@@ -11,10 +11,6 @@
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
 
-#include <random>
-
-const float kDeltaTime = 1.0f / 60.0f;
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
