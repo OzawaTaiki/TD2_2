@@ -21,7 +21,6 @@ void GameScene::Initialize()
     lineDrawer_ = LineDrawer::GetInstance();
     lineDrawer_->SetCameraPtr(camera_.get());
 
-
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
