@@ -26,4 +26,8 @@ private:
     std::unique_ptr<Camera> camera_ = nullptr;
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
+
+    Model* model_ = nullptr;
+    WorldTransform worldTransform;
+    ObjectColor color_;
 };
