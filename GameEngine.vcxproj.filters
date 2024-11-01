@@ -212,6 +212,7 @@
       <Filter>Engine\other</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Application\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -352,6 +353,7 @@
     <ClInclude Include="Engine\PSOManager.h">
       <Filter>Engine\other</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
