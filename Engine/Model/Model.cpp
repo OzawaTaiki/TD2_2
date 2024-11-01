@@ -12,7 +12,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-const std::string Model::defaultDirpath_ = "Resources/obj/";
+const std::string Model::defaultDirpath_ = "Resources/models/";
 
 void Model::Initialize()
 {

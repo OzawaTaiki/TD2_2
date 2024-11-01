@@ -32,7 +32,7 @@ void GameScene::Initialize()
     worldTransform.transform_ = Vector3{ 0,0,0 };
     worldTransform.rotate_.y = { 1.57f };
 
-    model_ = Model::CreateFromObj("models/Box/Box.obj");
+    model_ = Model::CreateFromObj("bunny.obj");
 
 
     color_.Initialize();

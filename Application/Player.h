@@ -14,7 +14,7 @@ public :
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Camera* camera);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -24,12 +24,12 @@ public :
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const Camera& camera);
 
 private:
 	Model* model_ = nullptr;
 	WorldTransform worldTransform;
 	ObjectColor color_;
 
-	Camera* camera_ = nullptr;
+	
 };
