@@ -33,12 +33,6 @@ void GameScene::Initialize()
     color = new ObjectColor;
     color->Initialize();
 
-    emit_ = new ParticleEmitter;
-    emit_->Setting({ 0,0,0 }, { 0,0,0 }, 1, 1, 10, true);
-    emit_->SetShape_Box({ 2, 2, 2 });
-
-   uint32_t handle= TextureManager::GetInstance()->Load("circle.png");
-   ParticleManager::GetInstance()->CreateParticleGroup("sample", "plane/plane.obj", emit_, handle);
 }
 
 void GameScene::Update()
@@ -50,8 +44,8 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
 
-    emit_->Update();
-    ParticleManager::GetInstance()->Update();
+
+
 
     camera_->UpdateMatrix();
     //<-----------------------
@@ -62,11 +56,10 @@ void GameScene::Draw()
 {
     ModelManager::GetInstance()->PreDraw();
     //<------------------------
-    //model_->Draw(trans_, camera_.get(), color);
+    model_->Draw(trans_, camera_.get(), color);
 
     //<------------------------
 
-    ParticleManager::GetInstance()->Draw(camera_.get());
 
     Sprite::PreDraw();
     //<------------------------
@@ -74,7 +67,6 @@ void GameScene::Draw()
 
 
     //<------------------------
-    emit_->Draw();
     lineDrawer_->Draw();
 
 
