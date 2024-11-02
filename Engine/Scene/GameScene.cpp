@@ -29,14 +29,25 @@ void GameScene::Initialize()
 
 
     worldTransform.Initialize();
-    worldTransform.transform_ = Vector3{ 0,0,0 };
+    worldTransform.transform_ = Vector3{ 0,-3.0f,0 };
     worldTransform.rotate_.y = { 1.57f };
 
-    model_ = Model::CreateFromObj("bunny.obj");
+    model_ = Model::CreateFromObj("Box/Box.obj");
 
 
     color_.Initialize();
     color_.SetColor(Vector4{ 1, 1, 1, 1 });
+
+    followCamera_ = std::make_unique<FollowCamera>();
+    followCamera_->Initialize();
+
+    player_ = std::make_unique<Player>();
+    player_->Initialize();
+    player_->SetCamera(&followCamera_->GetCamera());
+
+    followCamera_->SetTarget(&player_->GetWorldTransform());
+    
+
 }
 
 void GameScene::Update()
@@ -47,9 +58,20 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
 
+    player_->Update();
+
     worldTransform.UpdateData();
 
+
+    // 追従カメラの更新
+    followCamera_->Update();
+
+   
+    camera_->matView_ = followCamera_->GetCamera().matView_;
+    camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+
     camera_->UpdateMatrix();
+    camera_->TransferData();
     //<-----------------------
     ImGui::End();
 }
@@ -60,6 +82,9 @@ void GameScene::Draw()
     //<------------------------
 
 
+    player_->Draw(*camera_);
+
+    // モデル
     model_->Draw(worldTransform, camera_.get(), &color_);
 
     //<------------------------

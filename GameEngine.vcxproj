@@ -60,7 +60,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)Engine;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\DXWin;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Lights;$(ProjectDir)Engine\Material;$(ProjectDir)Engine\Mesh;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Sprite;$(ProjectDir)myLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)Engine;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\DXWin;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Lights;$(ProjectDir)Engine\Material;$(ProjectDir)Engine\Mesh;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Sprite;$(ProjectDir)myLib;$(ProjectDir)Application</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,7 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)Engine;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\DXWin;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Lights;$(ProjectDir)Engine\Material;$(ProjectDir)Engine\Mesh;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Sprite;$(ProjectDir)myLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)Engine;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\DXWin;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Lights;$(ProjectDir)Engine\Material;$(ProjectDir)Engine\Mesh;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Sprite;$(ProjectDir)myLib;$(ProjectDir)Application</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,6 +113,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\FollowCamera.cpp" />
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
@@ -158,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myLib\VectorFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\FollowCamera.h" />
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Camera.h" />

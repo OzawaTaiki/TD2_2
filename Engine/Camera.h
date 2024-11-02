@@ -20,6 +20,10 @@ public:
     ID3D12Resource* GetResource()const { return resource_.Get(); }
     Matrix4x4 GetViewProjection()const { return matViewProjection_; }
 
+    const Matrix4x4& GetViewMatrix() const { return matView_; }
+    const Matrix4x4& GetProjectionMatrix() const { return matProjection_; }
+
+
     /// <summary>
     /// メンバ変数から行列を計算，転送
     /// </summary>
