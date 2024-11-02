@@ -10,6 +10,7 @@
 #include "ImGuiManager.h"
 #include "ParticleManager.h"
 #include "RandomGenerator.h"
+#include "ConfigManager.h"
 #include <random>
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -31,6 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ParticleManager* particle = ParticleManager::GetInstance();
 	particle->Initialize(srvManager.get());
 
+	ConfigManager::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize(srvManager.get());
 	TextureManager::GetInstance()->Load("cube.jpg");
