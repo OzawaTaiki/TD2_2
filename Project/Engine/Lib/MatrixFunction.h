@@ -25,4 +25,8 @@ Matrix4x4 MakePerspectiveFovMatrix(float _fovY, float _aspectRatio, float _nearC
 Matrix4x4 MakeOrthographicMatrix(float _left, float _top, float _right, float _bottom, float _nearClip, float _farClip);
 Matrix4x4 MakeViewportMatrix(float _left, float _top, float _width, float _height, float _minDepth, float _maxDepth);
 
+//quaternion
+Matrix4x4 MakeRotateAxisAngle(const Vector3& _axis, float _angle);
+Matrix4x4 DirectionToDirection(const Vector3& _from, const Vector3& _to);
+
 Matrix4x4 operator* (const Matrix4x4& _mat1, const Matrix4x4& _mat2);
