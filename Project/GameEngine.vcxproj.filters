@@ -106,6 +106,9 @@
     <Filter Include="Engine\Other">
       <UniqueIdentifier>{15fa33b4-1187-4640-b874-a5deaf870c03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Lib\Quaternion">
+      <UniqueIdentifier>{71a7ed14-fddc-4724-b283-6d8af86940a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -140,9 +143,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Lib\VectorFunction.cpp">
       <Filter>Engine\Lib\Vector</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Lib\MyLib.cpp">
-      <Filter>Engine\LineDrawer</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Lights\SpotLight.cpp">
       <Filter>Engine\Object\ObjectModel\Light\Spot</Filter>
@@ -231,6 +231,15 @@
     <ClCompile Include="Engine\Utility\ConfigManager.cpp">
       <Filter>Engine\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Lib\Matrix4x4.cpp">
+      <Filter>Engine\Lib\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Lib\MyLib.cpp">
+      <Filter>Engine\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Lib\Quaternion.cpp">
+      <Filter>Engine\Lib\Quaternion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -311,9 +320,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Lib\VectorFunction.h">
       <Filter>Engine\Lib\Vector</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Lib\MyLib.h">
-      <Filter>Engine\LineDrawer</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Lights\SpotLight.h">
       <Filter>Engine\Object\ObjectModel\Light\Spot</Filter>
@@ -404,6 +410,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Utility\ConfigManager.h">
       <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Lib\MyLib.h">
+      <Filter>Engine\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Lib\Quaternion.h">
+      <Filter>Engine\Lib\Quaternion</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,9 @@
 #include "Vector3.h"
 
+#ifdef _DEBUG
+#include <imgui.h>
+#endif // _DEBUG
+
 float Vector3::Length() const
 {
     return std::sqrtf(x * x + y * y + z * z);
@@ -16,7 +20,7 @@ Vector3 Vector3::Normalize() const
 
 float Vector3::Dot(const Vector3& _v) const
 {
-    float result = x * x + y * y + z * z;
+    float result = x * _v.x + y * _v.y + z * _v.z;
 
     return result;
 }
@@ -93,3 +97,16 @@ Vector3 operator/(float _s, const Vector3& vec)
 {
     return { vec / _s };
 }
+
+#ifdef _DEBUG
+void Vector3::ShowData(const std::string& _label, bool _newWindow) const
+{
+    if (_newWindow)
+        ImGui::Begin((_label + " Vector3").c_str());
+
+    ImGui::Text("%-12s:%6.3f,%6.3f,%6.3f", _label.c_str(), x, y, z);
+
+    if (_newWindow)
+        ImGui::End();
+}
+#endif // _DEBUG

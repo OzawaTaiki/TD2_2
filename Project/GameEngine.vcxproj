@@ -123,8 +123,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DXWin\DXCommon.cpp" />
     <ClCompile Include="Engine\DXWin\WinApp.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Engine\Lib\Matrix4x4.cpp" />
     <ClCompile Include="Engine\Lib\MatrixFunction.cpp" />
     <ClCompile Include="Engine\Lib\MyLib.cpp" />
+    <ClCompile Include="Engine\Lib\Quaternion.cpp" />
     <ClCompile Include="Engine\Lib\Vector2.cpp" />
     <ClCompile Include="Engine\Lib\Vector3.cpp" />
     <ClCompile Include="Engine\Lib\VectorFunction.cpp" />
@@ -230,6 +232,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Lib\Matrix4x4.h" />
     <ClInclude Include="Engine\Lib\MatrixFunction.h" />
     <ClInclude Include="Engine\Lib\MyLib.h" />
+    <ClInclude Include="Engine\Lib\Quaternion.h" />
     <ClInclude Include="Engine\Lib\Vector2.h" />
     <ClInclude Include="Engine\Lib\Vector3.h" />
     <ClInclude Include="Engine\Lib\Vector4.h" />
