@@ -31,7 +31,7 @@ private:
 
     Model* model_;
     WorldTransform trans_;
-    ObjectColor* color_;
+    ObjectColor* color;
 
     ParticleEmitter* emit_;
 };
