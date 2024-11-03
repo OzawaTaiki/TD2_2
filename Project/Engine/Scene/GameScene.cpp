@@ -6,6 +6,8 @@
 #include "ParticleManager.h"
 #include "TextureManager.h"
 #include "ConfigManager.h"
+#include "Quaternion.h"
+#include "MyLib.h"
 #include <chrono>
 #include <imgui.h>
 
@@ -34,10 +36,6 @@ void GameScene::Initialize()
     color_ = new ObjectColor;
     color_->Initialize();
 
-    ConfigManager::GetInstance()->LoadData();
-    ConfigManager::GetInstance()->SetVariable("Model", "Position", &trans_.transform_);
-    ConfigManager::GetInstance()->SetVariable("Model", "scale", &trans_.scale_);
-    ConfigManager::GetInstance()->SetVariable("Model", "rotate", &trans_.rotate_);
 }
 
 void GameScene::Update()
@@ -49,15 +47,21 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
 
-    ImGui::DragFloat3("Position", &trans_.transform_.x, 0.1f);
-    ImGui::DragFloat3("Scale", &trans_.scale_.x, 0.1f);
-    ImGui::DragFloat3("Rotate", &trans_.rotate_.x, 0.1f);
+    Quaternion rotation0 = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(.71f, .71f, 0), 0.3f);
+    Quaternion rotation1 = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(.71f, 0, .71f), 3.141592f);
 
+    Quaternion interpolat0 = Slerp(rotation0, rotation1, 0.0f);
+    Quaternion interpolat1 = Slerp(rotation0, rotation1, 0.3f);
+    Quaternion interpolat2 = Slerp(rotation0, rotation1, 0.5f);
+    Quaternion interpolat3 = Slerp(rotation0, rotation1, 0.7f);
+    Quaternion interpolat4 = Slerp(rotation0, rotation1, 1);
 
-    if(ImGui::Button("save"))
-    {
-        ConfigManager::GetInstance()->SaveData();
-    }
+    interpolat0.ShowData("interpolat0", true);
+    interpolat1.ShowData("interpolat1", true);
+    interpolat2.ShowData("interpolat2", true);
+    interpolat3.ShowData("interpolat3", true);
+    interpolat4.ShowData("interpolat4", true);
+
     trans_.UpdateData();
 
     camera_->UpdateMatrix();
