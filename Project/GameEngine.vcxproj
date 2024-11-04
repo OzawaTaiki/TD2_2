@@ -64,7 +64,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)externals/assimp/include;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\imgui;$(projectDir)Engine\Audio;$(projectDir)Engine\Camera;$(projectDir)Engine\DXWin;$(projectDir)Engine\Input;$(projectDir)Engine\Lib;$(projectDir)Engine\Lights;$(projectDir)Engine\Model;$(projectDir)Engine\ObjectColor;$(projectDir)Engine\Other;$(projectDir)Engine\Particle;$(projectDir)Engine\Render;$(projectDir)Engine\Scene;$(projectDir)Engine\Sprite;$(projectDir)Engine\TextureManager;$(projectDir)Engine\Utility</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)externals/assimp/include;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\imgui;$(projectDir)Engine\Audio;$(projectDir)Engine\Camera;$(projectDir)Engine\DXWin;$(projectDir)Engine\Input;$(projectDir)Engine\Lib;$(projectDir)Engine\Lights;$(projectDir)Engine\Model;$(projectDir)Engine\Node;$(projectDir)Engine\ObjectColor;$(projectDir)Engine\Other;$(projectDir)Engine\Particle;$(projectDir)Engine\Render;$(projectDir)Engine\Scene;$(projectDir)Engine\Sprite;$(projectDir)Engine\TextureManager;$(projectDir)Engine\Utility</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +139,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Model\Model.cpp" />
     <ClCompile Include="Engine\Model\ModelAnimation.cpp" />
     <ClCompile Include="Engine\Model\ModelManager.cpp" />
+    <ClCompile Include="Engine\Model\ObjectModel.cpp" />
     <ClCompile Include="Engine\Model\WorldTransform.cpp" />
+    <ClCompile Include="Engine\Node\Node.cpp" />
     <ClCompile Include="Engine\ObjectColor\ObjectColor.cpp" />
     <ClCompile Include="Engine\Other\CatmulRomSpline.cpp" />
     <ClCompile Include="Engine\Other\Collider.cpp" />
@@ -247,7 +249,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Model\Model.h" />
     <ClInclude Include="Engine\Model\ModelAnimation.h" />
     <ClInclude Include="Engine\Model\ModelManager.h" />
+    <ClInclude Include="Engine\Model\ObjectModel.h" />
     <ClInclude Include="Engine\Model\WorldTransform.h" />
+    <ClInclude Include="Engine\Node\Node.h" />
     <ClInclude Include="Engine\ObjectColor\ObjectColor.h" />
     <ClInclude Include="Engine\Other\CatmulRomSpline.h" />
     <ClInclude Include="Engine\Other\Collider.h" />

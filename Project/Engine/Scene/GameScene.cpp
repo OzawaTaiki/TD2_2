@@ -9,6 +9,7 @@
 GameScene::~GameScene()
 {
     delete color_;
+    delete model_;
 }
 
 void GameScene::Initialize()
@@ -25,12 +26,8 @@ void GameScene::Initialize()
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
-    model_ = Model::CreateFromObj("bunny.gltf");
-    model_ = Model::CreateFromObj("tile/tile.gltf");
-    trans_.Initialize();
-    trans_.UpdateData();
-    color_ = new ObjectColor;
-    color_->Initialize();
+    model_ = new ObjectModel;
+    model_->Initialize("animatedCube/animatedCube.gltf");
 
 }
 
@@ -41,12 +38,12 @@ void GameScene::Update()
 
     input_->Update();
     //<-----------------------
-    camera_->Update();
+    camera_->Update();/*
+    static int c = 0;
+    if (c++ % 10 == 0)*/
+        model_->Update();
 
-
-    trans_.UpdateData();
-
-    camera_->UpdateMatrix();
+    camera_->TransferData();
     //<-----------------------
     ImGui::End();
 }
@@ -55,7 +52,7 @@ void GameScene::Draw()
 {
     ModelManager::GetInstance()->PreDraw();
     //<------------------------
-    model_->Draw(trans_, camera_.get(), color_);
+    model_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
 

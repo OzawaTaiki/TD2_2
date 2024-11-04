@@ -2,6 +2,7 @@
 #include "Matrix4x4.h"
 #include "Matrix3x3.h"
 #include "Vector3.h"
+#include "Quaternion.h"
 
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
@@ -21,6 +22,7 @@ Matrix4x4 MakeRotateYMatrix(float _radian);
 Matrix4x4 MakeRotateZMatrix(float _radian);
 Matrix4x4 MakeRotateMatrix(const Vector3& _rotate);
 Matrix4x4 MakeAffineMatrix(const Vector3& _scale, const Vector3& _rotate, const Vector3& _translate);
+Matrix4x4 MakeAffineMatrix(const Vector3& _scale, const Quaternion& _rotate, const Vector3& _translate);
 Matrix4x4 MakePerspectiveFovMatrix(float _fovY, float _aspectRatio, float _nearClip, float _farClip);
 Matrix4x4 MakeOrthographicMatrix(float _left, float _top, float _right, float _bottom, float _nearClip, float _farClip);
 Matrix4x4 MakeViewportMatrix(float _left, float _top, float _width, float _height, float _minDepth, float _maxDepth);

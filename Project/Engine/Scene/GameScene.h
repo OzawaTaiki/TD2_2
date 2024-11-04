@@ -4,7 +4,7 @@
 #include "Input.h"
 #include "LineDrawer.h"
 #include "WorldTransform.h"
-#include "Model.h"
+#include "ObjectModel.h"
 #include "Audio.h"
 #include "ObjectColor.h"
 #include "ParticleManager.h"
@@ -29,7 +29,7 @@ private:
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
 
-    Model* model_;
+    ObjectModel* model_;
     WorldTransform trans_;
     ObjectColor* color_;
 

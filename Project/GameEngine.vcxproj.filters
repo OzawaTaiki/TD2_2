@@ -112,6 +112,9 @@
     <Filter Include="Engine\Object\ObjectModel\Animation">
       <UniqueIdentifier>{996f9480-b422-4957-963b-ad52239bf37b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Node">
+      <UniqueIdentifier>{4dee600a-c111-423b-90f3-ea9becd182bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -245,6 +248,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Model\ModelAnimation.cpp">
       <Filter>Engine\Object\ObjectModel\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Node\Node.cpp">
+      <Filter>Engine\Object\ObjectModel\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Model\ObjectModel.cpp">
+      <Filter>Engine\Object\ObjectModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,6 +434,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Model\ModelAnimation.h">
       <Filter>Engine\Object\ObjectModel\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Node\Node.h">
+      <Filter>Engine\Object\ObjectModel\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model\ObjectModel.h">
+      <Filter>Engine\Object\ObjectModel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

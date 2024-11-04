@@ -20,6 +20,15 @@ void Model::Initialize()
 
 }
 
+void Model::Update()
+{
+    for (auto& animation : animation_)
+    {
+        animation->Update(node_.name_);
+    }
+
+}
+
 void Model::Draw(const WorldTransform& _transform, const Camera* _camera, uint32_t _textureHandle, ObjectColor* _color)
 {
     if (!lightGroup_)
@@ -56,8 +65,6 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
 {
     if (!lightGroup_)
     {
-        lightGroup_ = new LightGroup;
-        lightGroup_->Initialize();
     }
 
     ID3D12GraphicsCommandList* commandList = DXCommon::GetInstance()->GetCommandList();
@@ -88,7 +95,6 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
 void Model::ShowImGui(const std::string& _name)
 {
 
-
 }
 
 Model* Model::CreateFromObj(const std::string& _filePath)
@@ -98,11 +104,39 @@ Model* Model::CreateFromObj(const std::string& _filePath)
     if (model->mesh_.size() == 0|| model->material_.size() == 0)
     {
        model-> LoadFile(_filePath);
-        //model->LoadMesh(_filePath);
-        //model->LoadMaterial(_filePath);
     }
 
+    model->lightGroup_ = new LightGroup;
+    model->lightGroup_->Initialize();
     return model;
+}
+
+void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const
+{
+    lightGroup_->TransferData();
+    lightGroup_->QueueCommand(_commandList);
+
+    for (auto& mesh : mesh_)
+    {
+        mesh->QueueCommand(_commandList);
+        material_[mesh->GetUseMaterialIndex()]->MateriallQueueCommand(_commandList, 2);
+        material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(_commandList, 4);
+        _commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
+    }
+}
+
+void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList, uint32_t _textureHandle) const
+{
+    lightGroup_->TransferData();
+    lightGroup_->QueueCommand(_commandList);
+
+    for (auto& mesh : mesh_)
+    {
+        mesh->QueueCommand(_commandList);
+        material_[mesh->GetUseMaterialIndex()]->MateriallQueueCommand(_commandList, 2);
+        material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(_commandList, 4, _textureHandle);
+        _commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
+    }
 }
 
 void Model::LoadFile(const std::string& _filepath)
@@ -116,10 +150,26 @@ void Model::LoadFile(const std::string& _filepath)
     const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs); // 三角形の並びを逆に，UVのy軸反転
     assert(scene->HasMeshes());// メッシュがないのは対応しない
 
+    LoadMesh(scene);
+    LoadMaterial(scene);
+    LoadAnimation(scene);
+    LoadNode(scene);
 
+
+    TransferData();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::string str = std::to_string(duration);
+    Utils::Log("Load finish \ntime :" + str + "ms\n");
+    //Utils::Log("data\nvertex :" + std::to_string(vertices_.size()) + "\nindex :" + std::to_string(indices_.size()) + "\n");
+
+}
+
+void Model::LoadMesh(const aiScene* _scene)
+{
     // メッシュの読み込み
-    for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-        aiMesh* mesh = scene->mMeshes[meshIndex];
+    for (uint32_t meshIndex = 0; meshIndex < _scene->mNumMeshes; ++meshIndex) {
+        aiMesh* mesh = _scene->mMeshes[meshIndex];
         assert(mesh->HasNormals());						    // 法線がないMeshは今回は非対応
         assert(mesh->HasTextureCoords(0));				    // TexcoordがないMeshは今回は非対応
         std::unique_ptr<Mesh> pMesh = std::make_unique<Mesh>();
@@ -150,10 +200,13 @@ void Model::LoadFile(const std::string& _filepath)
         pMesh->TransferData();
         mesh_.push_back(std::move(pMesh));
     }
+}
 
-    material_.resize(scene->mNumMaterials);
-    for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-        aiMaterial* material = scene->mMaterials[materialIndex];
+void Model::LoadMaterial(const aiScene* _scene)
+{
+    material_.resize(_scene->mNumMaterials);
+    for (uint32_t materialIndex = 0; materialIndex < _scene->mNumMaterials; ++materialIndex) {
+        aiMaterial* material = _scene->mMaterials[materialIndex];
 
         std::string path = "";
         material_[materialIndex] = std::make_unique<Material>();
@@ -163,11 +216,11 @@ void Model::LoadFile(const std::string& _filepath)
             material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 
             // /の位置を探す
-            size_t slashPos = _filepath.find('/');
+            size_t slashPos = name_.find('/');
 
             if (slashPos != std::string::npos)
             {// 見つかったら
-                std::string dirPath = _filepath.substr(0, slashPos);
+                std::string dirPath = name_.substr(0, slashPos);
                 textureFilePath = dirPath + '/' + textureFilePath.C_Str();
             }
 
@@ -179,29 +232,26 @@ void Model::LoadFile(const std::string& _filepath)
         }
         material_[materialIndex]->Initialize(path);
     }
-
-    TransferData();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::string str = std::to_string(duration);
-    Utils::Log("Load finish \ntime :" + str + "ms\n");
-    //Utils::Log("data\nvertex :" + std::to_string(vertices_.size()) + "\nindex :" + std::to_string(indices_.size()) + "\n");
-
 }
 
-void Model::LoadMesh(const std::string& _filePath)
-{/*
-    name_ = _filePath;
-    mesh_ = std::make_unique<Mesh>();
-    mesh_->Initialize();
-    mesh_->LoadFile(_filePath);*/
+void Model::LoadAnimation(const aiScene* _scene)
+{
+    if (_scene->mNumAnimations == 0)
+        return;
+
+    animation_.resize(_scene->mNumAnimations);
+    for (uint32_t animationIndex = 0; animationIndex < _scene->mNumAnimations; ++animationIndex)
+    {
+        animation_[animationIndex] = std::make_unique<ModelAnimation>();
+        animation_[animationIndex]->ReadAnimation(_scene->mAnimations[animationIndex]);
+    }
 }
 
-void Model::LoadMaterial(const std::string& _filePath)
-{/*
-    material_ = std::make_unique<Material>();
-    material_->Initialize(mesh_->GetTexturePath());
-    material_->LoadTexture();*/
+void Model::LoadNode(const aiScene* _scene)
+{
+    assert(_scene->mRootNode != nullptr);
+
+    node_.ReadNode(_scene->mRootNode);
 }
 
 void Model::TransferData()
