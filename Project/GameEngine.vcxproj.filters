@@ -109,6 +109,9 @@
     <Filter Include="Engine\Lib\Quaternion">
       <UniqueIdentifier>{71a7ed14-fddc-4724-b283-6d8af86940a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Animation">
+      <UniqueIdentifier>{996f9480-b422-4957-963b-ad52239bf37b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -239,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="Engine\Lib\Quaternion.cpp">
       <Filter>Engine\Lib\Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Model\ModelAnimation.cpp">
+      <Filter>Engine\Object\ObjectModel\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -416,6 +422,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Lib\Quaternion.h">
       <Filter>Engine\Lib\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model\ModelAnimation.h">
+      <Filter>Engine\Object\ObjectModel\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

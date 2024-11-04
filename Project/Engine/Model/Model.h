@@ -30,25 +30,27 @@ public:
 
     static Model* CreateFromObj(const std::string& _filePath);
 
-    Mesh* GetMeshPtr() { return mesh_.get(); }
-    Material* GetMaterialPtr() { return material_.get(); }
+    Mesh* GetMeshPtr() { return mesh_[0].get(); }
+    Material* GetMaterialPtr() { return material_[0].get(); }
 
-    static const std::string defaultDirpath_;
 
     void SetLightGroup(LightGroup* _lightGroup) { lightGroup_ = _lightGroup; }
 
     ~Model() { delete lightGroup_; }
+
+    static const std::string defaultDirpath_;
 private:
 
     std::string name_ = {};
 
-    std::unique_ptr<Mesh>				mesh_			= nullptr;
-    std::unique_ptr<Material>			material_		= nullptr;
+    std::vector<std::unique_ptr<Mesh>> mesh_ = {};
+    std::vector<std::unique_ptr<Material>> material_ = {};
 
-    LightGroup*					        lightGroup_		= nullptr;
+    LightGroup* lightGroup_ = nullptr;
 
-    void LoadMesh(const std::string& _filePath);
-    void LoadMaterial(const std::string& _filePath);
+    void LoadFile(const std::string& _filepath);
+    void LoadMesh(const std::string& _filepath);
+    void LoadMaterial(const std::string& _filepath);
 
     void TransferData();
 

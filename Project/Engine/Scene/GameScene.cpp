@@ -26,6 +26,7 @@ void GameScene::Initialize()
     audio_->Initialize();
 
     model_ = Model::CreateFromObj("bunny.gltf");
+    model_ = Model::CreateFromObj("tile/tile.gltf");
     trans_.Initialize();
     trans_.UpdateData();
     color_ = new ObjectColor;
