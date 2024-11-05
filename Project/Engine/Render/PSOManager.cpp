@@ -487,10 +487,9 @@ void PSOManager::CreatePSOForLineDrawer()
     //DepthStencilStateの設定
     D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
     depthStencilDesc.DepthEnable = true;
-    depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-    depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-    depthStencilDesc.StencilReadMask = 0xffu;
-    depthStencilDesc.StencilWriteMask = 0xffu;
+    depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+    depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+    depthStencilDesc.StencilEnable = false;
 
 
     /// InputLayoutの設定を行う

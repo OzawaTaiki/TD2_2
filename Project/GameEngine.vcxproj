@@ -123,6 +123,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DXWin\DXCommon.cpp" />
     <ClCompile Include="Engine\DXWin\WinApp.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Engine\Joint\Joint.cpp" />
     <ClCompile Include="Engine\Lib\Matrix4x4.cpp" />
     <ClCompile Include="Engine\Lib\MatrixFunction.cpp" />
     <ClCompile Include="Engine\Lib\MyLib.cpp" />
@@ -153,6 +154,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Render\SRVManager.cpp" />
     <ClCompile Include="Engine\Scene\GameScene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
+    <ClCompile Include="Engine\Skeleton\Skeleton.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
     <ClCompile Include="Engine\Sprite\SpriteManager.cpp" />
     <ClCompile Include="Engine\TextureManager\TextureManager.cpp" />
@@ -231,11 +233,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DXWin\DXCommon.h" />
     <ClInclude Include="Engine\DXWin\WinApp.h" />
     <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\Joint\Joint.h" />
     <ClInclude Include="Engine\Lib\Matrix3x3.h" />
     <ClInclude Include="Engine\Lib\Matrix4x4.h" />
     <ClInclude Include="Engine\Lib\MatrixFunction.h" />
     <ClInclude Include="Engine\Lib\MyLib.h" />
     <ClInclude Include="Engine\Lib\Quaternion.h" />
+    <ClInclude Include="Engine\Lib\QuaternionTransform.h" />
     <ClInclude Include="Engine\Lib\Vector2.h" />
     <ClInclude Include="Engine\Lib\Vector3.h" />
     <ClInclude Include="Engine\Lib\Vector4.h" />
@@ -264,6 +268,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Scene\GameScene.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
+    <ClInclude Include="Engine\Skeleton\Skeleton.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
     <ClInclude Include="Engine\Sprite\SpriteManager.h" />
     <ClInclude Include="Engine\TextureManager\TextureManager.h" />

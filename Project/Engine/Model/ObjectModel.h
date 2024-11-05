@@ -27,5 +27,9 @@ private:
     std::unique_ptr<ObjectColor> objectColor_ = nullptr;
     Model* model_ = nullptr;
 
+#ifdef _DEBUG
+    void ImGui();
+#endif // _DEBUG
+
 
 };

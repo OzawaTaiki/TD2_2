@@ -1,6 +1,7 @@
 #include "ObjectModel.h"
 #include "DXCommon.h"
 #include "ModelManager.h"
+#include "MatrixFunction.h"
 
 void ObjectModel::Initialize(const std::string& _filePath)
 {
@@ -14,7 +15,13 @@ void ObjectModel::Initialize(const std::string& _filePath)
 
 void ObjectModel::Update()
 {
+#ifdef _DEBUG
+    ImGui();
+#endif // _DEBUG
+
+
     model_->Update();
+
     worldTransform_.UpdateData({ model_->GetNodeMatrix(),model_->GetAnimationMatrix()});
     worldTransform_.GetWorldPosition().ShowData("w", false);
 }
@@ -31,4 +38,16 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
     objectColor_->QueueCommand(commandList, 3);
     model_->QueueCommandAndDraw(commandList);// BVB IBV MTL2 TEX4 LIGHT567
 
+    model_->DrawSkeleton(worldTransform_.matWorld_);
+
 }
+#ifdef _DEBUG
+#include <imgui.h>
+void ObjectModel::ImGui()
+{
+    ImGui::DragFloat3("Translate", &worldTransform_. transform_.x, 0.01f);
+    ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
+    ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+
+}
+#endif // _DEBUG

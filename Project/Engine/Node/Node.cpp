@@ -1,16 +1,19 @@
 #include "Node.h"
-
+#include "MatrixFunction.h"
 #include <assimp/scene.h>
 
 void Node::ReadNode(const aiNode* _node)
 {
-    aiMatrix4x4 aiLocalMatrix = _node->mTransformation;
-    aiLocalMatrix.Transpose();//転置
 
-    // メンバ変数にコピー
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            localMatrix_.m[i][j] = aiLocalMatrix[i][j];
+    aiVector3D scale, translation;
+    aiQuaternion rotation;
+    _node->mTransformation.Decompose(scale, rotation, translation);
+
+    transform_.scale = Vector3(scale.x, scale.y, scale.z);
+    transform_.translate = Vector3(-translation.x, translation.y, translation.z);
+    transform_.rotation = Quaternion(rotation.x, -rotation.y, -rotation.z, rotation.w).Normalize();
+    localMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotation, transform_.translate);
+
 
     name_ = _node->mName.C_Str();
     children_.resize(_node->mNumChildren);

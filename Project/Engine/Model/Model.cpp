@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "ObjectColor.h"
-
+#include "MatrixFunction.h"
 #include <cassert>
 
 #include <assimp/Importer.hpp>
@@ -24,7 +24,8 @@ void Model::Update()
 {
     for (auto& animation : animation_)
     {
-        animation->Update(node_.name_);
+        animation->Update(skeleton_.GetJoints());
+        skeleton_.Update();
     }
 
 }
@@ -92,6 +93,11 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
     }
 }
 
+void Model::DrawSkeleton(const Matrix4x4& _wMat)
+{
+    skeleton_.Draw(_wMat);
+}
+
 void Model::ShowImGui(const std::string& _name)
 {
 
@@ -139,6 +145,13 @@ void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList, uint32_
     }
 }
 
+Matrix4x4 Model::GetAnimationMatrix() const
+{
+    if (animation_.empty())
+        return MakeIdentity4x4();
+    return animation_[0]->GetLocalMatrix();
+}
+
 void Model::LoadFile(const std::string& _filepath)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -147,13 +160,14 @@ void Model::LoadFile(const std::string& _filepath)
 
     Assimp::Importer importer;
     std::string filepath = defaultDirpath_ + _filepath;
-    const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs); // 三角形の並びを逆に，UVのy軸反転
+    const aiScene* scene = importer.ReadFile(filepath.c_str(),  aiProcess_FlipWindingOrder | aiProcess_FlipUVs); // 三角形の並びを逆に，UVのy軸反転
     assert(scene->HasMeshes());// メッシュがないのは対応しない
 
     LoadMesh(scene);
     LoadMaterial(scene);
     LoadAnimation(scene);
     LoadNode(scene);
+    CreateSkeleton();
 
 
     TransferData();
@@ -182,8 +196,8 @@ void Model::LoadMesh(const aiScene* _scene)
             vertex.normal = { mesh->mNormals[vertexIndex].x, mesh->mNormals[vertexIndex].y, mesh->mNormals[vertexIndex].z };
             vertex.texcoord = { mesh->mTextureCoords[0][vertexIndex].x, mesh->mTextureCoords[0][vertexIndex].y };
 
-            vertex.position.z *= -1.0f;  // Z反転
-            vertex.normal.z *= -1.0f;    // Z反転
+            vertex.position.x *= -1.0f;  // x反転
+            vertex.normal.x *= -1.0f;    // x反転
 
             pMesh->vertices_.push_back(vertex);
         }
@@ -252,6 +266,11 @@ void Model::LoadNode(const aiScene* _scene)
     assert(_scene->mRootNode != nullptr);
 
     node_.ReadNode(_scene->mRootNode);
+}
+
+void Model::CreateSkeleton()
+{
+    skeleton_.CreateSkeleton(node_);
 }
 
 void Model::TransferData()

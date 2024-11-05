@@ -115,6 +115,12 @@
     <Filter Include="Engine\Object\ObjectModel\Node">
       <UniqueIdentifier>{4dee600a-c111-423b-90f3-ea9becd182bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Skeleton">
+      <UniqueIdentifier>{215ed1e1-74ee-4651-8ab8-b290b5b256bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Joint">
+      <UniqueIdentifier>{2c4f1f9b-d394-4c45-be6b-3518dd576fee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -254,6 +260,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Model\ObjectModel.cpp">
       <Filter>Engine\Object\ObjectModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Joint\Joint.cpp">
+      <Filter>Engine\Object\ObjectModel\Joint</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Skeleton\Skeleton.cpp">
+      <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -440,6 +452,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Model\ObjectModel.h">
       <Filter>Engine\Object\ObjectModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Lib\QuaternionTransform.h">
+      <Filter>Engine\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Joint\Joint.h">
+      <Filter>Engine\Object\ObjectModel\Joint</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Skeleton\Skeleton.h">
+      <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

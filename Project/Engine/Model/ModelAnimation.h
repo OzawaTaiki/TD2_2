@@ -2,12 +2,12 @@
 
 #include "Vector3.h"
 #include "Quaternion.h"
-
 #include <vector>
 #include <map>
 
 struct aiAnimation;
 
+class Joint;
 class ModelAnimation
 {
 public:
@@ -16,7 +16,7 @@ public:
     ~ModelAnimation() = default;
 
     void Initialize();
-    void Update(const std::string& _rootNodeName);
+    void Update(std::vector<Joint>& _joints);
     void Draw();
 
     void ReadAnimation(const aiAnimation* _animation);

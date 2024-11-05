@@ -27,7 +27,9 @@ void GameScene::Initialize()
     audio_->Initialize();
 
     model_ = new ObjectModel;
-    model_->Initialize("animatedCube/animatedCube.gltf");
+    //model_->Initialize("simpleSkin/simpleSkin.gltf");
+    //model_->Initialize("human/sneakWalk.gltf");
+    model_->Initialize("human/walk.gltf");
 
 }
 

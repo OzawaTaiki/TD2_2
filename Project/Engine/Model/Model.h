@@ -8,6 +8,7 @@
 #include "Mesh.h"
 #include "ModelAnimation.h"
 #include "Node.h"
+#include "../Skeleton/Skeleton.h"
 #include "LightGroup.h"
 
 #include <vector>
@@ -28,6 +29,8 @@ public:
     void Draw(const WorldTransform& _transform, const Camera* _camera, uint32_t _textureHandle, ObjectColor* _color);
     void Draw(const WorldTransform& _transform, const Camera* _camera, ObjectColor* _color);
 
+    void DrawSkeleton(const Matrix4x4& _wMat);
+
     void ShowImGui(const std::string& _name);
 
     static Model* CreateFromObj(const std::string& _filePath);
@@ -40,7 +43,7 @@ public:
     Mesh* GetMeshPtr() { return mesh_[0].get(); }
     Material* GetMaterialPtr() { return material_[0].get(); }
 
-    Matrix4x4 GetAnimationMatrix()const { return animation_[0]->GetLocalMatrix(); }
+    Matrix4x4 GetAnimationMatrix()const;
     Matrix4x4 GetNodeMatrix()const { return node_.GetLocalMatrix(); }
 
     ~Model() { delete lightGroup_; }
@@ -54,6 +57,7 @@ private:
     std::vector<std::unique_ptr<Material>> material_ = {};
     std::vector<std::unique_ptr<ModelAnimation>> animation_ = {};
     Node node_ = {};
+    Skeleton skeleton_ = {};
 
 
     LightGroup* lightGroup_ = nullptr;
@@ -63,6 +67,7 @@ private:
     void LoadMaterial(const aiScene* _scene);
     void LoadAnimation(const aiScene* _scene);
     void LoadNode(const aiScene* _scene);
+    void CreateSkeleton();
 
     void TransferData();
 

@@ -1,5 +1,6 @@
 #include "ModelAnimation.h"
 #include "MyLib.h"
+#include "../Joint/joint.h"
 #include <assimp/scene.h>
 #include <imgui.h>
 
@@ -9,17 +10,31 @@ void ModelAnimation::Initialize()
     localMatrix_ = MakeIdentity4x4();
 }
 
-void ModelAnimation::Update(const std::string& _rootNodeName)
+void ModelAnimation::Update(std::vector<Joint>& _joints)
 {
     animetionTImer_ += 1.0f / 60.0f;
     animetionTImer_ = std::fmod(animetionTImer_, animation_.duration);
-    ImGui::Text("%f", animetionTImer_);
+
+    for (Joint& joint : _joints)
+    {
+        if (auto it = animation_.nodeAnimations.find(joint.name_); it != animation_.nodeAnimations.end())
+        {
+            const NodeAnimation& nodeAnimation = it->second;
+            QuaternionTransform transform = {};
+            transform.translate = CalculateValue(nodeAnimation.translate, animetionTImer_);
+            transform.rotation = CalculateValue(nodeAnimation.rotation, animetionTImer_);
+            transform.scale = CalculateValue(nodeAnimation.scale, animetionTImer_);
+            joint.SetTransform(transform);
+        }
+    }
+
+    /*ImGui::Text("%f", animetionTImer_);
     NodeAnimation& rootAnimation = animation_.nodeAnimations[_rootNodeName];
     Vector3 translate = CalculateValue(rootAnimation.translate, animetionTImer_);
     Quaternion rotation = CalculateValue(rootAnimation.rotation, animetionTImer_);
     rotation.ShowData("q", false);
     Vector3 scale = CalculateValue(rootAnimation.scale, animetionTImer_);
-    localMatrix_ = MakeAffineMatrix(scale, rotation, translate);
+    localMatrix_ = MakeAffineMatrix(scale, rotation, translate);*/
 }
 
 void ModelAnimation::Draw()
@@ -101,7 +116,6 @@ Quaternion ModelAnimation::CalculateValue(const AnimationCurve<Quaternion>& _cur
         if (_curve.keyframes[index].time <= _time && _time <= _curve.keyframes[nextIndex].time)
         {
             float t = (_time - _curve.keyframes[index].time) / (_curve.keyframes[nextIndex].time - _curve.keyframes[index].time);
-            ImGui::Text("%f", t);
             return Slerp(_curve.keyframes[index].value, _curve.keyframes[nextIndex].value, t);
         }
     }
