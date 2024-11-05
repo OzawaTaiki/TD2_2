@@ -6,7 +6,7 @@
 void FollowCamera::Initialize()
 {
 	camera_.Initialize();
-	
+	camera_.rotate_ = { 0.34f,0,0 };
 }
 
 void FollowCamera::Update()
@@ -21,23 +21,26 @@ void FollowCamera::Update()
 		}
 		ImGui::EndTabBar();
 	}
+	if (target_) {
+		const float kRotateSpeed = 0.000003f *10000;
+		if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) {
+			camera_.rotate_.y -= 1.0f * kRotateSpeed;
+		}
+		else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
+			camera_.rotate_.y += 1.0f * kRotateSpeed;
+		}
 
-	const float kRotateSpeed = 0.000003f;
-	if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) {
-		camera_.rotate_.y -= 1.0f * kRotateSpeed;
-	}else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
-		camera_.rotate_.y += 1.0f * kRotateSpeed;
+		// 追従対象からカメラまでのオフセット
+		Vector3 offset = { 0.0f, 8.0f, -20.0f };
+
+		Matrix4x4 matrix = MakeRotateYMatrix(camera_.rotate_.y);
+
+		// オフセットをカメラの回転に合わせて回転させる
+		offset = Transform(offset, matrix);
+
+		// 座標をコピーしてオフセット分ずらす
+		camera_.translate_ = Add(target_->transform_, offset);
 	}
 
-	// 追従対象からカメラまでのオフセット
-	Vector3 offset = { 0.0f, 2.0f, -10.0f };
-
-	Matrix4x4 matrix = MakeRotateYMatrix(camera_.rotate_.y);
-
-	// オフセットをカメラの回転に合わせて回転させる
-	offset = Transform(offset, matrix);
-
-	// 座標をコピーしてオフセット分ずらす
-	camera_.translate_ = Add(target_->transform_, offset);
-
+	camera_.UpdateMatrix();
 }

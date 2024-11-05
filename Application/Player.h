@@ -7,6 +7,20 @@
 
 #include <list>
 #include <optional>
+
+
+// 8方向の列挙型
+enum class LRDirection {
+	kRight,         // 右
+	kLeft,          // 左
+	kFront,         // 前
+	kBack,          // 後ろ
+	kRightFront,    // 右前
+	kLeftFront,     // 左前
+	kRightBack,     // 右後ろ
+	kLeftBack       // 左後ろ
+};
+
 /// <summary>
 /// プレイヤー
 /// </summary>
@@ -67,6 +81,15 @@ private:
 	//
 	const Camera* camera_ = nullptr;
 private:
+	//左右
+	LRDirection lrDirection_ = LRDirection::kRight;
+	//旋回開始時の角度
+	float turnFirstRotationY_ = 0.0f;
+	//旋回タイマー
+	float tureTimer_ = 0.0f;
+	//旋回時間<秒>
+	static inline const float kTimeTurn = 0.3f;
+
 	// 速度
 	Vector3 velocity_ = {};
 

@@ -18,7 +18,7 @@ void GameScene::Initialize()
     camera_ = std::make_unique<Camera>();
     camera_->Initialize();
     camera_->translate_ = Vector3{ 0,18,-50 };
-    camera_->rotate_ = Vector3{ 0.30f,0,0 };
+    camera_->rotate_ = Vector3{ 0.34f,0,0 };
 
 
     lineDrawer_ = LineDrawer::GetInstance();
@@ -70,7 +70,7 @@ void GameScene::Update()
     camera_->matView_ = followCamera_->GetCamera().matView_;
     camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
 
-    camera_->UpdateMatrix();
+    //camera_->UpdateMatrix();
     camera_->TransferData();
     //<-----------------------
     ImGui::End();
