@@ -1,4 +1,5 @@
 #pragma once
+//Engine
 #include "Scene.h"
 #include "Camera.h"
 #include "Input.h"
@@ -8,9 +9,11 @@
 #include "Audio.h"
 #include "ObjectColor.h"
 
+//Application
 #include "Player.h"
 #include "FollowCamera.h"
 
+//
 #include <memory>
 
 class GameScene : public Scene

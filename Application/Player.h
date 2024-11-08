@@ -1,12 +1,22 @@
 #pragma once
+#define _USE_MATH_DEFINES
+#include<cmath>
+
+
+//Engine
 #include "Model.h"
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+//Application
+#include "Weapon.h"
 
+
+// 
 #include <list>
 #include <optional>
+
 
 
 // 8方向の列挙型
@@ -60,13 +70,16 @@ private:
 
 
 	//攻撃行動初期化
-	//void BehaviorAttackInitialize();
+	void BehaviorAttackInitialize();
 
 	
 	//攻撃行動更新
-	//void BehaviorAttackUpdate();
+	void BehaviorAttackUpdate();
 
-
+	// 攻撃パラメータ
+	void AttackParameter();
+	// 攻撃コンボセット
+	void SetAttackCombo(int parameter);
 
 private:
 	// モデル
@@ -77,6 +90,8 @@ private:
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+
+	std::unique_ptr<Weapon> weapon_;
 
 	//
 	const Camera* camera_ = nullptr;
@@ -104,4 +119,34 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 	// 次の振るまいリクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+
+	// 攻撃用ワーク
+	struct WrokAttack {
+		// 攻撃ギミックの媒介変数
+		int attackParameter_ = 0;
+		int comboIndex = 0;
+		int inComboPhase = 0;
+		bool comboNext = false;
+		int comboSwitchingNum = 0;
+		Vector2 joyDirection;
+	};
+	WrokAttack workAttack{};
+
+	struct Direction
+	{
+
+	}; 
+	Vector2 direction_;
+
+	float attackParameter;
+	// コンボの数
+	static const int ComboNum = 4;
+
+	// 攻撃再発動時間
+	int recastTime = 0;
+
+
+	int hp = 100;
+	bool isAlive = true;
 };

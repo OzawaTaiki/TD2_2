@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\FollowCamera.cpp" />
     <ClCompile Include="Application\Player.cpp" />
+    <ClCompile Include="Application\Weapon.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Collider.cpp" />
@@ -161,6 +162,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Application\FollowCamera.h" />
     <ClInclude Include="Application\Player.h" />
+    <ClInclude Include="Application\Weapon.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Collider.h" />

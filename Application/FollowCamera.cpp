@@ -31,7 +31,7 @@ void FollowCamera::Update()
 		}
 
 		// 追従対象からカメラまでのオフセット
-		Vector3 offset = { 0.0f, 8.0f, -20.0f };
+		Vector3 offset = { 0.0f, 16.0f, -40.0f };
 
 		Matrix4x4 matrix = MakeRotateYMatrix(camera_.rotate_.y);
 

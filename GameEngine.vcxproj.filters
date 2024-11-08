@@ -214,6 +214,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
+    <ClCompile Include="Application\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -356,6 +357,7 @@
     </ClInclude>
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\FollowCamera.h" />
+    <ClInclude Include="Application\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
