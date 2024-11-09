@@ -9,6 +9,8 @@
 GameScene::~GameScene()
 {
     delete color_;
+    delete model_;
+    delete humanModel_;
 }
 
 void GameScene::Initialize()
@@ -25,11 +27,13 @@ void GameScene::Initialize()
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
-    model_ = Model::CreateFromObj("bunny.gltf");
-    trans_.Initialize();
-    trans_.UpdateData();
-    color_ = new ObjectColor;
-    color_->Initialize();
+    model_ = new ObjectModel;
+    model_->Initialize("human/sneakWalk.gltf");
+    humanModel_ = new ObjectModel;
+    humanModel_->Initialize("human/walk.gltf");
+    //model_->Initialize("human/sneakWalk.gltf");
+    //model_->Initialize("human/walk.gltf");
+    //model_->Initialize("testbunny.gltf");
 
 }
 
@@ -42,10 +46,10 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
 
+    model_->Update();
+    humanModel_->Update();
 
-    trans_.UpdateData();
-
-    camera_->UpdateMatrix();
+    camera_->TransferData();
     //<-----------------------
     ImGui::End();
 }
@@ -54,7 +58,8 @@ void GameScene::Draw()
 {
     ModelManager::GetInstance()->PreDraw();
     //<------------------------
-    model_->Draw(trans_, camera_.get(), color_);
+    model_->Draw(camera_.get(), { 1,1,1,1 });
+    humanModel_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
 

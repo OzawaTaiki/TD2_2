@@ -327,6 +327,10 @@ Quaternion Slerp(const Quaternion& _q1, const Quaternion& _q2, float _t)
 		q0 = -_q1;
         dot = -dot;
 	}
+	if (dot > 1.0f - 1e-6f)
+	{		
+		return Lerp(q0, _q2, _t);
+	}
     float theta = std::acosf(dot);
 	float scale0, scale1;
 
@@ -354,6 +358,11 @@ Vector3 Lerp(const Vector3& _v1, const Vector3& _v2, float _t)
 Vector4 Lerp(const Vector4& _v1, const Vector4& _v2, float _t)
 {
     return Vector4(Lerp(_v1.x, _v2.x, _t), Lerp(_v1.y, _v2.y, _t), Lerp(_v1.z, _v2.z, _t), Lerp(_v1.w, _v2.w, _t));
+}
+
+Quaternion Lerp(const Quaternion& _q1, const Quaternion& _q2, float _t)
+{
+	return Quaternion(Lerp(_q1.x, _q2.x, _t), Lerp(_q1.y, _q2.y, _t), Lerp(_q1.z, _q2.z, _t), Lerp(_q1.w, _q2.w, _t));
 }
 
 Vector3 Project(const Vector3& _v1, const Vector3& _v2)

@@ -13,15 +13,15 @@ ModelManager* ModelManager::GetInstance()
 void ModelManager::Initialize()
 {
     blendMode_ = PSOManager::BlendMode::Normal;
-
+    
     /// PSOを取得
-    auto pso = PSOManager::GetInstance()->GetPipeLineStateObject("Model", blendMode_);
+    auto pso = PSOManager::GetInstance()->GetPipeLineStateObject("AnimationModel", blendMode_);
     // PSOが生成されているか確認
     assert(pso.has_value() && pso != nullptr);
     graphicsPipelineState_ = pso.value();
 
     /// RootSingnatureを取得
-    auto rootSignature = PSOManager::GetInstance()->GetRootSignature("Model");
+    auto rootSignature = PSOManager::GetInstance()->GetRootSignature("AnimationModel");
     // 生成されているか確認
     assert(rootSignature.has_value() && rootSignature != nullptr);
     rootSignature_= rootSignature.value();

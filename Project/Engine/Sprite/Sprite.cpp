@@ -93,7 +93,7 @@ void Sprite::TransferData(ID3D12GraphicsCommandList* _commandList)
     _commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
     _commandList->SetGraphicsRootConstantBufferView(0, matResource_->GetGPUVirtualAddress());
-    colorObj_->TransferData(1, _commandList);
+    colorObj_->QueueCommand(_commandList,1);
     _commandList->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetGPUHandle(textureHandle_));
 }
 
