@@ -31,9 +31,6 @@ void GameScene::Initialize()
     model_->Initialize("human/sneakWalk.gltf");
     humanModel_ = new ObjectModel;
     humanModel_->Initialize("human/walk.gltf");
-    //model_->Initialize("human/sneakWalk.gltf");
-    //model_->Initialize("human/walk.gltf");
-    //model_->Initialize("testbunny.gltf");
 
 }
 
@@ -45,6 +42,7 @@ void GameScene::Update()
     input_->Update();
     //<-----------------------
     camera_->Update();
+
 
     model_->Update();
     humanModel_->Update();
