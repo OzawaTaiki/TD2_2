@@ -11,8 +11,8 @@
 #include <string>
 #include <functional>
 
+struct VertexInfluenceData;
 class DXCommon;
-
 class Mesh
 {
 public:
@@ -21,8 +21,10 @@ public:
 
     void TransferData();
     void QueueCommand(ID3D12GraphicsCommandList* _commandList)const;
+    void QueueCommand(ID3D12GraphicsCommandList* _commandList, const D3D12_VERTEX_BUFFER_VIEW& _vbv)const;
 
     uint32_t GetIndexNum() const { return static_cast<uint32_t>(indices_.size()); }
+    uint32_t GetVertexNum() const { return static_cast<uint32_t>(vertices_.size()); }
 
     D3D12_VERTEX_BUFFER_VIEW* GetVertexBufferView() { return &vertexBufferView_; }
     D3D12_INDEX_BUFFER_VIEW* GetIndexBufferView() { return &indexBufferView_; }

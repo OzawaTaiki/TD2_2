@@ -9,6 +9,7 @@
 #include "ModelAnimation.h"
 #include "Node.h"
 #include "../Skeleton/Skeleton.h"
+#include "../SkinCluster/SkinCluster.h"
 #include "LightGroup.h"
 
 #include <vector>
@@ -21,6 +22,7 @@ class Camera;
 class WorldTransform;
 class ObjectColor;
 struct aiScene;
+struct aiMesh;
 class Model
 {
 public:
@@ -58,6 +60,7 @@ private:
     std::vector<std::unique_ptr<ModelAnimation>> animation_ = {};
     Node node_ = {};
     Skeleton skeleton_ = {};
+    SkinCluster skinCluster_ = {};
 
 
     LightGroup* lightGroup_ = nullptr;
@@ -68,6 +71,7 @@ private:
     void LoadAnimation(const aiScene* _scene);
     void LoadNode(const aiScene* _scene);
     void CreateSkeleton();
+    void CreateSkinCluster(const aiMesh* _mesh);
 
     void TransferData();
 

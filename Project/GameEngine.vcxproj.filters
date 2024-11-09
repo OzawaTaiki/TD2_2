@@ -121,6 +121,9 @@
     <Filter Include="Engine\Object\ObjectModel\Joint">
       <UniqueIdentifier>{2c4f1f9b-d394-4c45-be6b-3518dd576fee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\SkinCluster">
+      <UniqueIdentifier>{287a3bfd-2fe4-4f6d-9fd6-34834b832c22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -267,6 +270,9 @@
     <ClCompile Include="Engine\Skeleton\Skeleton.cpp">
       <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\SkinCluster\SkinCluster.cpp">
+      <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -305,6 +311,9 @@
       <Filter>リソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shader\LineDrawer.VS.hlsl">
+      <Filter>リソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\SkinningObject3d.VS.hlsl">
       <Filter>リソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -461,6 +470,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Skeleton\Skeleton.h">
       <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SkinCluster\SkinCluster.h">
+      <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

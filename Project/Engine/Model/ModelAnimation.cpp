@@ -55,7 +55,7 @@ void ModelAnimation::ReadAnimation(const aiAnimation* _animation)
             aiVectorKey& aiKeyframe = aiNodeAnimation->mPositionKeys[keyframeIndex];
             KeyframeVector3 keyframe;
             keyframe.time = static_cast<float> (aiKeyframe.mTime / _animation->mTicksPerSecond);
-            keyframe.value = Vector3(aiKeyframe.mValue.x, aiKeyframe.mValue.y, aiKeyframe.mValue.z);
+            keyframe.value = Vector3(-aiKeyframe.mValue.x, aiKeyframe.mValue.y, aiKeyframe.mValue.z);
             nodeAnimation.translate.keyframes.push_back(keyframe);
         }
         for (uint32_t keyframeIndex = 0; keyframeIndex < aiNodeAnimation->mNumRotationKeys; ++keyframeIndex)

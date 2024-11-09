@@ -22,8 +22,7 @@ void ObjectModel::Update()
 
     model_->Update();
 
-    worldTransform_.UpdateData({ model_->GetNodeMatrix(),model_->GetAnimationMatrix()});
-    worldTransform_.GetWorldPosition().ShowData("w", false);
+    worldTransform_.UpdateData(/*{ model_->GetNodeMatrix(),model_->GetAnimationMatrix()}*/);
 }
 
 void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
@@ -45,9 +44,10 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
 #include <imgui.h>
 void ObjectModel::ImGui()
 {
+    ImGui::PushID(this);
     ImGui::DragFloat3("Translate", &worldTransform_. transform_.x, 0.01f);
     ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
     ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
-
+    ImGui::PopID();
 }
 #endif // _DEBUG

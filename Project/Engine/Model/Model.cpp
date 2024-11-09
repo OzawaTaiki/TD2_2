@@ -12,6 +12,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <Debug.h>
+#include "Input.h"
 
 const std::string Model::defaultDirpath_ = "Resources/models/";
 
@@ -24,8 +25,9 @@ void Model::Update()
 {
     for (auto& animation : animation_)
     {
-        animation->Update(skeleton_.GetJoints());
+            animation->Update(skeleton_.GetJoints());
         skeleton_.Update();
+        skinCluster_.Update(skeleton_.GetJoints());
     }
 
 }
@@ -66,6 +68,8 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
 {
     if (!lightGroup_)
     {
+        lightGroup_ = new LightGroup;
+        lightGroup_->Initialize();
     }
 
     ID3D12GraphicsCommandList* commandList = DXCommon::GetInstance()->GetCommandList();
@@ -124,9 +128,10 @@ void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const
 
     for (auto& mesh : mesh_)
     {
-        mesh->QueueCommand(_commandList);
+        mesh->QueueCommand(_commandList, skinCluster_.GetInfluenceBufferView());
         material_[mesh->GetUseMaterialIndex()]->MateriallQueueCommand(_commandList, 2);
         material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(_commandList, 4);
+        skinCluster_.QueueCommand(_commandList);
         _commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
     }
 }
@@ -169,6 +174,8 @@ void Model::LoadFile(const std::string& _filepath)
     LoadNode(scene);
     CreateSkeleton();
 
+    skinCluster_.CreateResources(static_cast<uint32_t>(skeleton_.GetJoints().size()), mesh_[0]->GetVertexNum(), skeleton_.GetJointMap());
+
 
     TransferData();
     auto end = std::chrono::high_resolution_clock::now();
@@ -192,12 +199,9 @@ void Model::LoadMesh(const aiScene* _scene)
         for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex)
         {
             Mesh::VertexData vertex = {};
-            vertex.position = { mesh->mVertices[vertexIndex].x, mesh->mVertices[vertexIndex].y, mesh->mVertices[vertexIndex].z, 1.0f };
-            vertex.normal = { mesh->mNormals[vertexIndex].x, mesh->mNormals[vertexIndex].y, mesh->mNormals[vertexIndex].z };
+            vertex.position = { -mesh->mVertices[vertexIndex].x, mesh->mVertices[vertexIndex].y, mesh->mVertices[vertexIndex].z, 1.0f };
+            vertex.normal = { -mesh->mNormals[vertexIndex].x, mesh->mNormals[vertexIndex].y, mesh->mNormals[vertexIndex].z };
             vertex.texcoord = { mesh->mTextureCoords[0][vertexIndex].x, mesh->mTextureCoords[0][vertexIndex].y };
-
-            vertex.position.x *= -1.0f;  // x反転
-            vertex.normal.x *= -1.0f;    // x反転
 
             pMesh->vertices_.push_back(vertex);
         }
@@ -210,6 +214,12 @@ void Model::LoadMesh(const aiScene* _scene)
                 pMesh->indices_.push_back(face.mIndices[index]);
             }
         }
+
+        for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+        {
+            skinCluster_.CreateSkinCluster(mesh->mBones[boneIndex]);
+        }
+
         pMesh->SetUseMaterialIndex(mesh->mMaterialIndex);
         pMesh->TransferData();
         mesh_.push_back(std::move(pMesh));
@@ -272,6 +282,20 @@ void Model::CreateSkeleton()
 {
     skeleton_.CreateSkeleton(node_);
 }
+
+void Model::CreateSkinCluster(const aiMesh* _mesh)
+{
+    for (uint32_t boneIndex = 0; boneIndex < _mesh->mNumBones; ++boneIndex)
+    {
+        aiBone* bone = _mesh->mBones[boneIndex];
+        std::string boneName = bone->mName.C_Str();
+
+        for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex)
+        {
+        }
+    }
+}
+
 
 void Model::TransferData()
 {
