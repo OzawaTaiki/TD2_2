@@ -16,6 +16,7 @@ struct Vector2
 	}
 
     float Length() const;
+    Vector2 Normalize() const;
 };
 
 template <>
