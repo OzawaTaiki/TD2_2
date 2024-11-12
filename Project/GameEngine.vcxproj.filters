@@ -279,6 +279,9 @@
     <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp">
       <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Utility\DebugCamera.cpp">
+      <Filter>Engine\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -482,6 +485,9 @@
     </ClInclude>
     <ClInclude Include="Engine\AnimationModel\AnimationModel.h">
       <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\DebugCamera.h">
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
