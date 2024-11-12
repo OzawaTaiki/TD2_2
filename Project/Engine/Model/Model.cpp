@@ -128,10 +128,15 @@ void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const
 
     for (auto& mesh : mesh_)
     {
-        mesh->QueueCommand(_commandList, skinCluster_.GetInfluenceBufferView());
+        if (animation_.empty())
+            mesh->QueueCommand(_commandList);
+        else
+        {
+            mesh->QueueCommand(_commandList, skinCluster_.GetInfluenceBufferView());
+            skinCluster_.QueueCommand(_commandList);
+        }
         material_[mesh->GetUseMaterialIndex()]->MateriallQueueCommand(_commandList, 2);
         material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(_commandList, 4);
-        skinCluster_.QueueCommand(_commandList);
         _commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
     }
 }

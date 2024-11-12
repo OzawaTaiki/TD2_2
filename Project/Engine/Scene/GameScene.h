@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "LineDrawer.h"
 #include "WorldTransform.h"
+#include "../AnimationModel/AnimationModel.h"
 #include "ObjectModel.h"
 #include "Audio.h"
 #include "ObjectColor.h"
@@ -30,7 +31,7 @@ private:
     uint32_t handle_;
 
     ObjectModel* model_;
-    ObjectModel* humanModel_;
+    AnimationModel* humanModel_;
     WorldTransform trans_;
     ObjectColor* color_;
 

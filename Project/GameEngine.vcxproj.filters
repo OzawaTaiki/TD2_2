@@ -124,6 +124,9 @@
     <Filter Include="Engine\Object\ObjectModel\SkinCluster">
       <UniqueIdentifier>{287a3bfd-2fe4-4f6d-9fd6-34834b832c22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\AnimationModel">
+      <UniqueIdentifier>{b4741e9d-49fc-4c39-8df5-5c580d1de3e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -272,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="Engine\SkinCluster\SkinCluster.cpp">
       <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp">
+      <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +479,9 @@
     </ClInclude>
     <ClInclude Include="Engine\SkinCluster\SkinCluster.h">
       <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\AnimationModel\AnimationModel.h">
+      <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

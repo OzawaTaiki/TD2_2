@@ -28,8 +28,8 @@ void GameScene::Initialize()
     audio_->Initialize();
 
     model_ = new ObjectModel;
-    model_->Initialize("human/sneakWalk.gltf");
-    humanModel_ = new ObjectModel;
+    model_->Initialize("bunny.gltf");
+    humanModel_ = new AnimationModel;
     humanModel_->Initialize("human/walk.gltf");
 
 }
@@ -54,13 +54,17 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-    ModelManager::GetInstance()->PreDraw();
+    ModelManager::GetInstance()->PreDrawForObjectModel();
     //<------------------------
     model_->Draw(camera_.get(), { 1,1,1,1 });
+
+    //<------------------------
+
+    ModelManager::GetInstance()->PreDrawForAnimationModel();
+    //<------------------------
     humanModel_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
-
 
     Sprite::PreDraw();
     //<------------------------
