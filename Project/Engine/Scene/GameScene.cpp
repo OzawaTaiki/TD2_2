@@ -6,6 +6,11 @@
 #include <chrono>
 #include <imgui.h>
 
+std::unique_ptr<BaseScene> GameScene::Create()
+{
+    return std::make_unique<GameScene>();
+}
+
 GameScene::~GameScene()
 {
     delete color_;

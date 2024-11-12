@@ -1,71 +1,57 @@
 #include "SceneManager.h"
-#include "GameScene.h"
 
-void SceneManager::Initialize(sceneName _startScene)
+#include <cassert>
+
+SceneManager* SceneManager::GetInstance()
 {
-	previous_ = _startScene;
-	current_ = _startScene;
-	next_ = current_;
+    static SceneManager instance;
+    return &instance;
+}
 
-	switch (_startScene)
-	{
-	case sceneName::Game:
-		currentScenePtr_ = new GameScene();
-		break;
-	default:
-		break;
-	}
-	currentScenePtr_->Initialize();
+void SceneManager::RegisterScene(const std::string& _name, SceneFactory _scene)
+{
+    auto instance = GetInstance();
+    instance->scenes_[_name] = _scene;
+}
+
+void SceneManager::Initialize(const std::string& _name)
+{
+    assert(scenes_.size() > 0);
+    auto it = scenes_.find(_name);
+    assert(it != scenes_.end());
+
+    currentScene_ = it->second();
+    currentSceneName_ = _name;
+
 }
 
 void SceneManager::Update()
 {
-#ifdef _DEBUG
-	//ImGui::Begin("sceneManager");
-	//ImGui::End();
-#endif // _DEBUG
-
-
-	if (isReserve_)
-	{
-		switch (current_)
-		{
-		case sceneName::Game:
-			ReserveScene(sceneName::Result);
-			break;
-		default:
-			break;
-		}
-	}
+    currentScene_->Update();
 }
 
 void SceneManager::Draw()
 {
-	currentScenePtr_->Draw();
+    currentScene_->Draw();
+
+    if (nextSceneName_ != "empty")
+    {
+        ChangeScene();
+    }
 }
 
-void SceneManager::ReserveScene(sceneName _nextScene)
+void SceneManager::ReserveScene(const std::string& _name)
 {
-	previous_ = current_;
-	next_ = _nextScene;
+    auto instance = GetInstance();
+
+    assert(instance->scenes_.find(_name) != instance->scenes_.end());
+    instance->nextSceneName_ = _name;
 }
 
 void SceneManager::ChangeScene()
 {
-	current_ = next_;
-
-	delete currentScenePtr_;
-	currentScenePtr_ = nullptr;
-
-	switch (current_)
-	{
-	case sceneName::Game:
-		currentScenePtr_ = new GameScene();
-		break;
-	default:
-		break;
-	}
-
-	currentScenePtr_->Initialize();
-
+    currentScene_ = scenes_[nextSceneName_]();
+    currentScene_->Initialize();
+    currentSceneName_ = nextSceneName_;
+    nextSceneName_ = "empty";
 }

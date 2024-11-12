@@ -155,6 +155,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Render\SRVManager.cpp" />
     <ClCompile Include="Engine\Scene\GameScene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
+    <ClCompile Include="Engine\Scene\TitleScene.cpp" />
     <ClCompile Include="Engine\Skeleton\Skeleton.cpp" />
     <ClCompile Include="Engine\SkinCluster\SkinCluster.cpp" />
     <ClCompile Include="Engine\Sprite\Sprite.cpp" />
@@ -273,9 +274,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\Render\PSOManager.h" />
     <ClInclude Include="Engine\Render\SRVManager.h" />
+    <ClInclude Include="Engine\Scene\BaseScene.h" />
     <ClInclude Include="Engine\Scene\GameScene.h" />
-    <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
+    <ClInclude Include="Engine\Scene\TitleScene.h" />
     <ClInclude Include="Engine\Skeleton\Skeleton.h" />
     <ClInclude Include="Engine\SkinCluster\SkinCluster.h" />
     <ClInclude Include="Engine\Sprite\Sprite.h" />
