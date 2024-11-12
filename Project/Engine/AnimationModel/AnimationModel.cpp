@@ -1,31 +1,34 @@
-#include "ObjectModel.h"
-#include "DXCommon.h"
-#include "ModelManager.h"
-#include "MatrixFunction.h"
+#include "AnimationModel.h"
 
-void ObjectModel::Initialize(const std::string& _filePath)
+#include "ModelManager.h"
+#include "DXCommon.h"
+
+void AnimationModel::Initialize(const std::string& _filePath)
 {
     model_ = Model::CreateFromObj(_filePath);
 
     worldTransform_.Initialize();
     objectColor_ = std::make_unique<ObjectColor>();
     objectColor_->Initialize();
-
 }
 
-void ObjectModel::Update()
+void AnimationModel::Update()
 {
 #ifdef _DEBUG
     ImGui();
 #endif // _DEBUG
-    worldTransform_.UpdateData();
+
+
+    model_->Update();
+
+    worldTransform_.UpdateData(/*{ model_->GetNodeMatrix(),model_->GetAnimationMatrix()}*/);
 }
 
-void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
+void AnimationModel::Draw(const Camera* _camera, const Vector4& _color)
 {
     objectColor_->SetColor(_color);
 
-    ModelManager::GetInstance()->PreDrawForObjectModel();
+    ModelManager::GetInstance()->PreDrawForAnimationModel();
 
     auto commandList = DXCommon::GetInstance()->GetCommandList();
     _camera->QueueCommand(commandList, 0);
@@ -36,12 +39,13 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
     model_->DrawSkeleton(worldTransform_.matWorld_);
 }
 
+
 #ifdef _DEBUG
 #include <imgui.h>
-void ObjectModel::ImGui()
+void AnimationModel::ImGui()
 {
     ImGui::PushID(this);
-    ImGui::DragFloat3("Translate", &worldTransform_. transform_.x, 0.01f);
+    ImGui::DragFloat3("Translate", &worldTransform_.transform_.x, 0.01f);
     ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
     ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
     ImGui::PopID();
