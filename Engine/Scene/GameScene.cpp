@@ -65,7 +65,7 @@ void GameScene::Update()
 
     // 追従カメラの更新
     followCamera_->Update();
-
+    
    
     camera_->matView_ = followCamera_->GetCamera().matView_;
     camera_->matProjection_ = followCamera_->GetCamera().matProjection_;

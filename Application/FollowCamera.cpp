@@ -2,7 +2,7 @@
 #include "MatrixFunction.h"
 #include "VectorFunction.h"
 #include"imgui.h"
-
+#include "Player.h"
 void FollowCamera::Initialize()
 {
 	camera_.Initialize();
@@ -24,11 +24,13 @@ void FollowCamera::Update()
 	if (target_) {
 		const float kRotateSpeed = 0.000003f *10000;
 		if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) {
-			camera_.rotate_.y -= 1.0f * kRotateSpeed;
-		}
-		else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
 			camera_.rotate_.y += 1.0f * kRotateSpeed;
 		}
+		else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
+			camera_.rotate_.y -= 1.0f * kRotateSpeed;
+		}
+
+		//camera_.rotate_.y = target_->rotate_.y;
 
 		// 追従対象からカメラまでのオフセット
 		Vector3 offset = { 0.0f, 16.0f, -40.0f };

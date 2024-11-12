@@ -34,6 +34,17 @@ public:
     /// </summary>
     void TransferData();
 
+
+    Vector3 GetAxisZ() const {
+        // ワールド行列の3列目がZ軸方向を表すベクトル
+        return Vector3(matWorld_.m[0][2], 0, matWorld_.m[2][2]);
+    }
+
+    Vector3 GetAxisX() const {
+        // ワールド変換行列の1列目がX軸方向ベクトルを表す
+        return Vector3(matWorld_.m[0][0], 0, matWorld_.m[2][0]);
+    }
+
     Vector3 scale_ = { 1.0f,1.0f ,1.0f };
     Vector3 rotate_ = { 0.0f,0.0f ,0.0f };
     Vector3 translate_ = { 0.0f,0.0f ,-20.0f };

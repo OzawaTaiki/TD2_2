@@ -59,6 +59,8 @@ public :
 
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 
+	const float& GetRotateY() { return worldTransform_.rotate_.y; };
+
 private:
 
 
@@ -80,6 +82,9 @@ private:
 	void AttackParameter();
 	// 攻撃コンボセット
 	void SetAttackCombo(int parameter);
+
+
+	
 
 private:
 	// モデル

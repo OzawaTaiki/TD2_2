@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <numbers>
+#include <MatrixFunction.h>
 
 
 // 8方向の角度テーブル（関数外で定義）
@@ -169,68 +170,64 @@ void Player::BehaviorRootUpdate()
 {
 #pragma region Move
 
-	// 入力による移動と方向設定
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 	speed = 0.2f;
-	// 前後左右の入力判定
+
+	// 入力判定
 	bool pressedW = Input::GetInstance()->IsKeyPressed(DIK_W);
 	bool pressedA = Input::GetInstance()->IsKeyPressed(DIK_A);
 	bool pressedS = Input::GetInstance()->IsKeyPressed(DIK_S);
 	bool pressedD = Input::GetInstance()->IsKeyPressed(DIK_D);
 	bool pressedSPACE = Input::GetInstance()->IsKeyPressed(DIK_SPACE);
 
-	// 移動方向の設定
+	// 入力方向ベクトルの初期化
+	Vector3 inputDirection = { 0.0f, 0.0f, 0.0f };
 	if (pressedW) {
-		velocity_.z = 1.0f;
-		if (pressedA) {
-			velocity_.x = -1.0f;
-			newDirection = LRDirection::kLeftFront;
-			direction_.x = velocity_.x;
-		}
-		else if (pressedD) {
-			velocity_.x = 1.0f;
-			newDirection = LRDirection::kRightFront;
-			direction_.x = velocity_.x;
-		}
-		else {
-			newDirection = LRDirection::kFront;
-			direction_.x = velocity_.x;
-		}
-		direction_.y = velocity_.z;
+		inputDirection.z += 1.0f;
 	}
-	else if (pressedS) {
-		velocity_.z = -1.0f;
-		if (pressedA) {
-			velocity_.x = -1.0f;
-			newDirection = LRDirection::kLeftBack;
-			direction_.x = velocity_.x;
-		}
-		else if (pressedD) {
-			velocity_.x = 1.0f;
-			newDirection = LRDirection::kRightBack;
-			direction_.x = velocity_.x;
-		}
-		else {
-			newDirection = LRDirection::kBack;
-			direction_.x = velocity_.x;
-		}
-		direction_.y = velocity_.z;
+	if (pressedS) {
+		inputDirection.z -= 1.0f;
 	}
-	else if (pressedA) {
-		velocity_.x = -1.0f;
-		newDirection = LRDirection::kLeft;
-		direction_.x = velocity_.x;
-		direction_.y = velocity_.z;
+	if (pressedA) {
+		inputDirection.x -= 1.0f;
 	}
-	else if (pressedD) {
-		velocity_.x = 1.0f;
-		newDirection = LRDirection::kRight;
-		direction_.x = velocity_.x;
-		direction_.y = velocity_.z;
+	if (pressedD) {
+		inputDirection.x += 1.0f;
 	}
 
-	
+	// 入力がある場合、カメラの向きに基づいた移動方向を計算
+	if (inputDirection.x != 0.0f || inputDirection.z != 0.0f) {
+		// 入力方向を正規化
+		inputDirection = Normalize(inputDirection);
+
+		// カメラのビュー行列の逆行列（カメラのワールド変換行列）を取得
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+
+		// カメラの向きに基づいて移動方向をワールド座標系に変換
+		Vector3 worldDirection = {
+			inputDirection.x * cameraWorldMatrix.m[0][0] + inputDirection.z * cameraWorldMatrix.m[2][0],
+			0.0f,
+			inputDirection.x * cameraWorldMatrix.m[0][2] + inputDirection.z * cameraWorldMatrix.m[2][2]
+		};
+
+		velocity_ = Normalize(worldDirection) * speed;
+
+		// 方向設定
+		direction_.x = velocity_.x;
+		direction_.y = velocity_.z;
+
+		// プレイヤーの向きを設定
+		if (inputDirection.z > 0) {
+			newDirection = (inputDirection.x < 0) ? LRDirection::kLeftFront : (inputDirection.x > 0) ? LRDirection::kRightFront : LRDirection::kFront;
+		}
+		else if (inputDirection.z < 0) {
+			newDirection = (inputDirection.x < 0) ? LRDirection::kLeftBack : (inputDirection.x > 0) ? LRDirection::kRightBack : LRDirection::kBack;
+		}
+		else {
+			newDirection = (inputDirection.x < 0) ? LRDirection::kLeft : LRDirection::kRight;
+		}
+	}
 
 	// 方向が変わったときに回転開始
 	if (newDirection != lrDirection_) {
@@ -240,37 +237,59 @@ void Player::BehaviorRootUpdate()
 	}
 
 	// 移動量に速さを反映
-	velocity_ = Multiply(Normalize(velocity_), speed);
-
 	worldTransform_.transform_ += velocity_;
 
-
 	// 旋回制御
-	if (tureTimer_ > 0.0f) {
-		tureTimer_ -= 1.0f / 60.0f;
+	if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
+		// 移動中なら常に旋回処理を行う
+		tureTimer_ = kTimeTurn;
 
-		// 状態に応じた角度を取得する
+		// 状態に応じた目的の角度を取得する
 		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 
+		// カメラの向きを考慮して目的の回転角度を補正
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+
+		// カメラのY軸回転角度（ワールド座標系）を取得
+		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
+
+		// 目的の角度にカメラの向きを加算して補正
+		float adjustedRotationY = destinationRotationY + cameraYaw;
+
 		// 角度差を最短経路で補間
-		float angleDifference = NormalizeAngleDifference(destinationRotationY - worldTransform_.rotate_.y);
+		float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
 		float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
 
-		// 自キャラの角度を設定する
+		// プレイヤーの回転を更新
 		worldTransform_.rotate_.y = targetRotationY;
-	};
+	}
+	else if (tureTimer_ > 0.0f) {
+		// 停止中でも旋回が残っていれば処理を継続
+		tureTimer_ -= 1.0f / 60.0f;
+
+		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
+		float adjustedRotationY = destinationRotationY + cameraYaw;
+
+		float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
+		float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
+
+		worldTransform_.rotate_.y = targetRotationY;
+	}
+
 
 #pragma endregion
 
 	recastTime++;
 	if (pressedSPACE) {
 		if (recastTime >= 40) {
-
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
-
 }
+
+
 
 void Player::BehaviorAttackInitialize()
 {
@@ -338,7 +357,7 @@ void Player::BehaviorAttackUpdate()
 
 			move = Normalize(move);
 
-			move = move * 2.1f;
+			move = move * 1.1f;
 
 			worldTransform_.transform_ += move;
 		}
