@@ -421,6 +421,17 @@ Matrix4x4  MakeAffineMatrix(const Vector3& _scale, const Vector3& _rotate, const
     return result;
 }
 
+Matrix4x4 MakeAffineMatrix(const Vector3& _scale, const Quaternion& _rotate, const Vector3& _translate)
+{
+    Matrix4x4 result = MakeIdentity4x4();
+
+    result *= MakeScaleMatrix(_scale);
+    result *= _rotate.ToMatrix();
+    result *= MakeTranslateMatrix(_translate);
+
+    return result;
+}
+
 Matrix4x4  MakePerspectiveFovMatrix(float _fovY, float _aspectRatio, float _nearClip, float _farClip)
 {
     Matrix4x4 result =

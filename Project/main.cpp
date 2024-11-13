@@ -11,6 +11,8 @@
 #include "ParticleManager.h"
 #include "RandomGenerator.h"
 #include "ConfigManager.h"
+#include "TitleScene.h"
+#include "SceneManager.h"
 #include <random>
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -22,19 +24,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	DXCommon* dxCommon =  DXCommon::GetInstance();
 	dxCommon->Initialize(winApp,WinApp::kWindowWidth_, WinApp::kWindowHeight_);
 
-	std::unique_ptr<SRVManager> srvManager = std::make_unique<SRVManager>();
+	SRVManager* srvManager = SRVManager::GetInstance();
 	srvManager->Initialize();
 	PSOManager::GetInstance()->Initialize();
 
+
 	std::unique_ptr<ImGuiManager> imguiManager = std::make_unique <ImGuiManager>();
-	imguiManager->Initialize(srvManager.get());
+	imguiManager->Initialize();
 
 	ParticleManager* particle = ParticleManager::GetInstance();
-	particle->Initialize(srvManager.get());
+	particle->Initialize();
 
 	ConfigManager::GetInstance()->Initialize();
 
-	TextureManager::GetInstance()->Initialize(srvManager.get());
+	TextureManager::GetInstance()->Initialize();
 	TextureManager::GetInstance()->Load("cube.jpg");
 	TextureManager::GetInstance()->Load("uvChecker.png");
 
@@ -47,9 +50,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Input* input = Input::GetInstance();
 	input->Initilize(winApp);
 
-	GameScene* gameScene = new GameScene;
-	gameScene->Initialize();
 
+	SceneManager::RegisterScene("title", TitleScene::Create);
+	SceneManager::RegisterScene("game", GameScene::Create);
+	SceneManager::GetInstance()->Initialize("game");
 
 	///
 	/// メインループ
@@ -63,7 +67,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		/// 更新処理ここから
 		///
 
-		gameScene->Update();
+        SceneManager::GetInstance()->Update();
+		//gameScene->Update();
 
 		///
 		/// 更新処理ここまで
@@ -76,7 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		/// 描画ここから
 		///
 
-		gameScene->Draw();
+		SceneManager::GetInstance()->Draw();
+		//gameScene->Draw();
 
 
 		///
@@ -86,12 +92,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		imguiManager->Draw();
 
 		dxCommon->PostDraw();
+
+		SceneManager::ChangeScene();
 	}
 	imguiManager->Finalize();
 
 	winApp->Filalze();
 
-	delete gameScene;
 
 	return 0;
 }

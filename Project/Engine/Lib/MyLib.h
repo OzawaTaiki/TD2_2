@@ -156,6 +156,7 @@ float Lerp(float _a, float _b, float _t);
 Vector2 Lerp(const Vector2& _v1, const Vector2& _v2, float _t);
 Vector3 Lerp(const Vector3& _v1, const Vector3& _v2, float _t);
 Vector4 Lerp(const Vector4& _v1, const Vector4& _v2, float _t);
+Quaternion Lerp(const Quaternion& _q1, const Quaternion& _q2, float _t);
 
 Vector3 Project(const Vector3& _v1, const Vector3& _v2);
 

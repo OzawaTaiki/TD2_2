@@ -109,6 +109,24 @@
     <Filter Include="Engine\Lib\Quaternion">
       <UniqueIdentifier>{71a7ed14-fddc-4724-b283-6d8af86940a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Animation">
+      <UniqueIdentifier>{996f9480-b422-4957-963b-ad52239bf37b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Node">
+      <UniqueIdentifier>{4dee600a-c111-423b-90f3-ea9becd182bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Skeleton">
+      <UniqueIdentifier>{215ed1e1-74ee-4651-8ab8-b290b5b256bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\Joint">
+      <UniqueIdentifier>{2c4f1f9b-d394-4c45-be6b-3518dd576fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\SkinCluster">
+      <UniqueIdentifier>{287a3bfd-2fe4-4f6d-9fd6-34834b832c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object\ObjectModel\AnimationModel">
+      <UniqueIdentifier>{b4741e9d-49fc-4c39-8df5-5c580d1de3e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -240,6 +258,33 @@
     <ClCompile Include="Engine\Lib\Quaternion.cpp">
       <Filter>Engine\Lib\Quaternion</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Model\ModelAnimation.cpp">
+      <Filter>Engine\Object\ObjectModel\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Node\Node.cpp">
+      <Filter>Engine\Object\ObjectModel\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Model\ObjectModel.cpp">
+      <Filter>Engine\Object\ObjectModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Joint\Joint.cpp">
+      <Filter>Engine\Object\ObjectModel\Joint</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Skeleton\Skeleton.cpp">
+      <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\SkinCluster\SkinCluster.cpp">
+      <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp">
+      <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Utility\DebugCamera.cpp">
+      <Filter>Engine\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\TitleScene.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -278,6 +323,9 @@
       <Filter>リソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shader\LineDrawer.VS.hlsl">
+      <Filter>リソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\Shader\SkinningObject3d.VS.hlsl">
       <Filter>リソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -393,9 +441,6 @@
     <ClInclude Include="Engine\Scene\GameScene.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Scene\Scene.h">
-      <Filter>Engine\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
@@ -416,6 +461,39 @@
     </ClInclude>
     <ClInclude Include="Engine\Lib\Quaternion.h">
       <Filter>Engine\Lib\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model\ModelAnimation.h">
+      <Filter>Engine\Object\ObjectModel\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Node\Node.h">
+      <Filter>Engine\Object\ObjectModel\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model\ObjectModel.h">
+      <Filter>Engine\Object\ObjectModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Lib\QuaternionTransform.h">
+      <Filter>Engine\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Joint\Joint.h">
+      <Filter>Engine\Object\ObjectModel\Joint</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Skeleton\Skeleton.h">
+      <Filter>Engine\Object\ObjectModel\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SkinCluster\SkinCluster.h">
+      <Filter>Engine\Object\ObjectModel\SkinCluster</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\AnimationModel\AnimationModel.h">
+      <Filter>Engine\Object\ObjectModel\AnimationModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\DebugCamera.h">
+      <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\BaseScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\TitleScene.h">
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,13 +6,22 @@
 #include <chrono>
 #include <imgui.h>
 
+std::unique_ptr<BaseScene> GameScene::Create()
+{
+    return std::make_unique<GameScene>();
+}
+
 GameScene::~GameScene()
 {
     delete color_;
+    delete model_;
+    delete humanModel_;
+    delete emit_;
 }
 
 void GameScene::Initialize()
 {
+
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -25,16 +34,16 @@ void GameScene::Initialize()
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
-    model_ = Model::CreateFromObj("bunny.gltf");
-    trans_.Initialize();
-    trans_.UpdateData();
-    color_ = new ObjectColor;
-    color_->Initialize();
+    model_ = new ObjectModel;
+    model_->Initialize("bunny.gltf");
+    humanModel_ = new AnimationModel;
+    humanModel_->Initialize("human/walk.gltf");
 
 }
 
 void GameScene::Update()
 {
+
     //ImGui::ShowDemoWindow();
     ImGui::Begin("Engine");
 
@@ -43,21 +52,27 @@ void GameScene::Update()
     camera_->Update();
 
 
-    trans_.UpdateData();
+    model_->Update();
+    humanModel_->Update();
 
-    camera_->UpdateMatrix();
+    camera_->TransferData();
     //<-----------------------
     ImGui::End();
 }
 
 void GameScene::Draw()
 {
-    ModelManager::GetInstance()->PreDraw();
+    ModelManager::GetInstance()->PreDrawForObjectModel();
     //<------------------------
-    model_->Draw(trans_, camera_.get(), color_);
+    model_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
 
+    ModelManager::GetInstance()->PreDrawForAnimationModel();
+    //<------------------------
+    humanModel_->Draw(camera_.get(), { 1,1,1,1 });
+
+    //<------------------------
 
     Sprite::PreDraw();
     //<------------------------

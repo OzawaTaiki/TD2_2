@@ -135,7 +135,7 @@ void CatmulRomSpline::Update(const Matrix4x4& _vp)
     }
     RegisterDrawPoint();
 
-    camera_->UpdateMatrix();
+    camera_->TransferData();
 }
 
 void CatmulRomSpline::Draw(const Camera* _camera)

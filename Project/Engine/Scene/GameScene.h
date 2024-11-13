@@ -1,10 +1,11 @@
 #pragma once
-#include "Scene.h"
+#include "BaseScene.h"
 #include "Camera.h"
 #include "Input.h"
 #include "LineDrawer.h"
 #include "WorldTransform.h"
-#include "Model.h"
+#include "../AnimationModel/AnimationModel.h"
+#include "ObjectModel.h"
 #include "Audio.h"
 #include "ObjectColor.h"
 #include "ParticleManager.h"
@@ -12,14 +13,18 @@
 
 #include <memory>
 
-class GameScene : public Scene
+class GameScene : public BaseScene
 {
 public:
-    ~GameScene();
 
-    void Initialize();
-    void Update();
-    void Draw();
+    // Factory Method
+    static std::unique_ptr<BaseScene> Create();
+
+    ~GameScene() override;
+
+    void Initialize() override;
+    void Update() override;
+    void Draw() override;
 
 
 private:
@@ -29,7 +34,8 @@ private:
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
 
-    Model* model_;
+    ObjectModel* model_;
+    AnimationModel* humanModel_;
     WorldTransform trans_;
     ObjectColor* color_;
 
