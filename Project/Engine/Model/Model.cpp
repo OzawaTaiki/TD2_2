@@ -34,11 +34,6 @@ void Model::Update()
 
 void Model::Draw(const WorldTransform& _transform, const Camera* _camera, uint32_t _textureHandle, ObjectColor* _color)
 {
-    if (!lightGroup_)
-    {
-        lightGroup_ = new LightGroup;
-        lightGroup_->Initialize();
-    }
 
     ID3D12GraphicsCommandList* commandList = DXCommon::GetInstance()->GetCommandList();
 
@@ -66,12 +61,6 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, uint32
 
 void Model::Draw(const WorldTransform& _transform, const Camera* _camera, ObjectColor* _color)
 {
-    if (!lightGroup_)
-    {
-        lightGroup_ = new LightGroup;
-        lightGroup_->Initialize();
-    }
-
     ID3D12GraphicsCommandList* commandList = DXCommon::GetInstance()->GetCommandList();
 
 
@@ -116,7 +105,7 @@ Model* Model::CreateFromObj(const std::string& _filePath)
        model-> LoadFile(_filePath);
     }
 
-    model->lightGroup_ = new LightGroup;
+    model->lightGroup_ = std::make_unique<LightGroup>();
     model->lightGroup_->Initialize();
     return model;
 }

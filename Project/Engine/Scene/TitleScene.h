@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 #include <memory>
+#include <string>
 
 class TitleScene : public BaseScene
 {
@@ -17,6 +18,7 @@ public:
 private:
 
 #ifdef _DEBUG
+    std::string nextSceneName_ = {};
     void ImGui();
 #endif // _DEBUG
 };

@@ -8,6 +8,12 @@ SceneManager* SceneManager::GetInstance()
     return &instance;
 }
 
+SceneManager::~SceneManager()
+{
+    scenes_.clear();
+    currentScene_.reset();
+}
+
 void SceneManager::RegisterScene(const std::string& _name, SceneFactory _scene)
 {
     auto instance = GetInstance();
@@ -23,21 +29,21 @@ void SceneManager::Initialize(const std::string& _name)
     currentScene_ = it->second();
     currentSceneName_ = _name;
 
+    nextSceneName_ = "empty";
+    currentScene_->Initialize();
 }
 
 void SceneManager::Update()
 {
+#ifdef _DEBUG
+    ImGui();
+#endif // _DEBUG
     currentScene_->Update();
 }
 
 void SceneManager::Draw()
 {
     currentScene_->Draw();
-
-    if (nextSceneName_ != "empty")
-    {
-        ChangeScene();
-    }
 }
 
 void SceneManager::ReserveScene(const std::string& _name)
@@ -50,8 +56,42 @@ void SceneManager::ReserveScene(const std::string& _name)
 
 void SceneManager::ChangeScene()
 {
-    currentScene_ = scenes_[nextSceneName_]();
-    currentScene_->Initialize();
-    currentSceneName_ = nextSceneName_;
-    nextSceneName_ = "empty";
+    auto instance = GetInstance();
+
+    if (instance->nextSceneName_ == "empty" ||
+        instance->currentSceneName_ == instance->nextSceneName_)
+    {
+        return;
+    }
+
+    instance->currentScene_.reset();
+
+    instance->currentScene_ = instance->scenes_[instance->nextSceneName_]();
+    instance->currentScene_->Initialize();
+    instance->currentSceneName_ = instance->nextSceneName_;
+    instance->nextSceneName_ = "empty";
 }
+
+#ifdef _DEBUG
+#include <imgui.h>
+void SceneManager::ImGui()
+{
+    char comboLabel[128];
+
+    ImGui::Begin("SceneManager");
+    for (auto& scene : scenes_)
+    {
+        strcpy_s(comboLabel, scene.first.c_str());
+        if (ImGui::Button(comboLabel))
+        {
+            ReserveScene(scene.first);
+            break;
+        }
+    }
+
+    ImGui::Text("Current Scene : %s", currentSceneName_.c_str());
+
+
+    ImGui::End();
+}
+#endif // _DEBUG

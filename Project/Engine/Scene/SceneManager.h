@@ -14,36 +14,44 @@ class SceneManager
 public:
     static SceneManager* GetInstance();
 
-    // ƒV[ƒ“‚Ì“o˜^
-    // _name : ƒV[ƒ“‚Ì–¼‘O
-    // _scene : ƒV[ƒ“‚Ì¶¬ŠÖ”
-    // —á : SceneManager::RegisterScene("game", Game::Create);
+    ~SceneManager();
+
+    // ã‚·ãƒ¼ãƒ³ã®ç™»éŒ²
+    // _name : ã‚·ãƒ¼ãƒ³ã®åå‰
+    // _scene : ã‚·ãƒ¼ãƒ³ã®ç”Ÿæˆé–¢æ•°
+    // ä¾‹ : SceneManager::RegisterScene("game", Game::Create);
     static void RegisterScene(const std::string& _name, SceneFactory _scene);
 
-    // ‰Šú‰»
-    // _name : ‰Šú‰»‚·‚éƒV[ƒ“‚Ì–¼‘O
+    // åˆæœŸåŒ–
+    // _name : åˆæœŸåŒ–ã™ã‚‹ã‚·ãƒ¼ãƒ³ã®åå‰
     void Initialize(const std::string& _name);
-    // XV
+    // æ›´æ–°
     void Update();
-    // •`‰æ
+    // æç”»
     void Draw();
 
-    // ƒV[ƒ“‚Ì—\–ñ
-    // _name : —\–ñ‚·‚éƒV[ƒ“‚Ì–¼‘O
+    // ã‚·ãƒ¼ãƒ³ã®äºˆç´„
+    // _name : äºˆç´„ã™ã‚‹ã‚·ãƒ¼ãƒ³ã®åå‰
     static void ReserveScene(const std::string& _name);
 
-private:
-    // ƒV[ƒ“‚Ì•ÏX
-    void ChangeScene();
+    // ã‚·ãƒ¼ãƒ³ã®å¤‰æ›´
+    static void ChangeScene();
 
-    // ƒV[ƒ“‚ÌƒŠƒXƒg
+private:
+
+    // ã‚·ãƒ¼ãƒ³ã®ãƒªã‚¹ãƒˆ
     std::unordered_map<std::string, SceneFactory>   scenes_ = {};
-    // Œ»İ‚ÌƒV[ƒ“
+    // ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³
     std::unique_ptr<BaseScene> currentScene_ = nullptr;
 
-    // Œ»İ‚ÌƒV[ƒ“–¼
+    // ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³å
     std::string currentSceneName_ = {};
-    // Ÿ‚ÌƒV[ƒ“–¼
+    // æ¬¡ã®ã‚·ãƒ¼ãƒ³å
     std::string nextSceneName_ = {};
+
+#ifdef _DEBUG
+    void ImGui();
+#endif // _DEBUG
+
 
 };

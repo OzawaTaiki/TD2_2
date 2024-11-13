@@ -1,10 +1,10 @@
 #pragma once
 
-#include <memory>
-
 class BaseScene
 {
 public:
+
+    virtual ~BaseScene() = default;
 
     virtual void Initialize() = 0;
     virtual void Update() = 0;

@@ -16,10 +16,12 @@ GameScene::~GameScene()
     delete color_;
     delete model_;
     delete humanModel_;
+    delete emit_;
 }
 
 void GameScene::Initialize()
 {
+
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -41,6 +43,7 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
+
     //ImGui::ShowDemoWindow();
     ImGui::Begin("Engine");
 
