@@ -48,6 +48,10 @@ void GameScene::Initialize()
     followCamera_->SetTarget(&player_->GetWorldTransform());
     
 
+    enemy_ = std::make_unique<Enemy>();
+    enemy_->Initialize();
+    enemy_->SetPlayer(player_.get());
+
 }
 
 void GameScene::Update()
@@ -58,7 +62,11 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
 
+    // プレイヤー
     player_->Update();
+
+    // 敵
+    enemy_->Update();
 
     worldTransform.UpdateData();
 
@@ -81,8 +89,11 @@ void GameScene::Draw()
     ModelManager::GetInstance()->PreDraw();
     //<------------------------
 
-
+    // プレイヤー
     player_->Draw(*camera_);
+
+    // 敵
+    enemy_->Draw(*camera_);
 
     // モデル
     model_->Draw(worldTransform, camera_.get(), &color_);

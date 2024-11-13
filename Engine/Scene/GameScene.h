@@ -11,6 +11,7 @@
 
 //Application
 #include "Player.h"
+#include "Enemy/Enemy.h"
 #include "FollowCamera.h"
 
 //
@@ -39,6 +40,9 @@ private:
 
     // プレイヤー
     std::unique_ptr < Player> player_;
+
+    // ボス
+    std::unique_ptr <Enemy> enemy_;
 
     // フォローカメラ
     std::unique_ptr <FollowCamera> followCamera_;

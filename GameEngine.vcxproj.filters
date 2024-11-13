@@ -215,6 +215,8 @@
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
     <ClCompile Include="Application\Weapon.cpp" />
+    <ClCompile Include="Application\Enemy\Enemy.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -358,6 +360,8 @@
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\FollowCamera.h" />
     <ClInclude Include="Application\Weapon.h" />
+    <ClInclude Include="Application\Enemy\Enemy.h" />
+    <ClInclude Include="Application\Enemy\EnemyBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
