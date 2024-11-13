@@ -40,7 +40,7 @@ public:
     void QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const;
     void QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList,uint32_t _textureHandle) const;
 
-    void SetLightGroup(LightGroup* _lightGroup) { lightGroup_ = _lightGroup; }
+    void SetLightGroup(LightGroup* _lightGroup) { lightGroup_ = std::unique_ptr<LightGroup>(_lightGroup); }
 
     Mesh* GetMeshPtr() { return mesh_[0].get(); }
     Material* GetMaterialPtr() { return material_[0].get(); }
@@ -48,7 +48,6 @@ public:
     Matrix4x4 GetAnimationMatrix()const;
     Matrix4x4 GetNodeMatrix()const { return node_.GetLocalMatrix(); }
 
-    ~Model() { delete lightGroup_; }
 
     static const std::string defaultDirpath_;
 private:
@@ -63,7 +62,7 @@ private:
     SkinCluster skinCluster_ = {};
 
 
-    LightGroup* lightGroup_ = nullptr;
+    std::unique_ptr<LightGroup> lightGroup_ = nullptr;
 
     void LoadFile(const std::string& _filepath);
     void LoadMesh(const aiScene* _scene);

@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene.h"
+#include "BaseScene.h"
 #include "Camera.h"
 #include "Input.h"
 #include "LineDrawer.h"
@@ -13,14 +13,18 @@
 
 #include <memory>
 
-class GameScene : public Scene
+class GameScene : public BaseScene
 {
 public:
-    ~GameScene();
 
-    void Initialize();
-    void Update();
-    void Draw();
+    // Factory Method
+    static std::unique_ptr<BaseScene> Create();
+
+    ~GameScene() override;
+
+    void Initialize() override;
+    void Update() override;
+    void Draw() override;
 
 
 private:
