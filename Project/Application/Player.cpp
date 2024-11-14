@@ -10,14 +10,14 @@
 
 // 8方向の角度テーブル（関数外で定義）
 constexpr float destinationRotationYTable[] = {
+	std::numbers::pi_v<float> * 3.0f / 2.0f,               // 左
 	std::numbers::pi_v<float> / 2.0f,                      // 右
-	std::numbers::pi_v<float> *3.0f / 2.0f,               // 左
+	std::numbers::pi_v<float>,	 // 前
 	0.0f,                                                  // 後ろ
-	std::numbers::pi_v<float>,                             // 前
-	std::numbers::pi_v<float> *1.0f / 4.0f,               // 右前
-	std::numbers::pi_v<float> *7.0f / 4.0f,               // 右後ろ
+	std::numbers::pi_v<float> * 5.0f / 4.0f,                // 左後ろ
 	std::numbers::pi_v<float> *3.0f / 4.0f,               // 左前
-	std::numbers::pi_v<float> *5.0f / 4.0f                // 左後ろ
+	std::numbers::pi_v<float> * 7.0f / 4.0f,               // 右後ろ
+	std::numbers::pi_v<float> * 1.0f / 4.0f,               // 右前
 };
 
 // 角度差を -π ～ +π の範囲に正規化する関数
