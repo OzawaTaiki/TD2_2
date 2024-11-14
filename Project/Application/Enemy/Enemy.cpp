@@ -18,12 +18,12 @@ void Enemy::Initialize()
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = Vector3{ 0,0,0 };
 
-	model_ = Model::CreateFromObj("Arrow/Arrow.obj");
+	model_ = Model::CreateFromObj("boss/boss.obj");
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-	modelBullet_ = Model::CreateFromObj("Arrow/Arrow.obj");;
+	modelBullet_ = Model::CreateFromObj("electricBall/electricBall.obj");;
 
 	attackCamera_.Initialize();
 	attackCamera_.translate_ = { 0,40,-80 };
@@ -217,7 +217,7 @@ void Enemy::BehaviorRootUpdate()
 	behaviorTimer_++;
 	if (behaviorTimer_ >= 180) {
 		behaviorTimer_ = 0;
-		behaviorRequest_ = Behavior::kAttack2;
+		//behaviorRequest_ = Behavior::kAttack2;
 	}
 
 	//

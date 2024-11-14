@@ -70,14 +70,14 @@ void Player::Initialize()
 	weapon_->SetPosition(Vector3{ 0.0f, 0.5f, 1.0f });
 	weapon_->GetWorldTransform().parent_ = &worldTransform_; // 本体が親
 
-	model_ = Model::CreateFromObj("Arrow/Arrow.obj");
+	model_ = Model::CreateFromObj("playerBody/playerBody.obj");
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
+	ConfigManager::GetInstance()->LoadData();
 
-
-
+	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 }
 
 void Player::Update()
@@ -91,6 +91,13 @@ void Player::Update()
 			ImGui::DragFloat3("translateMat", &mat.x, 0.01f);
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
+			ImGui::DragFloat("speed", &speed, 0.01f);
+
+			if (ImGui::Button("save")) {
+				ConfigManager::GetInstance()->SaveData();
+			}
+
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -136,6 +143,7 @@ void Player::Update()
 	}
 
 
+
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
 	worldTransform_.UpdateData();
@@ -172,7 +180,7 @@ void Player::BehaviorRootUpdate()
 
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
-	speed = 0.2f;
+	//speed = 0.2f;
 
 	// 入力判定
 	bool pressedW = Input::GetInstance()->IsKeyPressed(DIK_W);

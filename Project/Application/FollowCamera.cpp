@@ -7,6 +7,13 @@ void FollowCamera::Initialize()
 {
 	camera_.Initialize();
 	camera_.rotate_ = { 0.34f,0,0 };
+
+
+	ConfigManager::GetInstance()->LoadData();
+
+	ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
+	ConfigManager::GetInstance()->SetVariable("followCamera", "rotate", &camera_.rotate_);
+
 }
 
 void FollowCamera::Update()
@@ -15,7 +22,8 @@ void FollowCamera::Update()
 	{
 		if (ImGui::BeginTabItem("followCamera"))
 		{
-			ImGui::DragFloat3("translate", &camera_.translate_.x, 0.01f);
+			//ImGui::DragFloat3("translate", &camera_.translate_.x, 0.01f);
+			ImGui::DragFloat3("offset", &offset_.x, 0.01f);
 			ImGui::DragFloat3("rotate", &camera_.rotate_.x, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -33,7 +41,7 @@ void FollowCamera::Update()
 		//camera_.rotate_.y = target_->rotate_.y;
 
 		// 追従対象からカメラまでのオフセット
-		Vector3 offset = { 0.0f, 16.0f, -40.0f };
+		Vector3 offset = offset_;
 
 		Matrix4x4 matrix = MakeRotateYMatrix(camera_.rotate_.y);
 

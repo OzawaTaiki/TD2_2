@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "ConfigManager.h"
 //Application
 #include "Weapon.h"
 

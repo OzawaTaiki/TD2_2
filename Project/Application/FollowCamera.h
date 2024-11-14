@@ -2,6 +2,7 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "Input.h"
+#include "ConfigManager.h"
 
 class FollowCamera
 {
@@ -30,6 +31,8 @@ private:
 
 	//追従対象
 	const WorldTransform* target_ = nullptr;
+
+	Vector3 offset_ = { 0.0f, 20.0f, -60.0f };
 
 };
 

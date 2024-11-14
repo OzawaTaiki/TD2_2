@@ -76,7 +76,7 @@ void GameScene::Update()
     // ステージ
     stage_->Update();
 
-
+    
 
 
     if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
