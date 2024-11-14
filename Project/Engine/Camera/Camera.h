@@ -26,6 +26,11 @@ public:
     /// </summary>
     void TransferData();
 
+    /// <summary>
+   /// メンバ変数から行列を計算，転送
+   /// </summary>
+    void UpdateMatrix();
+
     void QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index)const;
 
 

@@ -34,29 +34,27 @@ void GameScene::Initialize()
     audio_->Initialize();
 
 
-    worldTransform.Initialize();
-    worldTransform.transform_ = Vector3{ 0,-3.0f,0 };
-    worldTransform.rotate_.y = { 1.57f };
-
-    model_ = Model::CreateFromObj("Stage/Stage.obj");
-
-
-    color_.Initialize();
-    color_.SetColor(Vector4{ 1, 1, 1, 1 });
-
+    // フォローカメラ
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
 
+
+    // プレイヤ
     player_ = std::make_unique<Player>();
     player_->Initialize();
     player_->SetCamera(&followCamera_->GetCamera());
 
     followCamera_->SetTarget(&player_->GetWorldTransform());
 
-
+    // 敵
     enemy_ = std::make_unique<Enemy>();
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
+
+    // ステージ
+    stage_ = std::make_unique<Stage>();
+    stage_->Initialize();
+    
 
 }
 
@@ -75,16 +73,29 @@ void GameScene::Update()
     // 敵
     enemy_->Update();
 
-    worldTransform.UpdateData();
+    // ステージ
+    stage_->Update();
 
 
-    // 追従カメラの更新
-    followCamera_->Update();
 
 
-    camera_->matView_ = followCamera_->GetCamera().matView_;
-    camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+    if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
 
+        // 追従カメラの更新
+        followCamera_->Update();
+        camera_->matView_ = followCamera_->GetCamera().matView_;
+        camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+    }
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
+        camera_->matView_ = enemy_->GetCamera().matView_;
+        camera_->matProjection_ = enemy_->GetCamera().matProjection_;
+    }
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack2) {
+        camera_->matView_ = enemy_->GetCamera2().matView_;
+        camera_->matProjection_ = enemy_->GetCamera2().matProjection_;
+    }
+
+   
     //camera_->UpdateMatrix();
     camera_->TransferData();
     //<-----------------------
@@ -102,7 +113,10 @@ void GameScene::Draw()
     enemy_->Draw(*camera_);
 
     // モデル
-    model_->Draw(worldTransform, camera_.get(), &color_);
+    stage_->Draw(*camera_);
+
+
+
     //<------------------------
 
     ModelManager::GetInstance()->PreDrawForAnimationModel();

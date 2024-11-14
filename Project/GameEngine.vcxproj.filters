@@ -306,6 +306,12 @@
     <ClCompile Include="Application\Enemy\EnemyBullet.cpp">
       <Filter>Application\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Stage\Stage.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\EnemyStageArm.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -530,6 +536,12 @@
     </ClInclude>
     <ClInclude Include="Application\Enemy\EnemyBullet.h">
       <Filter>Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Stage\Stage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\EnemyStageArm.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

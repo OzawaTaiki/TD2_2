@@ -92,8 +92,8 @@ void Enemy::Update()
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
 
-	//attackCamera_.UpdateMatrix();
-	//attackCamera2_.UpdateMatrix();
+	attackCamera_.UpdateMatrix();
+	attackCamera2_.UpdateMatrix();
 }
 
 void Enemy::Draw(const Camera& camera)

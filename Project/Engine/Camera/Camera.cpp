@@ -42,6 +42,21 @@ void Camera::Draw()
 
 void Camera::TransferData()
 {
+    // ビュー行列の逆行列を計算してカメラの位置を抽出
+    Matrix4x4 iView = Inverse(matView_);
+    translate_ = { iView.m[3][0], iView.m[3][1], iView.m[3][2] };
+
+    // ビュー・プロジェクション行列を計算
+    matViewProjection_ = matView_ * matProjection_;
+
+    // 定数バッファへのデータ転送
+    constMap_->pos = translate_;
+    constMap_->view = matView_;
+    constMap_->proj = matProjection_;
+}
+
+void Camera::UpdateMatrix()
+{
     matWorld_ = MakeAffineMatrix(scale_, rotate_, translate_);
     matView_ = Inverse(matWorld_);
     matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
@@ -51,6 +66,7 @@ void Camera::TransferData()
     constMap_->view = matView_;
     constMap_->proj = matProjection_;
 }
+
 
 void Camera::QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index) const
 {

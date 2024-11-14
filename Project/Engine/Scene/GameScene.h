@@ -15,6 +15,7 @@
 #include "../../Application/Player.h"
 #include "../../Application/Enemy/Enemy.h"
 #include "../../Application/FollowCamera.h"
+#include "../../Application/Stage/Stage.h"
 
 #include <memory>
 
@@ -39,10 +40,6 @@ private:
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
 
-    Model* model_ = nullptr;
-    WorldTransform worldTransform;
-    ObjectColor color_;
-
     // プレイヤー
     std::unique_ptr < Player> player_;
 
@@ -51,5 +48,8 @@ private:
 
     // フォローカメラ
     std::unique_ptr <FollowCamera> followCamera_;
+
+    // ステージ
+    std::unique_ptr <Stage> stage_;
 
 };
