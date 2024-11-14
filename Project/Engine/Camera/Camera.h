@@ -20,8 +20,9 @@ public:
     ID3D12Resource* GetResource()const { return resource_.Get(); }
     Matrix4x4 GetViewProjection()const { return matViewProjection_; }
 
+    
     /// <summary>
-    /// 行列を転送
+    /// セットした行列を転送
     /// </summary>
     void TransferData();
 
