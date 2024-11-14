@@ -24,6 +24,13 @@ class Player;
 class Enemy
 {
 public:
+	// 振るまい
+	enum class Behavior {
+		kRoot,   // 通常状態
+		kAttack, // 攻撃中
+		kJump,   // ジャンプ中
+	};
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -68,10 +75,13 @@ private:
 	void UpdateFloatingGimmick();
 
 
+
 public:
 	void SetPlayer(Player* player) { player_ = player; };
 
+	const Behavior& GetBehavior() const { return behavior_; };
 
+	const Camera& GetCamera() { return attackCamera_; };
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -85,25 +95,26 @@ private:
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
-
+	//
+	Vector3 oldPos_;
 	//
 	const Camera* camera_ = nullptr;
 
 	Player* player_;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+
+
+
+
+	Camera attackCamera_;
 private:
 	// 速度
 	Vector3 velocity_ = {};
 
 	float speed;
 
-	// 振るまい
-	enum class Behavior {
-		kRoot,   // 通常状態
-		kAttack, // 攻撃中
-		kJump,   // ジャンプ中
-	};
+	
 	//振るまい
 	Behavior behavior_ = Behavior::kRoot;
 	// 次の振るまいリクエスト
@@ -116,13 +127,41 @@ private:
 	int floatingPeriod = 120;
 
 
-
+	// hp
 	int hp = 100;
+	// 生死フラグ
 	bool isAlive = true;
-
-
-	//
+	// 行動タイマー
 	int behaviorTimer_;
-	int timre;
+
+	
+	struct Attack3 {
+		//移動位置
+		Vector3 attackPos = { 0,10,0 };
+		// 上下移動切り替え
+		int clock1 = 1;
+		//　弾をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+	};
+	Attack3 attack3_;
+
+	struct Attack2
+	{
+		// 移動位置
+		Vector3 attackPos = { 0,10,0 };
+		// 上下移動切り替え
+		int clock = 1;
+		//　雷をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+	};
+
+
 };
+
+
+
 

@@ -75,9 +75,6 @@ void Player::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-
-
-
 }
 
 void Player::Update()

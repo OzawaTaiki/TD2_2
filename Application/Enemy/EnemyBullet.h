@@ -38,7 +38,6 @@ private:
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
 
-
 	// 速度
 	Vector3 velocity_;
 

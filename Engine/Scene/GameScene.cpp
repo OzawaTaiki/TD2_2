@@ -51,7 +51,6 @@ void GameScene::Initialize()
     enemy_ = std::make_unique<Enemy>();
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
-
 }
 
 void GameScene::Update()
@@ -74,11 +73,17 @@ void GameScene::Update()
     // 追従カメラの更新
     followCamera_->Update();
     
-   
-    camera_->matView_ = followCamera_->GetCamera().matView_;
-    camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+    if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
+        camera_->matView_ = followCamera_->GetCamera().matView_;
+        camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+    }
+    else {
+        camera_->matView_ = enemy_->GetCamera().matView_;
+        camera_->matProjection_ = enemy_->GetCamera().matProjection_;
+    }
 
-    //camera_->UpdateMatrix();
+
+
     camera_->TransferData();
     //<-----------------------
     ImGui::End();

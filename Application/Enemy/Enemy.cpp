@@ -4,6 +4,10 @@
 #include "Enemy.h"
 #include "Player.h"
 
+template<typename T>
+T Lerp(const T& a, const T& b, float t) {
+	return a * (1.0f - t) + b * t;
+}
 
 
 
@@ -18,6 +22,10 @@ void Enemy::Initialize()
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
 	modelBullet_ = Model::CreateFromObj("Arrow/Arrow.obj");;
+
+	attackCamera_.Initialize();
+	attackCamera_.translate_ = { 0,40,-80 };
+	attackCamera_.rotate_ = { 0.55f,0,0 };
 }
 
 void Enemy::Update()
@@ -63,6 +71,8 @@ void Enemy::Update()
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
+
+	attackCamera_.UpdateMatrix();
 }
 
 void Enemy::Draw(const Camera& camera)
@@ -96,7 +106,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = behaviorTimer_ / 3000;
+		float rotate = float(behaviorTimer_ / 3000);
 
 		Vector3 direction{ cos(radian + behaviorTimer_), pos.y, sin(radian + behaviorTimer_) };
 
@@ -134,8 +144,23 @@ void Enemy::BehaviorRootInitialize()
 
 void Enemy::BehaviorRootUpdate()
 {
-	velocity_ = { 0.0f, 0.0f, 0.0f };
-	speed = 0.2f;
+	// 回転と移動量の設定
+	const float kMoveSpeed = 0.1f; // 移動速度
+	// worldTransformBase_.rotation_.y += 0.00f; // 一定量のY軸回転
+
+	// 向いている方向への移動ベクトルの計算
+	Vector3 moveDirection = { 0.0f, 0.0f, kMoveSpeed };
+	Matrix4x4 rotationMatrix = MakeRotateYMatrix(worldTransform_.rotate_.y);
+	moveDirection = Transform(moveDirection, rotationMatrix);
+
+	// ロックオン座標
+	Vector3 lockOnPosition = player_->GetWorldTransform().GetWorldPosition();
+
+	// 追跡対象からロックオン対象へのベクトル
+	Vector3 sub = Subtract(lockOnPosition, worldTransform_.transform_);
+
+	// Y軸周り角度
+	worldTransform_.rotate_.y = std::atan2(sub.x, sub.z);
 
 	behaviorTimer_++;
 	if (behaviorTimer_ >= 180) {
@@ -143,25 +168,77 @@ void Enemy::BehaviorRootUpdate()
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
+	//
+	oldPos_ = worldTransform_.transform_;
+
 	// 浮遊ギミック
 	UpdateFloatingGimmick();
 }
 
 void Enemy::BehaviorAttackInitialize()
 {
-
+	attack3_.isBulletShot = false;
+	attack3_.clock1 = 1;
+	attack3_.transitionFactor = 0;
 }
 
 void Enemy::BehaviorAttackUpdate()
 {
-	behaviorTimer_++;
-	if (behaviorTimer_ >= 120) {
-		behaviorTimer_ = 0;
-		behaviorRequest_ = Behavior::kRoot;
-	}
 
-	if (behaviorTimer_ % 15 == 0) {
-		BulletInitialize(worldTransform_.GetWorldPosition());
+	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
+	
+	Vector3 targetPos;
+	if (attack3_.isBulletShot == false) {
+		if (attack3_.clock1 == 1) {
+			// 補間の進行度を更新
+			if (attack3_.transitionFactor < 1.0f) {
+				attack3_.transitionFactor += transitionSpeed;
+			}
+			else {
+				attack3_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
+				attack3_.clock1 *= -1;
+				attack3_.isBulletShot = false;
+			}
+
+
+			targetPos = attack3_.attackPos;
+
+			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack3_.transitionFactor);
+		}
+		else  if (attack3_.clock1 == -1) {
+			// 補間の進行度を更新
+			if (attack3_.transitionFactor > 0.0f) {
+				attack3_.transitionFactor -= transitionSpeed * 3;
+				if (attack3_.transitionFactor < 0.5f) {
+					attack3_.isBulletShot = true;
+				}
+			}
+			else {
+				attack3_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
+				attack3_.clock1 *= -1;
+			}
+
+			targetPos.y = oldPos_.y;
+			targetPos.x = oldPos_.x;
+			targetPos.z = oldPos_.z;
+
+			worldTransform_.transform_ = Lerp(targetPos,worldTransform_.transform_, attack3_.transitionFactor);
+		}
+	}
+	
+
+	if (attack3_.isBulletShot == true) {
+		if (behaviorTimer_ <= 60) {
+			if (behaviorTimer_ % 15 == 0 || behaviorTimer_ == 0) {
+				BulletInitialize(worldTransform_.GetWorldPosition());
+			}
+		}
+		
+		behaviorTimer_++;
+		if (behaviorTimer_ >= 120) {
+			behaviorRequest_ = Behavior::kRoot;
+			behaviorTimer_ = 0;
+		}
 	}
 }
 
