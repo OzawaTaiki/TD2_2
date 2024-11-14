@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "../Collider/Collider.h"
 #include <chrono>
 #include <imgui.h>
 
@@ -43,13 +44,13 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-
     //ImGui::ShowDemoWindow();
     ImGui::Begin("Engine");
 
     input_->Update();
     //<-----------------------
     camera_->Update();
+
 
 
     model_->Update();

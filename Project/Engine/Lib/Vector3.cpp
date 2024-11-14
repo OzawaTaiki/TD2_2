@@ -88,6 +88,22 @@ Vector3& Vector3::operator-=(const Vector3& _v)
     return *this;
 }
 
+Vector3& Vector3::operator=(const float arr[3])
+{
+    x = arr[0];
+    y = arr[1];
+    z = arr[2];
+    return *this;
+}
+
+float* Vector3::operator=(const Vector3& _vec)
+{
+    x = _vec.x;
+    y = _vec.y;
+    z = _vec.z;
+    return &x;
+}
+
 Vector3 operator*(float _s, const Vector3& vec)
 {
     return { vec * _s };
@@ -97,6 +113,7 @@ Vector3 operator/(float _s, const Vector3& vec)
 {
     return { vec / _s };
 }
+
 
 #ifdef _DEBUG
 void Vector3::ShowData(const std::string& _label, bool _newWindow) const
