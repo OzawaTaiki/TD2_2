@@ -1,8 +1,5 @@
 #include "Vector3.h"
 
-#ifdef _DEBUG
-#include <imgui.h>
-#endif // _DEBUG
 
 float Vector3::Length() const
 {
@@ -98,7 +95,15 @@ Vector3 operator/(float _s, const Vector3& vec)
     return { vec / _s };
 }
 
+Vector3& Vector3::operator*=(float _s)
+{
+    *this = *this * _s;
+    return *this;
+}
+
+
 #ifdef _DEBUG
+#include <imgui.h>
 void Vector3::ShowData(const std::string& _label, bool _newWindow) const
 {
     if (_newWindow)
