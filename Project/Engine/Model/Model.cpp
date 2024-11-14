@@ -80,6 +80,7 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
         material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(commandList, 4);
         // ライトたち
         lightGroup_->TransferData();
+        lightGroup_->QueueCommand(commandList);
 
         commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
     }

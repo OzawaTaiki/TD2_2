@@ -2,7 +2,7 @@
 #include "VectorFunction.h"
 
 #include "Enemy.h"
-#include "Player.h"
+#include "../Player.h"
 
 
 
@@ -53,7 +53,7 @@ void Enemy::Update()
 		//BehaviorJumpUpdate(); // ジャンプ行動更新
 		break;
 	}
-	
+
 	BulletUpdate();
 	// HP
 	if (hp <= 0) {

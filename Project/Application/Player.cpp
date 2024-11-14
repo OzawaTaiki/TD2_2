@@ -143,7 +143,7 @@ void Player::Update()
 
 void Player::Draw(const Camera& camera)
 {
-	
+
 	model_->Draw(worldTransform_, &camera, &color_);
 
 
@@ -202,7 +202,7 @@ void Player::BehaviorRootUpdate()
 		inputDirection = Normalize(inputDirection);
 
 		// カメラのビュー行列の逆行列（カメラのワールド変換行列）を取得
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
 
 		// カメラの向きに基づいて移動方向をワールド座標系に変換
 		Vector3 worldDirection = {
@@ -248,7 +248,7 @@ void Player::BehaviorRootUpdate()
 		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 
 		// カメラの向きを考慮して目的の回転角度を補正
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
 
 		// カメラのY軸回転角度（ワールド座標系）を取得
 		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
@@ -268,7 +268,7 @@ void Player::BehaviorRootUpdate()
 		tureTimer_ -= 1.0f / 60.0f;
 
 		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->GetViewMatrix());
+		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
 		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
 		float adjustedRotationY = destinationRotationY + cameraYaw;
 
@@ -316,33 +316,33 @@ void Player::BehaviorAttackUpdate()
 	// コンボ段階によってモーションを分岐
 	switch (workAttack.comboIndex) {
 		// 0:右から反時計回り
-	case 0:		
+	case 0:
 		// パラメータ
 		AttackParameter();
-		
+
 
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(15));
 
 		SetAttackCombo(15);
 		break;
-	case 1:	
+	case 1:
 		// パラメータ
 		AttackParameter();
-	
+
 
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(45));
-		
+
 		SetAttackCombo(15);
 		break;
 	case 2:
 		// パラメータ
 		AttackParameter();
-		
+
 
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(-45));
-		
+
 		SetAttackCombo(15);
 		break;
 	case 3:
@@ -350,10 +350,10 @@ void Player::BehaviorAttackUpdate()
 		AttackParameter();
 
 		if (workAttack.attackParameter_ <= 5) {
-			
+
 			Vector3 move(direction_.x, 0, direction_.y);
 
-			
+
 
 			move = Normalize(move);
 
@@ -363,7 +363,7 @@ void Player::BehaviorAttackUpdate()
 		}
 
 		weapon_->SetRotationX(DegreesToRadians(90));
-		
+
 		SetAttackCombo(25);
 		break;
 	default:
@@ -401,7 +401,7 @@ void Player::SetAttackCombo(int parameter)
 			}
 			//weapon_->ContactRecordClear();
 			// 各パーツの角度などを次のコンボ用に初期化
-			
+
 			// 武器位置設定
 			weapon_->SetRotation(Vector3{0,0,0});
 			weapon_->SetRotationX(0);
