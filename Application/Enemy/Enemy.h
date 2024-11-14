@@ -13,6 +13,7 @@
 
 // application
 #include "EnemyBullet.h"
+#include "EnemyStageArm.h"
 
 
 // 
@@ -28,7 +29,7 @@ public:
 	enum class Behavior {
 		kRoot,   // 通常状態
 		kAttack, // 攻撃中
-		kJump,   // ジャンプ中
+		kAttack2,   // ジャンプ中
 	};
 
 	/// <summary>
@@ -52,6 +53,12 @@ public:
 	// 弾更新
 	void BulletUpdate();
 
+	// 弾の初期化
+	void StageArmInitialize(Vector3 pos);
+
+	// 弾更新
+	void StageArmUpdate();
+
 private:
 	//通常行動初期化
 	void BehaviorRootInitialize();
@@ -59,20 +66,27 @@ private:
 	//通常行動更新
 	void BehaviorRootUpdate();
 
-
-	//攻撃行動初期化
-	void BehaviorAttackInitialize();
-
-
-	//攻撃行動更新
-	void BehaviorAttackUpdate();
-
-
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
 
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
+
+	//攻撃行動初期化
+	void BehaviorAttackInitialize();
+
+	//攻撃行動更新
+	void BehaviorAttackUpdate();
+	
+	//攻撃行動初期化
+	void BehaviorAttack2Initialize();
+
+	//攻撃行動更新
+	void BehaviorAttack2Update();
+
+
+
+	
 
 
 
@@ -82,6 +96,8 @@ public:
 	const Behavior& GetBehavior() const { return behavior_; };
 
 	const Camera& GetCamera() { return attackCamera_; };
+	const Camera& GetCamera2() { return attackCamera2_; };
+
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -108,6 +124,7 @@ private:
 
 
 	Camera attackCamera_;
+	Camera attackCamera2_;
 private:
 	// 速度
 	Vector3 velocity_ = {};
@@ -134,7 +151,35 @@ private:
 	// 行動タイマー
 	int behaviorTimer_;
 
-	
+
+	// 攻撃3
+	struct Attack1 {
+		//移動位置
+		Vector3 attackPos = { 0,10,0 };
+		// 上下移動切り替え
+		int clock1 = 1;
+		//　弾をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+	};
+	Attack1 attack1_;
+
+	// 攻撃2
+	struct Attack2
+	{
+		// 移動位置
+		Vector3 attackPos = { 0,10,0 };
+		// 上下移動切り替え
+		int clock = 1;
+		//　雷をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+	};
+	Attack2 attack2_;
+
+	// 攻撃3
 	struct Attack3 {
 		//移動位置
 		Vector3 attackPos = { 0,10,0 };
@@ -147,17 +192,11 @@ private:
 	};
 	Attack3 attack3_;
 
-	struct Attack2
-	{
-		// 移動位置
-		Vector3 attackPos = { 0,10,0 };
-		// 上下移動切り替え
-		int clock = 1;
-		//　雷をうつ
-		bool isBulletShot = 0;
-		// t補間用
-		float transitionFactor = 0;
-	};
+	
+
+
+
+
 
 
 };

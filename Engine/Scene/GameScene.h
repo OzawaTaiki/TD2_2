@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Enemy/Enemy.h"
 #include "FollowCamera.h"
+#include "Stage/Stage.h"
 
 //
 #include <memory>
@@ -47,5 +48,8 @@ private:
 
     // フォローカメラ
     std::unique_ptr <FollowCamera> followCamera_;
+
+    // ステージ
+    std::unique_ptr <Stage> stage_;
 
 };

@@ -217,6 +217,8 @@
     <ClCompile Include="Application\Weapon.cpp" />
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyStageArm.cpp" />
+    <ClCompile Include="Application\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -362,6 +364,8 @@
     <ClInclude Include="Application\Weapon.h" />
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyBullet.h" />
+    <ClInclude Include="Application\Enemy\EnemyStageArm.h" />
+    <ClInclude Include="Application\Stage\Stage.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
