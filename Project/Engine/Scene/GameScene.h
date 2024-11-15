@@ -12,6 +12,11 @@
 #include "ParticleEmitters.h"
 #include "DebugCamera.h"
 
+//Application
+#include "../../Application/Player.h"
+#include "../../Application/Enemy/Enemy.h"
+#include "../../Application/FollowCamera.h"
+
 #include <memory>
 
 class GameScene : public BaseScene
@@ -36,5 +41,18 @@ private:
     bool activeDebugCamera_ = false;
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
+
+    Model* model_ = nullptr;
+    WorldTransform worldTransform;
+    ObjectColor color_;
+
+    // プレイヤー
+    std::unique_ptr < Player> player_;
+
+    // ボス
+    std::unique_ptr <Enemy> enemy_;
+
+    // フォローカメラ
+    std::unique_ptr <FollowCamera> followCamera_;
 
 };

@@ -117,6 +117,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\Enemy\Enemy.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Application\FollowCamera.cpp" />
+    <ClCompile Include="Application\Player.cpp" />
+    <ClCompile Include="Application\Weapon.cpp" />
     <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
     <ClCompile Include="Engine\Camera\Camera.cpp" />
@@ -236,6 +241,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\Enemy\Enemy.h" />
+    <ClInclude Include="Application\Enemy\EnemyBullet.h" />
+    <ClInclude Include="Application\FollowCamera.h" />
+    <ClInclude Include="Application\Player.h" />
+    <ClInclude Include="Application\Weapon.h" />
     <ClInclude Include="Engine\AnimationModel\AnimationModel.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />
     <ClInclude Include="Engine\Camera\Camera.h" />

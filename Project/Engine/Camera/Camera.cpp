@@ -1,6 +1,9 @@
 #include "Camera.h"
 #include "MatrixFunction.h"
 #include "DXCommon.h"
+#include "Input.h"
+#include "VectorFunction.h"
+#include "MatrixFunction.h"
 #include <imgui.h>
 
 void Camera::Initialize()
@@ -22,10 +25,15 @@ void Camera::Update()
         ImGui::EndTabBar();
     }
 
-    matWorld_ = MakeAffineMatrix(scale_, rotate_, translate_);
-    matView_ = Inverse(matWorld_);
-    matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
-    matViewProjection_ = matView_ * matProjection_;
+    //Vector3 move;
+    //Input::GetInstance()->GetMove(move, 0.1f);
+    //Vector3 rot;
+    //Input::GetInstance()->GetRotate(rot);
+
+    //Matrix4x4 matRot = MakeRotateMatrix(rotate_ + rot);
+    //Vector3 rotVelo = TransformNormal(move, matRot);
+
+    //translate_ += rotVelo;
 }
 
 void Camera::Draw()
@@ -34,8 +42,9 @@ void Camera::Draw()
 
 void Camera::TransferData()
 {
-    Matrix4x4 iView = Inverse(matView_);
-    //translate_ = { iView.m[3][0],iView.m[3][1],iView.m[3][2] };
+    matWorld_ = MakeAffineMatrix(scale_, rotate_, translate_);
+    matView_ = Inverse(matWorld_);
+    matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
     matViewProjection_ = matView_ * matProjection_;
 
     constMap_->pos = translate_;

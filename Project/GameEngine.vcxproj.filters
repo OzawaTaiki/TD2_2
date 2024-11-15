@@ -130,6 +130,12 @@
     <Filter Include="Engine\Collider">
       <UniqueIdentifier>{598980a1-baa6-4946-8bf2-b5b2f3550387}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{31839123-81d2-44c3-a4c3-b48f017325bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Enemy">
+      <UniqueIdentifier>{8535fd9b-e391-4afa-ad31-197f169fadba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -290,6 +296,21 @@
     </ClCompile>
     <ClCompile Include="Engine\Collider\Shapes.cpp">
       <Filter>Engine\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\FollowCamera.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Player.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Weapon.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\Enemy.cpp">
+      <Filter>Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\EnemyBullet.cpp">
+      <Filter>Application\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -503,6 +524,21 @@
     </ClInclude>
     <ClInclude Include="Engine\Collider\CollisionManager.h">
       <Filter>Engine\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\FollowCamera.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Player.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Weapon.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\Enemy.h">
+      <Filter>Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\EnemyBullet.h">
+      <Filter>Application\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

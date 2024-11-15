@@ -1,8 +1,5 @@
 #include "Vector3.h"
 
-#ifdef _DEBUG
-#include <imgui.h>
-#endif // _DEBUG
 
 float Vector3::Length() const
 {
@@ -153,6 +150,8 @@ void Vector3::Vec3ToFloat3(float _f[3]) const
 
 #ifdef _DEBUG
 
+#ifdef _DEBUG
+#include <imgui.h>
 void Vector3::ShowData(const std::string& _label, bool _newWindow) const
 {
     if (_newWindow)
