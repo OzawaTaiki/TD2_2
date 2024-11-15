@@ -10,6 +10,7 @@
 #include "ObjectColor.h"
 #include "ParticleManager.h"
 #include "ParticleEmitters.h"
+#include "ConfigManager.h"
 
 
 //Application

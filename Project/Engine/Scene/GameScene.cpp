@@ -70,6 +70,7 @@ void GameScene::Update()
     //{
         if (ImGui::Button("save")) {
             ConfigManager::GetInstance()->SaveData();
+            //JsonLoader::SaveJson()
         }
     //}
 

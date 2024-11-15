@@ -70,7 +70,9 @@ void Player::Update()
 			ImGui::DragFloat("speed", &speed, 0.01f);
 
 			
-			
+			if (ImGui::Button("save")) {
+				ConfigManager::GetInstance()->SaveData();
+			}
 
 			ImGui::EndTabItem();
 		}
