@@ -122,6 +122,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Collider\Collider.cpp" />
     <ClCompile Include="Engine\Collider\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Collider\Shapes.cpp" />
     <ClCompile Include="Engine\DXWin\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="Engine\DXWin\DXCommon.cpp" />
     <ClCompile Include="Engine\DXWin\WinApp.cpp" />

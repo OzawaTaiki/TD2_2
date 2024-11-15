@@ -288,6 +288,9 @@
     <ClCompile Include="Engine\Collider\CollisionManager.cpp">
       <Filter>Engine\Collider</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Collider\Shapes.cpp">
+      <Filter>Engine\Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">

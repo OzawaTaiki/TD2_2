@@ -33,6 +33,7 @@ public:
     void SetShape(float _radius);
     void SetShape(const Vector3& _min, const Vector3& _max);
 
+
     // 衝突判定の形状を取得する
     template <typename T>
     T GetShape() const;
@@ -71,7 +72,6 @@ private:
     std::variant<Sphere, AABB, OBB> shape_;
     // 衝突判定のサイズ
     Vector3 size_ = {};
-    // 衝突判定の中心座標
 
 
     BoundingBox boundingBox_ = BoundingBox::NONE;

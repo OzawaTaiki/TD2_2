@@ -28,15 +28,18 @@ void GameScene::Initialize()
     camera_ = std::make_unique<Camera>();
     camera_->Initialize();
 
+    debugCamera_ = std::make_unique<DebugCamera>();
+    debugCamera_->Initialize();
+
+
     lineDrawer_ = LineDrawer::GetInstance();
     lineDrawer_->SetCameraPtr(camera_.get());
-
 
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
     model_ = new ObjectModel;
-    model_->Initialize("bunny.gltf");
+    model_->Initialize("ColliderTestModel.obj");
     humanModel_ = new AnimationModel;
     humanModel_->Initialize("human/walk.gltf");
 
@@ -46,17 +49,31 @@ void GameScene::Update()
 {
     //ImGui::ShowDemoWindow();
     ImGui::Begin("Engine");
-
     input_->Update();
-    //<-----------------------
-    camera_->Update();
 
+    if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
+    {
+        activeDebugCamera_ = !activeDebugCamera_;
+    }
+
+    //<-----------------------
 
 
     model_->Update();
     humanModel_->Update();
 
-    camera_->TransferData();
+    if (activeDebugCamera_)
+    {
+        debugCamera_->Update();
+        camera_->matView_ = debugCamera_->matView_;
+        camera_->TransferData();
+    }
+    else
+    {
+        camera_->Update();
+        camera_->TransferData();
+    }
+
     //<-----------------------
     ImGui::End();
 }
@@ -71,7 +88,7 @@ void GameScene::Draw()
 
     ModelManager::GetInstance()->PreDrawForAnimationModel();
     //<------------------------
-    humanModel_->Draw(camera_.get(), { 1,1,1,1 });
+    //humanModel_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
 

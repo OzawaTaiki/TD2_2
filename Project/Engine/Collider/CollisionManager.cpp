@@ -1,6 +1,5 @@
 #include "CollisionManager.h"
 #include "Collider.h"
-
 #include "VectorFunction.h"
 
 CollisionManager* CollisionManager::GetInstance()
@@ -48,11 +47,14 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
         {
             Sphere sphereA = _colliderA->GetShape<Sphere>();
             sphereA.center = Transform({ 0,0,0 }, _colliderA->GetWorldMatrix());
+
             switch (_colliderB->GetBoundingBox())
             {
             case Collider::BoundingBox::Sphere_3D:
                 {
                     Sphere sphereB = _colliderB->GetShape<Sphere>();
+                    sphereB.center = Transform({ 0,0,0 }, _colliderB->GetWorldMatrix());
+
                     if (IsCollision(sphereA, sphereB))
                     {
                         _colliderA->OnCollision();
@@ -63,6 +65,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
             case Collider::BoundingBox::AABB_3D:
                 {
                     AABB aabbB = _colliderB->GetShape<AABB>();
+                    aabbB.center = Transform({ 0,0,0 }, _colliderB->GetWorldMatrix());
+
                     if (IsCollision(sphereA, aabbB))
                     {
                         _colliderA->OnCollision();
@@ -73,6 +77,7 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
             case Collider::BoundingBox::OBB_3D:
                 {
                     OBB obbB = _colliderB->GetShape<OBB>();
+                    //obbB.center = Transform(obbB.referencePoint, _colliderB->GetWorldMatrix());
                     if (IsCollision(sphereA, obbB))
                     {
                         _colliderA->OnCollision();
@@ -132,7 +137,7 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
         }
         break;
     case Collider::BoundingBox::OBB_3D:
-            OBB obbA = _colliderA->GetShape<OBB>();
+            {  OBB obbA = _colliderA->GetShape<OBB>();
             switch (_colliderB->GetBoundingBox())
             {
             case Collider::BoundingBox::Sphere_3D:
@@ -169,7 +174,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                 }
                 break;
             }
-            break;
+        }
+        break;
     case Collider::BoundingBox::NONE:
         assert(false && "Please set BoundingBox before SetShape");
         break;

@@ -11,6 +11,16 @@ void ObjectModel::Initialize(const std::string& _filePath)
     objectColor_ = std::make_unique<ObjectColor>();
     objectColor_->Initialize();
 
+    collider_ = new Collider;
+    collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+    collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
+    refPoint = (model_->GetMin(0) + model_->GetMax(0)) / 2.0f;
+    collider_->SetReferencePoint(refPoint);
+
+    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this]() {OnCollision(); });
+
+
 }
 
 void ObjectModel::Update()
@@ -33,7 +43,9 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
     objectColor_->QueueCommand(commandList, 3);
     model_->QueueCommandAndDraw(commandList);// BVB IBV MTL2 TEX4 LIGHT567
 
-    model_->DrawSkeleton(worldTransform_.matWorld_);
+    collider_->Draw();
+
+    //model_->DrawSkeleton(worldTransform_.matWorld_);
 }
 
 #ifdef _DEBUG
@@ -44,6 +56,8 @@ void ObjectModel::ImGui()
     ImGui::DragFloat3("Translate", &worldTransform_. transform_.x, 0.01f);
     ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
     ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+    if(ImGui::DragFloat3("ReferencePoint", &refPoint.x, 0.01f))
+        collider_->SetReferencePoint(refPoint);
     ImGui::PopID();
 }
 #endif // _DEBUG

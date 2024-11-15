@@ -1,14 +1,23 @@
 #pragma once
 
+
 #ifdef _DEBUG
 #include <imgui.h>
 #include <string>
 #endif // _DEBUG
 
+#include <Vector3.h>
+
 
 struct Matrix4x4
 {
 	float m[4][4];
+
+	static Matrix4x4 Identity() {
+		return Matrix4x4{ 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+	}
+
+	Vector3 GetScale() const;
 
 	inline void operator*=(const Matrix4x4& _mat)
 	{

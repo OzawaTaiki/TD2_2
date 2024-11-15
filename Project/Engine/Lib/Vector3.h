@@ -36,6 +36,10 @@ struct Vector3
     // ベクトルの外積を返す
 	Vector3 Cross(const Vector3& _v) const;
 
+   static Vector3 Min(const Vector3& _v1, const Vector3& _v2);
+   static Vector3 Max(const Vector3& _v1, const Vector3& _v2);
+
+
 	inline bool operator==(const Vector3& _v)const {
 		return x == _v.x && y == _v.y && z == _v.z;
 	}
@@ -49,16 +53,19 @@ struct Vector3
 	Vector3 operator-() const;
 	Vector3& operator+= (const Vector3& _v);
 	Vector3& operator-= (const Vector3& _v);
+    Vector3& operator*= (const Vector3& _v);
+    Vector3& operator/= (const Vector3& _v);
+
 
     inline operator float* () { return &x; }
 	inline operator const float* () const { return &x; }
     Vector3& operator= (const float arr[3]);
-	float* operator=(const Vector3& _vec);
 	
 
 	friend Vector3 operator*(float _s, const Vector3& vec);
 	friend Vector3 operator/(float _s, const Vector3& vec);
 
+    void Vec3ToFloat3(float _f[3]) const;
 
 #ifdef _DEBUG
 	void ShowData(const std::string& _label, bool _newWindow = true) const;

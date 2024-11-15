@@ -1,36 +1,37 @@
 #include "Collider.h"
 #include "CollisionManager.h"
+#include "LineDrawer.h"
 
 void Collider::Draw()
 {
-    std::visit([](auto&& arg) {
+    Matrix4x4 worldMat = GetWorldMatrix();
+
+    auto lineDrawer = LineDrawer::GetInstance();
+
+    std::visit([worldMat, lineDrawer](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, Sphere>)
         {
-            Sphere sphere = arg;
-            //ImGui::Text("Sphere");
-            //ImGui::Text("Center: %f, %f, %f", sphere.center.x, sphere.center.y, sphere.center.z);
-            //ImGui::Text("Radius: %f", sphere.radius);
+            lineDrawer->DrawSphere(worldMat);
         }
         else if constexpr (std::is_same_v<T, AABB>)
         {
             AABB aabb = arg;
-            //ImGui::Text("AABB");
-            //ImGui::Text("Min: %f, %f, %f", aabb.min.x, aabb.min.y, aabb.min.z);
-            //ImGui::Text("Max: %f, %f, %f", aabb.max.x, aabb.max.y, aabb.max.z);
+            lineDrawer->DrawOBB(aabb.vertices);
         }
         else if constexpr (std::is_same_v<T, OBB>)
         {
             OBB obb = arg;
-            //ImGui::Text("OBB");
-            //ImGui::Text("Center: %f, %f, %f", obb.center.x, obb.center.y, obb.center.z);
-            //ImGui::Text("Size: %f, %f, %f", obb.size.x, obb.size.y, obb.size.z);
+            obb.Calculate(worldMat);
+            lineDrawer->DrawOBB(obb.vertices);
         }
         else
         {
-            assert(false && "Draw() is not supported in this type");
+            assert(false && "Not supported");
         }
                }, shape_);
+
+
 }
 
 void Collider::SetShape(float _radius)
@@ -102,14 +103,14 @@ void Collider::SetReferencePoint(const Vector3& _referencePoint)
             using T = std::decay_t<decltype(arg)>;
             if constexpr (std::is_same_v<T, OBB>)
             {
-                OBB obb = arg;
+                OBB& obb = arg;
                 obb.referencePoint[0] = _referencePoint.x;
                 obb.referencePoint[1] = _referencePoint.y;
                 obb.referencePoint[2] = _referencePoint.z;
             }
             else if constexpr (std::is_same_v<T, AABB>)
             {
-                AABB aabb = arg;
+                AABB& aabb = arg;
                 aabb.referencePoint[0] = _referencePoint.x;
                 aabb.referencePoint[1] = _referencePoint.y;
                 aabb.referencePoint[2] = _referencePoint.z;
