@@ -149,8 +149,6 @@ void Vector3::Vec3ToFloat3(float _f[3]) const
 }
 
 #ifdef _DEBUG
-
-#ifdef _DEBUG
 #include <imgui.h>
 void Vector3::ShowData(const std::string& _label, bool _newWindow) const
 {

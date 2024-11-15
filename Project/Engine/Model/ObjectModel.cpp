@@ -35,7 +35,6 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
     objectColor_->QueueCommand(commandList, 3);
     model_->QueueCommandAndDraw(commandList);// BVB IBV MTL2 TEX4 LIGHT567
 
-    collider_->Draw();
 
     //model_->DrawSkeleton(worldTransform_.matWorld_);
 }
@@ -48,8 +47,6 @@ void ObjectModel::ImGui()
     ImGui::DragFloat3("Translate", &worldTransform_. transform_.x, 0.01f);
     ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
     ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
-    if(ImGui::DragFloat3("ReferencePoint", &refPoint.x, 0.01f))
-        collider_->SetReferencePoint(refPoint);
     ImGui::PopID();
 }
 #endif // _DEBUG
