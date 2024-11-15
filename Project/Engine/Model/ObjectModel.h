@@ -16,17 +16,12 @@ public:
     void Update();
     void Draw(const Camera* _camera ,const Vector4& _color);
 
-    void OnCollision()const { };
-
     Vector3 translate_ = { 0,0,0 };
     Vector3 scale_ = { 1,1,1 };
     Quaternion rotate_ = { 0,0,0,1 };
 
 
 private:
-
-    Collider* collider_ = nullptr;
-    Vector3 refPoint = {};
 
     WorldTransform worldTransform_;
     std::unique_ptr<ObjectColor> objectColor_ = nullptr;

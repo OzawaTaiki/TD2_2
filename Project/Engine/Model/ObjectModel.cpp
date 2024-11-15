@@ -12,15 +12,6 @@ void ObjectModel::Initialize(const std::string& _filePath)
     objectColor_ = std::make_unique<ObjectColor>();
     objectColor_->Initialize();
 
-    collider_ = new Collider;
-    //collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-    collider_->SetBoundingBox(Collider::BoundingBox::Sphere_3D);
-    //collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
-    collider_->SetShape(2);
-    //collider_->SetReferencePoint(refPoint);
-
-    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
-    collider_->SetOnCollisionFunc([this]() {OnCollision(); });
 
 }
 
@@ -29,7 +20,6 @@ void ObjectModel::Update()
 #ifdef _DEBUG
     ImGui();
 #endif // _DEBUG
-    CollisionManager::GetInstance()->RegisterCollider(collider_);
     worldTransform_.UpdateData();
 }
 

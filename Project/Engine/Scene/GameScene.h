@@ -37,10 +37,4 @@ private:
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
 
-    ObjectModel* model_;
-    ObjectModel* humanModel_;
-    WorldTransform trans_;
-    ObjectColor* color_;
-
-    ParticleEmitter* emit_;
 };
