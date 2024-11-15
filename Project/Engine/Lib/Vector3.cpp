@@ -41,6 +41,29 @@ Vector3 Vector3::Cross(const Vector3& _v) const
     return result;
 }
 
+Vector3 Vector3::Min(const Vector3& _v1, const Vector3& _v2)
+{
+    Vector3 result;
+
+    result.x = std::min(_v1.x, _v2.x);
+    result.y = std::min(_v1.y, _v2.y);
+    result.z = std::min(_v1.z, _v2.z);
+
+    return result;
+}
+
+Vector3 Vector3::Max(const Vector3& _v1, const Vector3& _v2)
+{
+    Vector3 result;
+
+    result.x = std::max(_v1.x, _v2.x);
+    result.y = std::max(_v1.y, _v2.y);
+    result.z = std::max(_v1.z, _v2.z);
+
+    return result;
+}
+
+
 Vector3 Vector3::operator+(const Vector3& _v) const
 {
     return Vector3(x + _v.x, y + _v.y, z + _v.z);
@@ -88,6 +111,27 @@ Vector3& Vector3::operator-=(const Vector3& _v)
     return *this;
 }
 
+Vector3& Vector3::operator*=(const Vector3& _v)
+{
+    *this = *this * _v;
+    return *this;
+}
+
+Vector3& Vector3::operator/=(const Vector3& _v)
+{
+    *this = *this / _v;
+    return *this;
+
+}
+
+//Vector3& Vector3::operator=(const float arr[3])
+//{
+//    x = arr[0];
+//    y = arr[1];
+//    z = arr[2];
+//    return *this;
+//}
+
 Vector3 operator*(float _s, const Vector3& vec)
 {
     return { vec * _s };
@@ -98,7 +142,17 @@ Vector3 operator/(float _s, const Vector3& vec)
     return { vec / _s };
 }
 
+void Vector3::Vec3ToFloat3(float _f[3]) const
+{
+    _f[0] = x;
+    _f[1] = y;
+    _f[2] = z;
+
+    return;
+}
+
 #ifdef _DEBUG
+
 void Vector3::ShowData(const std::string& _label, bool _newWindow) const
 {
     if (_newWindow)
