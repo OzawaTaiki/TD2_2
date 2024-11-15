@@ -14,17 +14,19 @@ void FollowCamera::Initialize()
 	ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
 	ConfigManager::GetInstance()->SetVariable("followCamera", "rotate", &camera_.rotate_);
 
+
+
 }
 
 void FollowCamera::Update()
 {
-	if (ImGui::BeginTabBar("followCamera"))
+	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("followCamera"))
 		{
-			//ImGui::DragFloat3("translate", &camera_.translate_.x, 0.01f);
 			ImGui::DragFloat3("offset", &offset_.x, 0.01f);
 			ImGui::DragFloat3("rotate", &camera_.rotate_.x, 0.01f);
+			
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

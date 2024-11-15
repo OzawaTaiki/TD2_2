@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
-
+#include "MyLib.h"
 
 /// <summary>
 /// ステージ
@@ -14,6 +14,14 @@
 class Stage
 {
 public:
+
+	enum StageNum {
+		kFlont,
+		kBack,
+		kRight,
+		kLeft,
+		kFloor,
+	};
 
 	/// <summary>
 	/// 初期化
@@ -30,6 +38,12 @@ public:
 	/// </summary>
 	void Draw(const Camera& camera);
 
+
+	Vector3 GetWallFloor() { return worldFloor_.GetWorldPosition();}
+	Vector3 GetWallFlont() { return worldWallFlont.GetWorldPosition();}
+	Vector3 GetWallBack() { return worldWallBack.GetWorldPosition();}
+	Vector3 GetWallLeft() { return worldWallLeft.GetWorldPosition();}
+	Vector3 GetWallRight() { return worldWallRight.GetWorldPosition();}
 
 private:
 	// モデル

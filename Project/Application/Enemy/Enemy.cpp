@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "../Player.h"
+#include "../../../Application/Stage/Stage.h"
 
 #include "imgui.h"
 
@@ -33,6 +34,13 @@ void Enemy::Initialize()
 	attackCamera2_.translate_ = { 0,35,-120 };
 	attackCamera2_.rotate_ = { 0.25f,0,0 };
 
+
+	ConfigManager::GetInstance()->LoadData();
+
+	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera2_.translate_);
+	ConfigManager::GetInstance()->SetVariable("attackCamera1", "rotate", &attackCamera2_.rotate_);
+	ConfigManager::GetInstance()->SetVariable("attackCamera3", "translate", &attackCamera_.translate_);
+	ConfigManager::GetInstance()->SetVariable("attackCamera3", "rotate", &attackCamera_.rotate_);
 
 }
 
@@ -70,23 +78,40 @@ void Enemy::Update()
 		break;
 	}
 
+	//
 	BulletUpdate();
+
+	//
+	StageArmUpdate();
+
+
 	// HP
 	if (hp <= 0) {
 		isAlive = false;
 	}
 
-
-	ImGui::Begin("EnemyAttack");
-	if(ImGui::Button("attack3")) {
-		behaviorTimer_ = 0;
-		behaviorRequest_ = Behavior::kAttack;
+	if (ImGui::BeginTabBar("GameScene"))
+	{
+		if (ImGui::BeginTabItem("enemy"))
+		{
+			ImGui::DragFloat3("AttackCamera translate", &attackCamera_.translate_.x, 0.01f);
+			ImGui::DragFloat3("AttackCamera rotate", &attackCamera_.rotate_.x, 0.01f);
+			ImGui::DragFloat3("AttackCamera2 translate", &attackCamera2_.translate_.x, 0.01f);
+			ImGui::DragFloat3("AttackCamera2 rotate", &attackCamera2_.rotate_.x, 0.01f);
+			if (ImGui::Button("attack3")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kAttack;
+			}
+			if (ImGui::Button("attack2")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kAttack2;
+			}
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
-	if(ImGui::Button("attack2")) {
-		behaviorTimer_ = 0;
-		behaviorRequest_ = Behavior::kAttack2;
-	}
-	ImGui::End();
+	
+	
 
 
 	// ワールドトランスフォーム更新
@@ -101,6 +126,10 @@ void Enemy::Draw(const Camera& camera)
 	model_->Draw(worldTransform_, &camera, &color_);
 
 	for (const auto& bullet : bullets_) {
+		bullet->Draw(camera);
+	}
+
+	for (const auto& bullet : stageArm) {
 		bullet->Draw(camera);
 	}
 
@@ -156,34 +185,48 @@ void Enemy::BulletUpdate()
 	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
 }
 
-void Enemy::StageArmInitialize(Vector3 pos)
+void Enemy::StageArmInitialize(int num)
 {
-	const float kBulletSpeed = 0.4f;
+	const float kBulletSpeed = 1.4f;
 	Vector3 velocityB{};
 
-	const int numBullets = 16;
+	// 
+	Vector3 direction{};
+	Vector3 stagePos{};
+	direction = player_->GetWorldTransform().GetWorldPosition();
 
-	for (int i = 0; i < numBullets; i++) {
-		Vector3 direction{ 0,pos.y,0 };
-
-		velocityB = Subtract(direction, pos);
-		velocityB = Multiply(Normalize(velocityB), kBulletSpeed);
-
-		// 弾を生成し、初期化
-		auto newBullet = std::make_unique<EnemyBullet>();
-		newBullet->Initialize(pos, velocityB, modelBullet_);
-
-		// 弾の親設定
-		newBullet->SetParent(worldTransform_.parent_);
-
-		// 弾を登録する
-		bullets_.push_back(std::move(newBullet));
+	// 床から
+	if (num == Stage::StageNum::kFloor) {
+		stagePos.x = player_->GetWorldTransform().GetWorldPosition().x;
+		stagePos.y = stage_->GetWallFloor().y;
+		stagePos.z = player_->GetWorldTransform().GetWorldPosition().z;
 	}
+	
+	
+	
+
+	velocityB = Subtract(direction, stagePos);
+	velocityB = Multiply(Normalize(velocityB), kBulletSpeed);
+
+	// 弾を生成し、初期化
+	auto newBullet = std::make_unique<EnemyStageArm>();
+	newBullet->Initialize(stagePos, velocityB, modelBullet_);
+
+	// 弾の親設定
+	newBullet->SetParent(worldTransform_.parent_);
+
+	// 弾を登録する
+	stageArm.push_back(std::move(newBullet));
 }
 
 void Enemy::StageArmUpdate()
 {
+	for (const auto& bullet : stageArm) {
+		bullet->Update();
+	}
 
+	// デスフラグが立った弾を削除
+	stageArm.remove_if([](const std::unique_ptr<EnemyStageArm>& bullet) { return bullet->IsDead(); });
 }
 
 void Enemy::BehaviorRootInitialize()
@@ -329,7 +372,7 @@ void Enemy::BehaviorAttack2Update()
 	if (attack1_.isBulletShot == true) {
 		if (behaviorTimer_ <= 60) {
 			if (behaviorTimer_ % 15 == 0 || behaviorTimer_ == 0) {
-				//BulletInitialize(worldTransform_.GetWorldPosition());
+				StageArmInitialize(Stage::kFloor);
 			}
 		}
 		if (behaviorTimer_ >= 120) {
@@ -352,7 +395,7 @@ void Enemy::BehaviorAttack2Update()
 		}
 
 		behaviorTimer_++;
-		if (behaviorTimer_ >= 180) {
+		if (behaviorTimer_ >= 600) {
 			behaviorRequest_ = Behavior::kRoot;
 			behaviorTimer_ = 0;
 		}

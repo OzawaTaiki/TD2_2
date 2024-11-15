@@ -7,6 +7,8 @@
 #include "MatrixFunction.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <math.h>
+
 
 
 struct Sphere
@@ -226,3 +228,12 @@ void CalculateProjectionRange(const OBB& _obb, const Vector3& _axis, float& _min
 Vector3 CalculatePointBezier(const Bezier& _bezier, float _t);
 
 Vector3 CalculatePointCatmullRom(const Vector3& _cPoint0, const Vector3& _cPoint1, const Vector3& _cPoint2, const Vector3& _cPoint3, float _t);
+
+
+float DegreesToRadians(float degrees);
+
+Vector3 DegreesToRadians(Vector3 degrees);
+
+float RadiansToDegrees(float radians);
+
+Vector3 RadiansToDegrees(Vector3 degrees);

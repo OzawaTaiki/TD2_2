@@ -10,6 +10,8 @@
 #include "Input.h"
 #include "ObjectColor.h"
 #include "ConfigManager.h"
+#include "MyLib.h"
+
 //Application
 #include "Weapon.h"
 

@@ -19,12 +19,18 @@ GameScene::~GameScene()
 void GameScene::Initialize()
 {
 
+    ConfigManager::GetInstance()->LoadData();
+
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
     camera_->Initialize();
     camera_->translate_ = Vector3{ 0,18,-50 };
     camera_->rotate_ = Vector3{ 0.34f,0,0 };
+
+    // ステージ
+    stage_ = std::make_unique<Stage>();
+    stage_->Initialize();
 
 
     lineDrawer_ = LineDrawer::GetInstance();
@@ -50,10 +56,7 @@ void GameScene::Initialize()
     enemy_ = std::make_unique<Enemy>();
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
-
-    // ステージ
-    stage_ = std::make_unique<Stage>();
-    stage_->Initialize();
+    enemy_->SetStage(stage_.get());
     
 
 }
@@ -62,6 +65,13 @@ void GameScene::Update()
 {
 
     ImGui::Begin("Engine");
+
+   //if (ImGui::BeginTabBar("GameScene"))
+    //{
+        if (ImGui::Button("save")) {
+            ConfigManager::GetInstance()->SaveData();
+        }
+    //}
 
     input_->Update();
     //<-----------------------

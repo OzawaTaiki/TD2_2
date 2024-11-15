@@ -5,7 +5,7 @@
 void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity, Model* model)
 {
 	worldTransform_.Initialize();
-	worldTransform_.transform_ = Vector3{ 0,0,0 };
+	worldTransform_.transform_ = position;
 
 	model_ = model;
 

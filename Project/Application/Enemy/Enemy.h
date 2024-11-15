@@ -10,16 +10,19 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "ConfigManager.h"
 
 // application
 #include "EnemyBullet.h"
-
+#include "EnemyStageArm.h"
 
 // 
 #include <list>
 #include <optional>
 
 class Player;
+
+class Stage;
 
 class Enemy
 {
@@ -30,6 +33,8 @@ public:
 		kAttack, // 攻撃中
 		kAttack2,   // ジャンプ中
 	};
+
+	
 
 	/// <summary>
 	/// 初期化
@@ -53,7 +58,7 @@ public:
 	void BulletUpdate();
 
 	// 弾の初期化
-	void StageArmInitialize(Vector3 pos);
+	void StageArmInitialize(int num);
 
 	// 弾更新
 	void StageArmUpdate();
@@ -91,7 +96,7 @@ private:
 
 public:
 	void SetPlayer(Player* player) { player_ = player; };
-
+	void SetStage(Stage* stage) { stage_ = stage; }
 	const Behavior& GetBehavior() const { return behavior_; };
 
 	const Camera& GetCamera() { return attackCamera_; };
@@ -116,8 +121,11 @@ private:
 	const Camera* camera_ = nullptr;
 
 	Player* player_;
+	Stage* stage_;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+
+	std::list<std::unique_ptr<EnemyStageArm>> stageArm;
 
 
 
