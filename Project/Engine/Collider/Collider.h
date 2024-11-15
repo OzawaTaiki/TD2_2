@@ -10,6 +10,24 @@
 #include <functional>
 #include <variant>
 
+/*
+    衝突判定のクラス
+使い方
+Initilaizeで
+    Colliderのインスタンスを作成し、SetBoundingBoxで衝突判定の形状を設定する
+    SetShapeで形状のデータを設定する
+    SetAtrributeで自身の属性を設定する
+    SetMaskで当たらない属性を設定する
+    SetGetWorldMatrixFuncでワールド行列を取得する関数を設定する
+    SetOnCollisionFuncで衝突時の処理を行う関数を設定する
+    SetReferencePointで基準点を設定する(初期は{0,0,0})
+
+Updateで
+    CollisionManagerのRegisterColliderでColliderを登録する
+    ※必ず毎フレーム登録すること
+
+*/
+
 class Collider final
 {
 public:

@@ -124,13 +124,13 @@ Vector3& Vector3::operator/=(const Vector3& _v)
 
 }
 
-Vector3& Vector3::operator=(const float arr[3])
-{
-    x = arr[0];
-    y = arr[1];
-    z = arr[2];
-    return *this;
-}
+//Vector3& Vector3::operator=(const float arr[3])
+//{
+//    x = arr[0];
+//    y = arr[1];
+//    z = arr[2];
+//    return *this;
+//}
 
 Vector3 operator*(float _s, const Vector3& vec)
 {

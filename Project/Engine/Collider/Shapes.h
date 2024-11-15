@@ -9,6 +9,7 @@ struct Sphere
 {
     float radius;
     Vector3 center;
+    Vector3 referencePoint;
 };
 
 struct AABB

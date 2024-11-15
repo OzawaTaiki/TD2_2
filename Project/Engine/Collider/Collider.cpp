@@ -1,6 +1,7 @@
 #include "Collider.h"
 #include "CollisionManager.h"
 #include "LineDrawer.h"
+#include "MatrixFunction.h"
 
 void Collider::Draw()
 {
@@ -8,10 +9,12 @@ void Collider::Draw()
 
     auto lineDrawer = LineDrawer::GetInstance();
 
-    std::visit([worldMat, lineDrawer](auto&& arg) {
+    std::visit([&worldMat, lineDrawer](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, Sphere>)
         {
+            Sphere sphere = arg;
+            worldMat = MakeTranslateMatrix(sphere.referencePoint) * worldMat;
             lineDrawer->DrawSphere(worldMat);
         }
         else if constexpr (std::is_same_v<T, AABB>)
@@ -96,8 +99,7 @@ void Collider::SetMask(std::initializer_list<std::string> _atrribute)
 
 void Collider::SetReferencePoint(const Vector3& _referencePoint)
 {
-    if (boundingBox_ == BoundingBox::OBB_3D ||
-        boundingBox_ == BoundingBox::AABB_3D)
+    if (boundingBox_ != BoundingBox::NONE)
     {
         std::visit([_referencePoint](auto&& arg) {
             using T = std::decay_t<decltype(arg)>;
@@ -117,12 +119,20 @@ void Collider::SetReferencePoint(const Vector3& _referencePoint)
             }
             else if constexpr (std::is_same_v<T, Sphere>)
             {
-                assert(false && "SetReferencePoint is supported in OBB_3D or AABB_3D");
+                Sphere& sphere = arg;
+                sphere.referencePoint[0] = _referencePoint.x;
+                sphere.referencePoint[1] = _referencePoint.y;
+                sphere.referencePoint[2] = _referencePoint.z;
+            }
+            else
+            {
+                assert(false && "Not supported");
+
             }
                    }, shape_);
     }
     else
     {
-        assert(false && "SetReferencePoint is supported in OBB_3D or AABB_3D");
+        assert(false && "Not supported");
     }
 }

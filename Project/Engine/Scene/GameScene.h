@@ -38,7 +38,7 @@ private:
     uint32_t handle_;
 
     ObjectModel* model_;
-    AnimationModel* humanModel_;
+    ObjectModel* humanModel_;
     WorldTransform trans_;
     ObjectColor* color_;
 

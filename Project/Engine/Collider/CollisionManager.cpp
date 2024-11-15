@@ -46,14 +46,14 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
     case Collider::BoundingBox::Sphere_3D:
         {
             Sphere sphereA = _colliderA->GetShape<Sphere>();
-            sphereA.center = Transform({ 0,0,0 }, _colliderA->GetWorldMatrix());
+            sphereA.center = Transform(sphereA.referencePoint, _colliderA->GetWorldMatrix());
 
             switch (_colliderB->GetBoundingBox())
             {
             case Collider::BoundingBox::Sphere_3D:
                 {
                     Sphere sphereB = _colliderB->GetShape<Sphere>();
-                    sphereB.center = Transform({ 0,0,0 }, _colliderB->GetWorldMatrix());
+                    sphereB.center = Transform(sphereA.referencePoint, _colliderB->GetWorldMatrix());
 
                     if (IsCollision(sphereA, sphereB))
                     {

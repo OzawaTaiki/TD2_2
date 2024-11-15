@@ -4,6 +4,8 @@
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
 #include "../Collider/Collider.h"
+#include "../Collider/CollisionManager.h"
+
 #include <chrono>
 #include <imgui.h>
 
@@ -40,8 +42,8 @@ void GameScene::Initialize()
 
     model_ = new ObjectModel;
     model_->Initialize("ColliderTestModel.obj");
-    humanModel_ = new AnimationModel;
-    humanModel_->Initialize("human/walk.gltf");
+    humanModel_ = new ObjectModel;
+    humanModel_->Initialize("bunny.gltf");
 
 }
 
@@ -50,6 +52,7 @@ void GameScene::Update()
     //ImGui::ShowDemoWindow();
     ImGui::Begin("Engine");
     input_->Update();
+    CollisionManager::GetInstance()->ResetColliderList();
 
     if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
     {
@@ -74,6 +77,8 @@ void GameScene::Update()
         camera_->TransferData();
     }
 
+    CollisionManager::GetInstance()->CheckAllCollision();
+
     //<-----------------------
     ImGui::End();
 }
@@ -83,6 +88,7 @@ void GameScene::Draw()
     ModelManager::GetInstance()->PreDrawForObjectModel();
     //<------------------------
     model_->Draw(camera_.get(), { 1,1,1,1 });
+    humanModel_->Draw(camera_.get(), { 1,1,1,1 });
 
     //<------------------------
 

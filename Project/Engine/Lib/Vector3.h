@@ -59,7 +59,7 @@ struct Vector3
 
     inline operator float* () { return &x; }
 	inline operator const float* () const { return &x; }
-    Vector3& operator= (const float arr[3]);
+    //Vector3& operator= (const float arr[3]);
 	
 
 	friend Vector3 operator*(float _s, const Vector3& vec);

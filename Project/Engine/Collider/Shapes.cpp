@@ -32,8 +32,8 @@ void OBB::CalculateOrientations(const Matrix4x4& _worldMat)
 void OBB::CalculateMinMax(const Matrix4x4& _worldMat)
 {
     Vector3 scale = _worldMat.GetScale();
-    min = (localMin - referencePoint) * scale;
-    max = (localMax - referencePoint) * scale;
+    min = (localMin) - referencePoint;
+    max = (localMax) - referencePoint;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -49,22 +49,25 @@ void OBB::CalculateVertices(const Matrix4x4& _worldMat)
     Vector3 rotMin[3];
     Vector3 rotMax[3];
 
-    Vector3 drawCenter = Transform(referencePoint, _worldMat);
-
     for (int i = 0; i < 3; ++i)
     {
-        rotMin[i] = (min) * orientations[i];
-        rotMax[i] = (max) * orientations[i];
+        rotMin[i] = min * orientations[i];
+        rotMax[i] = max * orientations[i];
     }
 
-    vertices[0] = drawCenter + rotMax[0] + rotMax[1] + rotMax[2];
-    vertices[1] = drawCenter + rotMax[0] + rotMax[1] + rotMin[2];
-    vertices[2] = drawCenter + rotMax[0] + rotMin[1] + rotMax[2];
-    vertices[3] = drawCenter + rotMax[0] + rotMin[1] + rotMin[2];
-    vertices[4] = drawCenter + rotMin[0] + rotMax[1] + rotMax[2];
-    vertices[5] = drawCenter + rotMin[0] + rotMax[1] + rotMin[2];
-    vertices[6] = drawCenter + rotMin[0] + rotMin[1] + rotMax[2];
-    vertices[7] = drawCenter + rotMin[0] + rotMin[1] + rotMin[2];
+    vertices[0] = max;
+    vertices[1] = Vector3(max.x, max.y, min.z);
+    vertices[2] = Vector3(max.x, min.y, max.z);
+    vertices[3] = Vector3(max.x, min.y, min.z);
+    vertices[4] = Vector3(min.x, max.y, max.z);
+    vertices[5] = Vector3(min.x, max.y, min.z);
+    vertices[6] = Vector3(min.x, min.y, max.z);
+    vertices[7] = min;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        vertices[i] = Transform(vertices[i], _worldMat);
+    }
 
     min = vertices[0];
     max = vertices[0];
