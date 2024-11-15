@@ -3,6 +3,9 @@
 #include "Sprite.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "../Collider/Collider.h"
+#include "../Collider/CollisionManager.h"
+
 #include <chrono>
 #include <imgui.h>
 
@@ -18,7 +21,6 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -26,6 +28,9 @@ void GameScene::Initialize()
     camera_->translate_ = Vector3{ 0,18,-50 };
     camera_->rotate_ = Vector3{ 0.34f,0,0 };
 
+
+    debugCamera_ = std::make_unique<DebugCamera>();
+    debugCamera_->Initialize();
 
     lineDrawer_ = LineDrawer::GetInstance();
     lineDrawer_->SetCameraPtr(camera_.get());
@@ -62,12 +67,16 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-
     ImGui::Begin("Engine");
-
     input_->Update();
+    CollisionManager::GetInstance()->ResetColliderList();
+
+    if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
+    {
+        activeDebugCamera_ = !activeDebugCamera_;
+    }
+
     //<-----------------------
-    camera_->Update();
 
     // プレイヤー
     player_->Update();
@@ -82,11 +91,22 @@ void GameScene::Update()
     followCamera_->Update();
 
 
-    camera_->matView_ = followCamera_->GetCamera().matView_;
-    camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+   
 
-    //camera_->UpdateMatrix();
-    camera_->TransferData();
+  if (activeDebugCamera_)
+    {
+        debugCamera_->Update();
+        camera_->matView_ = debugCamera_->matView_;
+        camera_->TransferData();
+    }
+    else
+    {
+        camera_->matView_ = followCamera_->GetCamera().matView_;
+        camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
+        camera_->TransferData();
+    }
+    CollisionManager::GetInstance()->CheckAllCollision();
+  
     //<-----------------------
     ImGui::End();
 }

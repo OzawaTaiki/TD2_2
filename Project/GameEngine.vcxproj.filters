@@ -127,6 +127,9 @@
     <Filter Include="Engine\Object\ObjectModel\AnimationModel">
       <UniqueIdentifier>{b4741e9d-49fc-4c39-8df5-5c580d1de3e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Collider">
+      <UniqueIdentifier>{598980a1-baa6-4946-8bf2-b5b2f3550387}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Application">
       <UniqueIdentifier>{31839123-81d2-44c3-a4c3-b48f017325bf}</UniqueIdentifier>
     </Filter>
@@ -243,13 +246,7 @@
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Other\CollisionManager.cpp">
-      <Filter>Engine\Other</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Other\CatmulRomSpline.cpp">
-      <Filter>Engine\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Other\Collider.cpp">
       <Filter>Engine\Other</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Utility\ConfigManager.cpp">
@@ -290,6 +287,15 @@
     </ClCompile>
     <ClCompile Include="Engine\Scene\TitleScene.cpp">
       <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collider\Collider.cpp">
+      <Filter>Engine\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collider\CollisionManager.cpp">
+      <Filter>Engine\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collider\Shapes.cpp">
+      <Filter>Engine\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Application\FollowCamera.cpp">
       <Filter>Application</Filter>
@@ -465,13 +471,7 @@
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Other\CollisionManager.h">
-      <Filter>Engine\Other</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Other\CatmulRomSpline.h">
-      <Filter>Engine\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Other\Collider.h">
       <Filter>Engine\Other</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Utility\ConfigManager.h">
@@ -515,6 +515,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Scene\TitleScene.h">
       <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collider\Shapes.h">
+      <Filter>Engine\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collider\Collider.h">
+      <Filter>Engine\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collider\CollisionManager.h">
+      <Filter>Engine\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Application\FollowCamera.h">
       <Filter>Application</Filter>
