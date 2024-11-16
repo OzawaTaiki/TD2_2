@@ -40,16 +40,22 @@ void Camera::Draw()
 {
 }
 
+
 void Camera::TransferData()
 {
-    matWorld_ = MakeAffineMatrix(scale_, rotate_, translate_);
-    matView_ = Inverse(matWorld_);
-    matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
     matViewProjection_ = matView_ * matProjection_;
 
     constMap_->pos = translate_;
     constMap_->view = matView_;
     constMap_->proj = matProjection_;
+}
+
+void Camera::UpdateMatrix()
+{
+    matWorld_ = MakeAffineMatrix(scale_, rotate_, translate_);
+    matView_ = Inverse(matWorld_);
+    matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
+    matViewProjection_ = matView_ * matProjection_;
 }
 
 void Camera::QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index) const

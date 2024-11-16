@@ -19,6 +19,8 @@ struct Matrix4x4
 
 	Vector3 GetScale() const;
 
+	Vector3 GetTranslate() const;
+
 
 	Matrix4x4 operator*(const Matrix4x4& _mat);
 

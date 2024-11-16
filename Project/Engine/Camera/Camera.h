@@ -26,6 +26,8 @@ public:
     /// </summary>
     void TransferData();
 
+    void UpdateMatrix();
+
     void QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index)const;
 
 

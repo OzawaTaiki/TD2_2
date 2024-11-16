@@ -91,8 +91,6 @@ void GameScene::Update()
     followCamera_->Update();
 
 
-   
-
   if (activeDebugCamera_)
     {
         debugCamera_->Update();
@@ -105,8 +103,9 @@ void GameScene::Update()
         camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
         camera_->TransferData();
     }
+
+
     CollisionManager::GetInstance()->CheckAllCollision();
-  
     //<-----------------------
     ImGui::End();
 }

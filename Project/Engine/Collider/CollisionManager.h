@@ -37,18 +37,15 @@ private:
 
     bool IsCollision(const Sphere& _sphere, const OBB& _obb);
 
-    bool IsCollition(const AABB& _aabb, const Sphere& _sphere);
-
     bool IsCollision(const AABB& _aabb1, const AABB& _aabb2);
 
     bool IsCollision(const AABB& _aabb, const OBB& _obb);
 
-    bool IsCollision(const OBB& _obb, const Sphere& _sphere);
-
-    bool IsCollision(const OBB& _obb, const AABB& _aabb);
-
     bool IsCollision(const OBB& _obb1, const OBB& _obb2);
 
+    void CalculateProjectionRange(const OBB& _obb, const Vector3& _axis, float& _min, float& _max);
+
+    OBB AABBConvertToOBB(const AABB& _aabb);
 
     // コライダーのリスト
     std::list<Collider*> colliders_;

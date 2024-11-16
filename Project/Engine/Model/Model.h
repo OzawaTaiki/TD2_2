@@ -45,8 +45,8 @@ public:
     Mesh* GetMeshPtr() { return mesh_[0].get(); }
     Material* GetMaterialPtr() { return material_[0].get(); }
 
-    Vector3 GetMin(size_t _index)const { return mesh_[_index]->GetMin(); }
-    Vector3 GetMax(size_t _index)const { return mesh_[_index]->GetMax(); }
+    Vector3 GetMin(size_t _index = 0)const { return mesh_[_index]->GetMin(); }
+    Vector3 GetMax(size_t _index = 0)const { return mesh_[_index]->GetMax(); }
 
     Matrix4x4 GetAnimationMatrix()const;
     Matrix4x4 GetNodeMatrix()const { return node_.GetLocalMatrix(); }
