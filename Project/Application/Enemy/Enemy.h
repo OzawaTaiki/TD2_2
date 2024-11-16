@@ -29,12 +29,16 @@ class Enemy
 public:
 	// 振るまい
 	enum class Behavior {
-		kRoot,   // 通常状態
-		kAttack, // 攻撃中
-		kAttack2,   // ジャンプ中
+		kRoot,		// 通常状態
+		kAttack,	// 攻撃1中
+		kAttack2,   // 攻撃2中
+		kAttack3,   // 攻撃3中
+		kAttack4,   // 攻撃4中
+		kAttack5,   // 攻撃5中
+		kAttack6,   // 攻撃6中
 	};
 
-	
+
 
 	/// <summary>
 	/// 初期化
@@ -88,6 +92,12 @@ private:
 	//攻撃行動更新
 	void BehaviorAttack2Update();
 
+	//攻撃行動初期化
+	void BehaviorAttack3Initialize();
+
+	//攻撃行動更新
+	void BehaviorAttack3Update();
+
 
 
 
@@ -101,12 +111,14 @@ public:
 
 	const Camera& GetCamera() { return attackCamera_; };
 	const Camera& GetCamera2() { return attackCamera2_; };
+	const Camera& GetCamera3() { return attackCamera3_; };
 
 private:
 	// モデル
 	Model* model_ = nullptr;
 	// モデル
 	Model* modelBullet_ = nullptr;
+	Model* modelStageArm_ = nullptr;
 
 
 
@@ -132,6 +144,8 @@ private:
 
 	Camera attackCamera_;
 	Camera attackCamera2_;
+	Camera attackCamera3_;
+
 private:
 	// 速度
 	Vector3 velocity_ = {};
@@ -159,7 +173,7 @@ private:
 	int behaviorTimer_;
 
 
-	// 攻撃3
+	// 攻撃1
 	struct Attack1 {
 		//移動位置
 		Vector3 attackPos = { 0,10,0 };

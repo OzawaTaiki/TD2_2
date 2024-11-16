@@ -8,14 +8,8 @@ void FollowCamera::Initialize()
 	camera_.Initialize();
 	camera_.rotate_ = { 0.34f,0,0 };
 
-
-	ConfigManager::GetInstance()->LoadData();
-
 	ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
 	ConfigManager::GetInstance()->SetVariable("followCamera", "rotate", &camera_.rotate_);
-
-
-
 }
 
 void FollowCamera::Update()

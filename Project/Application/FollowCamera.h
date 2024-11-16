@@ -23,7 +23,8 @@ public:
 
 	const Camera& GetCamera() { return camera_; };
 	
-	
+	void SetRotateY(const float& y) { camera_.rotate_.y = y; };
+
 private:
 
 	// ビュープロジェクション
