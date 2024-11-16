@@ -44,5 +44,5 @@ void FollowCamera::Update()
 		camera_.translate_ = Add(target_->transform_, offset);
 	}
 
-	camera_.TransferData();
+	camera_.UpdateMatrix();
 }

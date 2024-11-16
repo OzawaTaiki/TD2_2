@@ -19,28 +19,37 @@ struct AABB
     Vector3 referencePoint;
     Vector3 center;
     std::array <Vector3, 8> vertices;
+    Matrix4x4 worldMat;
 
     AABB() = default;
     AABB(const float* _min, const float* _max) : referencePoint{ 0.0f }, center{ 0.0f }, vertices{ 0.0f }
     {
+        localMin = _min;
+        localMax = _max;
+
+        min = localMin;
+        max = localMax;
+
         for (int i = 0; i < 3; ++i)
         {
-            if (min[0] < max[0])
+            if (min[0] > max[0])
             {
-                min[i] = _min[i];
-                max[i] = _max[i];
-            }
-            else
-            {
-                min[i] = _max[i];
-                max[i] = _min[i];
+                std::swap(min[i], max[i]);
             }
         }
 
 
     };
-    void CalculateMinMax();
+    void Calculate(const Matrix4x4& _worldMat);
 
+private:
+    // center基準のmin
+    Vector3 localMin;
+    // center基準のmax
+    Vector3 localMax;
+
+    void CalculateMinMax();
+    void CalculateVertices();
 };
 
 struct OBB
@@ -55,6 +64,8 @@ struct OBB
     std::array <Vector3, 3> orientations;
     Vector3 center;
     Vector3 size;
+
+    Matrix4x4 worldMat;
 
     std::array <Vector3, 8>vertices;
 
@@ -83,9 +94,9 @@ private:
     // center基準のmax
     Vector3 localMax;
 
-    void CalculateOrientations(const Matrix4x4& _worldMat);
+    void CalculateOrientations();
 
-    void CalculateMinMax(const Matrix4x4& _worldMat);
+    void CalculateMinMax();
 
-    void CalculateVertices(const Matrix4x4& _worldMat);
+    void CalculateVertices();
 };

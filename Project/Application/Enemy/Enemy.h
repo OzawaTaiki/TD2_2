@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "../Collider/Collider.h"
 
 // application
 #include "EnemyBullet.h"
@@ -44,6 +45,9 @@ public:
 
 	// 弾更新
 	void BulletUpdate();
+
+    // 衝突処理
+    void OnCollision();
 
 private:
 	//通常行動初期化
@@ -92,6 +96,8 @@ private:
 	Player* player_;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+
+    std::unique_ptr<Collider> collider_ = nullptr;
 private:
 	// 速度
 	Vector3 velocity_ = {};

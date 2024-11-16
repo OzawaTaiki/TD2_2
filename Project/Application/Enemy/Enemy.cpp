@@ -1,5 +1,6 @@
 #include <MatrixFunction.h>
 #include "VectorFunction.h"
+#include "../Collider/CollisionManager.h"
 
 #include "Enemy.h"
 #include "../Player.h"
@@ -17,7 +18,18 @@ void Enemy::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-	modelBullet_ = Model::CreateFromObj("Arrow/Arrow.obj");;
+	modelBullet_ = Model::CreateFromObj("Arrow/Arrow.obj");
+
+    collider_ = std::make_unique<Collider>();
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+    collider_->SetShape(model_->GetMin(), model_->GetMax());
+    collider_->SetAtrribute("enemy");
+    collider_->SetMask("enemy");
+    collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this]() { OnCollision(); });
+
+
+
 }
 
 void Enemy::Update()
@@ -60,6 +72,7 @@ void Enemy::Update()
 		isAlive = false;
 	}
 
+    CollisionManager::GetInstance()->RegisterCollider(collider_.get());
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
@@ -82,6 +95,7 @@ void Enemy::Draw(const Camera& camera)
 	case Behavior::kAttack:
 		break;
 	}
+	collider_->Draw();
 }
 
 void Enemy::BulletInitialize(Vector3 pos)
@@ -96,7 +110,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = behaviorTimer_ / 3000;
+		float rotate = static_cast<float> (behaviorTimer_) / 3000.0f;
 
 		Vector3 direction{ cos(radian + behaviorTimer_), pos.y, sin(radian + behaviorTimer_) };
 
@@ -124,6 +138,10 @@ void Enemy::BulletUpdate()
 
 	// デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
+}
+
+void Enemy::OnCollision()
+{
 }
 
 void Enemy::BehaviorRootInitialize()

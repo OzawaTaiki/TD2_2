@@ -12,6 +12,17 @@ Vector3 Matrix4x4::GetScale() const
     return scale;
 }
 
+Vector3 Matrix4x4::GetTranslate() const
+{
+    Vector3 translate;
+
+    translate.x = m[3][0];
+    translate.y = m[3][1];
+    translate.z = m[3][2];
+
+    return translate;
+}
+
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4& _mat)
 {
     Matrix4x4 result;
