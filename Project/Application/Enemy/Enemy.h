@@ -15,6 +15,7 @@
 // application
 #include "EnemyBullet.h"
 #include "EnemyStageArm.h"
+#include "EnemyThunder.h"
 
 // 
 #include <list>
@@ -30,6 +31,7 @@ public:
 	// 振るまい
 	enum class Behavior {
 		kRoot,		// 通常状態
+		kFear,      // 怯み状態
 		kAttack,	// 攻撃1中
 		kAttack2,   // 攻撃2中
 		kAttack3,   // 攻撃3中
@@ -55,6 +57,9 @@ public:
 	/// </summary>
 	void Draw(const Camera& camera);
 
+
+	void Move(float speed);
+
 	// 弾の初期化
 	void BulletInitialize(Vector3 pos);
 
@@ -66,6 +71,12 @@ public:
 
 	// 弾更新
 	void StageArmUpdate();
+
+	// 雷の初期化
+	void ThunderInitialize(Vector3 pos);
+
+	// 弾更新
+	void ThunderUpdate();
 
 private:
 	//通常行動初期化
@@ -79,6 +90,13 @@ private:
 
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
+
+	//怯み行動初期化
+	void BehaviorFearInitialize();
+
+	//怯み行動更新
+	void BehaviorFearUpdate();
+
 
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
@@ -98,6 +116,12 @@ private:
 	//攻撃行動更新
 	void BehaviorAttack3Update();
 
+	//攻撃行動初期化
+	void BehaviorAttack4Initialize();
+
+	//攻撃行動更新
+	void BehaviorAttack4Update();
+
 
 
 
@@ -116,9 +140,12 @@ public:
 private:
 	// モデル
 	Model* model_ = nullptr;
+	Model* modelLeftArm_ = nullptr;
+	Model* modelRightArm_ = nullptr;
 	// モデル
 	Model* modelBullet_ = nullptr;
 	Model* modelStageArm_ = nullptr;
+	Model* modelThunder_ = nullptr;
 
 
 
@@ -127,6 +154,9 @@ private:
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+	WorldTransform worldTransformBody_;
+	WorldTransform worldTransformLeft_;
+	WorldTransform worldTransformRight_;
 	//
 	Vector3 oldPos_;
 	//
@@ -138,6 +168,8 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	std::list<std::unique_ptr<EnemyStageArm>> stageArm;
+
+	std::list<std::unique_ptr<EnemyThunder>> thunder_;
 
 
 
@@ -190,7 +222,7 @@ private:
 	struct Attack2
 	{
 		// 移動位置
-		Vector3 attackPos = { 0,10,0 };
+		Vector3 attackPos = { 0,50,0 };
 		// 上下移動切り替え
 		int clock = 1;
 		//　雷をうつ
@@ -212,6 +244,19 @@ private:
 		float transitionFactor = 0;
 	};
 	Attack3 attack3_;
+
+	// 攻撃4
+	struct Attack4 {
+		//移動位置
+		Vector3 attackPos = { 0,10,0 };
+		// 上下移動切り替え
+		int clock1 = 1;
+		//　弾をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+	};
+	Attack4 attack4_;
 
 
 

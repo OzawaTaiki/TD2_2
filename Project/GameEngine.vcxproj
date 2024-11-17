@@ -120,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Application\Enemy\EnemyStageArm.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyThunder.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\Stage\Stage.cpp" />
@@ -245,6 +246,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyBullet.h" />
     <ClInclude Include="Application\Enemy\EnemyStageArm.h" />
+    <ClInclude Include="Application\Enemy\EnemyThunder.h" />
     <ClInclude Include="Application\FollowCamera.h" />
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\Stage\Stage.h" />

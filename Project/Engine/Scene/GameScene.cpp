@@ -90,14 +90,7 @@ void GameScene::Update()
     
 
 
-    if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
-
-        // 追従カメラの更新
-        followCamera_->Update();
-        camera_->matView_ = followCamera_->GetCamera().matView_;
-        camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
-    }
-    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
+    if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
         followCamera_->Update();
         followCamera_->SetRotateY(0);
         camera_->matView_ = enemy_->GetCamera().matView_;
@@ -114,6 +107,13 @@ void GameScene::Update()
         followCamera_->SetRotateY(0);
         camera_->matView_ = enemy_->GetCamera3().matView_;
         camera_->matProjection_ = enemy_->GetCamera3().matProjection_;
+    }
+    else {
+
+        // 追従カメラの更新
+        followCamera_->Update();
+        camera_->matView_ = followCamera_->GetCamera().matView_;
+        camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
     }
 
    
