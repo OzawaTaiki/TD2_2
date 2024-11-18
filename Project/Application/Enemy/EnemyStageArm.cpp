@@ -1,8 +1,9 @@
 
 #include "EnemyStageArm.h"
 #include "VectorFunction.h"
+#include "Enemy.h"
 
-void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity, Model* model)
+void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity, Model* model, EnemyStageArm::AttackArm* attack)
 {
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = position;
@@ -10,6 +11,7 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 
 	model_ = model;
 
+	attack_ = attack;
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
 	worldTransform2_.scale_ = {5, 5, 5};
@@ -32,22 +34,41 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 	worldTransform_.rotate_.x = std::atan2(velocity_.y, -length);
 
 	worldTransform2_.rotate_ = worldTransform_.rotate_;
+
+
 }
 
 void EnemyStageArm::Update()
 {
 	// 時間経過でデス
+	// 時間経過でデス
 	if (--deathTimer_ <= 0) {
 		isDead_ = true;
 	}
 
-	// 座標を移動させる
-	if (deathTimer_ <= 100) {
-		worldTransform_.transform_ = worldTransform_.transform_ - velocity_;
+	attackPreparationTime++;
+	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
+		attaskMoveTime++;
+		// 移動時間まで前に出る
+		if (attaskMoveTime < attack_->MaxAttaskMoveTime) {
+			worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
+			
+		}// 時間が過ぎたら
+		else {
+			// 引っ込むまでの時間＋＋
+			armRetractTime++;
+		}
+
+		// 引っ込むまでの時間が過ぎたら、引っ込ませる
+		if (armRetractTime >= attack_->MaxArmRetractTime) {
+			worldTransform_.transform_ = worldTransform_.transform_ - velocity_;
+		}
+
+
 	}
-	else if (deathTimer_ <= 200) {
-		worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
-	}
+	
+	
+	
 
 	worldTransform_.UpdateData();
 	worldTransform2_.UpdateData();
@@ -55,7 +76,7 @@ void EnemyStageArm::Update()
 
 void EnemyStageArm::Draw(const Camera& camera)
 {
-	if (deathTimer_ >= 200) {
+	if (attackPreparationTime < attack_->MaxAttackPreparationTime) {
 		model2_->Draw(worldTransform2_, &camera, &color2_);
 	}
 	else {

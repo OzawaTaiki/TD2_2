@@ -71,6 +71,8 @@ void Enemy::Initialize()
 	attackCamera3_.rotate_ = { 0.55f,0,0 };
 
 
+	
+
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "rotate", &attackCamera_.rotate_);
@@ -78,6 +80,20 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attackCamera2", "rotate", &attackCamera2_.rotate_);
 	ConfigManager::GetInstance()->SetVariable("attackCamera3", "translate", &attackCamera3_.translate_);
 	ConfigManager::GetInstance()->SetVariable("attackCamera3", "rotate", &attackCamera3_.rotate_);
+
+
+	// 攻撃1
+	ConfigManager::GetInstance()->SetVariable("attack1", "attackPos", &attack1_.attackPos);
+	ConfigManager::GetInstance()->SetVariable("attack1", "attackPower", &attack1_.attackPower);
+	ConfigManager::GetInstance()->SetVariable("attack1", "andingTime", &attack1_.MaxLandingTime);
+	float armmax = float(attack1_.MaxArmNum);
+	ConfigManager::GetInstance()->SetVariable("attack1", "armNum", &armmax);
+	ConfigManager::GetInstance()->SetVariable("attack1", "moveTime", &attack1_.MaxAttaskMoveTime);
+	ConfigManager::GetInstance()->SetVariable("attack1", "preparationTime", &attack1_.MaxAttackPreparationTime);
+	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
+	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
+	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
+
 
 }
 
@@ -134,12 +150,6 @@ void Enemy::Update()
 	//
 	BulletUpdate();
 
-	//
-	StageArmUpdate();
-
-	//
-	ThunderUpdate();
-
 	// HP
 	if (hp <= 0) {
 		isAlive = false;
@@ -176,6 +186,23 @@ void Enemy::Update()
 		ImGui::EndTabBar();
 	}
 
+	if (ImGui::BeginTabBar("Boss"))
+	{
+		if (ImGui::BeginTabItem("attack1"))
+		{
+			ImGui::DragFloat3("pos", &attack1_.attackPos.x, 0.01f);
+			ImGui::DragFloat("armSpeed", &attack1_.armSpeed, 0.01f);
+			ImGui::DragInt("armNum", &attack1_.MaxArmNum, 0.01f);
+			ImGui::DragFloat("attackPower", &attack1_.attackPower, 0.01f);
+			ImGui::DragFloat("poreparationTime", &attack1_.MaxAttackPreparationTime, 0.01f);
+			ImGui::DragFloat("moveTime", &attack1_.MaxAttaskMoveTime, 0.01f);
+			ImGui::DragFloat("armRetractTime", &attack1_.MaxArmRetractTime, 0.01f);
+			ImGui::DragFloat("ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay, 0.01f);
+			ImGui::DragFloat("LandingTime", &attack1_.MaxLandingTime, 0.01f);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 
 
 
@@ -229,7 +256,7 @@ void Enemy::Draw(const Camera& camera)
 
 void Enemy::StageArmInitialize(int num)
 {
-	const float kBulletSpeed = 0.5f;
+	const float kBulletSpeed = attack1_.armSpeed;
 	Vector3 velocityB{};
 
 	// 
@@ -267,7 +294,7 @@ void Enemy::StageArmInitialize(int num)
 
 	// 弾を生成し、初期化
 	auto newBullet = std::make_unique<EnemyStageArm>();
-	newBullet->Initialize(stagePos, velocityB, modelStageArm_);
+	newBullet->Initialize(stagePos, velocityB, modelStageArm_,&attack1_);
 
 	// 弾の親設定
 	newBullet->SetParent(worldTransform_.parent_);
@@ -276,28 +303,29 @@ void Enemy::StageArmInitialize(int num)
 	stageArm.push_back(std::move(newBullet));
 }
 
-void Enemy::StageArmUpdate()
-{
-	for (const auto& bullet : stageArm) {
-		bullet->Update();
-	}
-
-	// デスフラグが立った弾を削除
-	stageArm.remove_if([](const std::unique_ptr<EnemyStageArm>& bullet) { return bullet->IsDead(); });
-}
-
 void Enemy::BehaviorAttackInitialize()
 {
 	attack1_.isBulletShot = false;
 	attack1_.clock1 = 1;
 	attack1_.transitionFactor = 0;
+
+	attack1_.armNum = 0;
+	attack1_.landingTime = 0;
+
+	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
+
+	attack1_.armNum = 0;
 }
 
 void Enemy::BehaviorAttackUpdate()
 {
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
+
+
+
 	Vector3 targetPos;
+	// 上に上がる処理
 	if (attack1_.isBulletShot == false) {
 		if (attack1_.clock1 == 1) {
 			// 補間の進行度を更新
@@ -319,46 +347,54 @@ void Enemy::BehaviorAttackUpdate()
 		}
 	}
 
-
+	// 上がった時の処理
 	if (attack1_.isBulletShot == true) {
-		if (behaviorTimer_ <= 60) {
-			if (behaviorTimer_ == 15) {
-				StageArmInitialize(Stage::kFloor);
-			}
-			else if (behaviorTimer_ == 30) {
-				StageArmInitialize(Stage::kBack);
-			}
-			else if (behaviorTimer_ == 45) {
-				StageArmInitialize(Stage::kLeft);
-			}
-			else if (behaviorTimer_ == 60) {
-				StageArmInitialize(Stage::kRight);
-			}
+		if(++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
+		if (attack1_.armNum < attack1_.MaxArmNum) {
+
+			
+			int newLocation;
+			do { 
+				newLocation = rand() % 4 + 1; 
+			} while (newLocation == attack1_.oldAttackSpawnLocation); 
+			
+			StageArmInitialize(attack1_.attackSpawnLocation);
+
+			attack1_.attackSpawnLocation = newLocation; 
+			attack1_.oldAttackSpawnLocation = newLocation;
+			attack1_.AttackToNextPredictionDelay = 0;
+			attack1_.armNum++;
 		}
 
-		if (behaviorTimer_ >= 120) {
-			if (attack1_.clock1 == -1) {
-				// 補間の進行度を更新
-				if (attack1_.transitionFactor > 0.0f) {
-					attack1_.transitionFactor -= transitionSpeed * 3;
-				}
-				else {
-					attack1_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
-					attack1_.clock1 *= -1;
-				}
+		
 
-				targetPos.y = oldPos_.y;
-				targetPos.x = oldPos_.x;
-				targetPos.z = oldPos_.z;
+		if (attack1_.armNum >= attack1_.MaxArmNum) {
+			if (++attack1_.landingTime >= attack1_.MaxLandingTime) {
+				if (attack1_.clock1 == -1) {
+					// 補間の進行度を更新
+					if (attack1_.transitionFactor > 0.0f) {
+						attack1_.transitionFactor -= transitionSpeed * 3;
+					}
+					else {
+						attack1_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
+						attack1_.clock1 *= -1;
+					}
 
-				worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack1_.transitionFactor);
+					targetPos.y = oldPos_.y;
+					targetPos.x = oldPos_.x;
+					targetPos.z = oldPos_.z;
+
+					worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack1_.transitionFactor);
+
+
+					
+			
+				}
+				if (++behaviorTimer_ >= 120) {
+					behaviorRequest_ = Behavior::kRoot;
+					behaviorTimer_ = 0;
+				}
 			}
-		}
-
-		behaviorTimer_++;
-		if (behaviorTimer_ >= 600) {
-			behaviorRequest_ = Behavior::kRoot;
-			behaviorTimer_ = 0;
 		}
 	}
 }
@@ -400,16 +436,6 @@ void Enemy::ThunderInitialize(Vector3 pos)
 			thunder_.push_back(std::move(newBullet));
 		}
 	}
-}
-
-void Enemy::ThunderUpdate()
-{
-	for (const auto& bullet : thunder_) {
-		bullet->Update();
-	}
-
-	// デスフラグが立った弾を削除
-	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
 void Enemy::BehaviorAttack2Initialize()
@@ -514,12 +540,25 @@ void Enemy::BulletInitialize(Vector3 pos)
 
 void Enemy::BulletUpdate()
 {
-	for (const auto& bullet : bullets_) {
+	for (const auto& bullet : stageArm) {
 		bullet->Update();
 	}
 
 	// デスフラグが立った弾を削除
+	stageArm.remove_if([](const std::unique_ptr<EnemyStageArm>& bullet) { return bullet->IsDead(); });
+
+	for (const auto& bullet : bullets_) {
+		bullet->Update();
+	}
+	// デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
+
+
+	for (const auto& bullet : thunder_) {
+		bullet->Update();
+	}
+	// デスフラグが立った弾を削除
+	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
 void Enemy::BehaviorAttack3Initialize()
@@ -638,7 +677,7 @@ void Enemy::BehaviorRootInitialize()
 
 void Enemy::BehaviorRootUpdate()
 {
-	Move(0.1f);
+	//Move(0.1f);
 
 
 	// 浮遊ギミック

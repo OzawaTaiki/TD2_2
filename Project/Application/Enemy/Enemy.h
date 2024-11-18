@@ -69,14 +69,8 @@ public:
 	// 弾の初期化
 	void StageArmInitialize(int num);
 
-	// 弾更新
-	void StageArmUpdate();
-
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
-
-	// 弾更新
-	void ThunderUpdate();
 
 private:
 	//通常行動初期化
@@ -205,18 +199,9 @@ private:
 	int behaviorTimer_;
 
 
-	// 攻撃1
-	struct Attack1 {
-		//移動位置
-		Vector3 attackPos = { 0,10,0 };
-		// 上下移動切り替え
-		int clock1 = 1;
-		//　弾をうつ
-		bool isBulletShot = 0;
-		// t補間用
-		float transitionFactor = 0;
-	};
-	Attack1 attack1_;
+	EnemyStageArm::AttackArm attack1_;
+	
+
 
 	// 攻撃2
 	struct Attack2

@@ -16,7 +16,7 @@ class Stage
 public:
 
 	enum StageNum {
-		kFlont,
+		kFlont = 0,
 		kBack,
 		kRight,
 		kLeft,
