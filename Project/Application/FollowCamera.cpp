@@ -21,8 +21,6 @@ void FollowCamera::Update()
 			ImGui::DragFloat3("offset", &offset_.x, 0.01f);
 			ImGui::DragFloat3("rotate", &camera_.rotate_.x, 0.01f);
 			
-
-
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

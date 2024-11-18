@@ -11,10 +11,44 @@
 class EnemyThunder
 {
 public:
+	// 攻撃2
+	struct AttackThunder
+	{
+		// 移動位置
+		Vector3 attackPos = { 0,50,0 };
+		// 上下移動切り替え
+		int clock = 1;
+		//　雷をうつ
+		bool isBulletShot = 0;
+		// t補間用
+		float transitionFactor = 0;
+		// 着地時間
+		float landingTime;
+		// 最大
+		float MaxLandingTime = 100.0f;
+
+
+		////
+		// 予測が出てから攻撃するまでの時間(最大)
+		float MaxAttackPreparationTime = 120.0f;
+		// 雷が出る時間(最大)
+		float MaxThunderStrikeTime = 30.0f;
+		// 細→太が始まる時間
+		float MaxThicknessStartTime = 10.0f;
+		// 細→太くなるまでの時間
+		float MaxExpandTime = 15.0f;
+		// 最小サイズ
+		float minSize = 1.0f;
+		// 最大サイズ
+		float maxSize = 5.0f;
+		//攻撃力
+		float attackPower = 1;
+	};
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const Vector3& position, const Vector3& Velocity, Model* model);
+	void Initialize(const Vector3& position, const Vector3& Velocity, Model* model,EnemyThunder::AttackThunder *attack);
 
 	/// <summary>
 	/// 更新
@@ -30,6 +64,9 @@ public:
 
 	void SetParent(const WorldTransform* parent);
 private:
+	float MinMaxSize(float &maxTime, float &time, float &size);
+private:
+
 	// モデル
 	Model* model_ = nullptr;
 
@@ -55,5 +92,16 @@ private:
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	AttackThunder* attack_;
+
+	// 予測が出てから攻撃するまでの時間
+	float attackPreparationTime_ = 0.0f;
+	// 細→太くなるまでの時間
+	float expandTime_ = 0;
+	//
+	float thicknessStartTime = 0;
+	// 雷が出る時間
+	float thunderStrikeTime = 0;
 };
 

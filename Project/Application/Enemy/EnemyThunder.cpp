@@ -1,13 +1,29 @@
 #include "EnemyThunder.h"
 #include "VectorFunction.h"
 
-void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, Model* model)
+
+float EnemyThunder::MinMaxSize(float& maxTime, float& time, float& size) {
+	if (time <= 0) {
+		return attack_->minSize;
+	}
+	else if (time >= maxTime) {
+		return attack_->maxSize;
+	}
+	else { // 線形補間を用いてサイズを計算 
+		float normalizedTime = time / maxTime;
+		return attack_->minSize + (attack_->maxSize - attack_->minSize) * normalizedTime;
+	}
+};
+
+void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, Model* model, EnemyThunder::AttackThunder* attack)
 {
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = position;
 	worldTransform_.scale_ = { 5,5,5 };
 
 	model_ = model;
+
+	attack_ = attack;
 
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
@@ -33,7 +49,7 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 	worldTransform2_.rotate_ = worldTransform_.rotate_;
 
-	
+
 }
 
 void EnemyThunder::Update()
@@ -43,16 +59,21 @@ void EnemyThunder::Update()
 		isDead_ = true;
 	}
 
-	if (deathTimer_ <= 150) {
-		if (worldTransform2_.scale_.x <= 5.0f) {
-			worldTransform2_.scale_.x += 0.5f;
-			//worldTransform2_.scale_.y += 0.05f;
-			worldTransform2_.scale_.z += 0.5f;
+	attackPreparationTime_++;
+	if (attackPreparationTime_ > attack_->MaxAttackPreparationTime) {
+		if (++thicknessStartTime > attack_->MaxThicknessStartTime) {
+			if (++thunderStrikeTime > attack_->MaxThunderStrikeTime) {
+				expandTime_++;
+				worldTransform2_.scale_.x = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.x);
+				worldTransform2_.scale_.z = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.z);
+			}
 		}
 	}
 
+
+
 	worldTransform_.transform_ = worldTransform_.transform_;
-	
+
 
 	worldTransform_.UpdateData();
 	worldTransform2_.UpdateData();
@@ -60,12 +81,10 @@ void EnemyThunder::Update()
 
 void EnemyThunder::Draw(const Camera& camera)
 {
-	//if (deathTimer_ >= 200) {
+	if (thicknessStartTime > attack_->MaxThicknessStartTime) {
 		model2_->Draw(worldTransform2_, &camera, &color2_);
-	//}
-	//else {
-		model_->Draw(worldTransform_, &camera, &color_);
-	//}
+	}
+	model_->Draw(worldTransform_, &camera, &color_);
 }
 
 void EnemyThunder::SetParent(const WorldTransform* parent)

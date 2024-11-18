@@ -58,7 +58,7 @@ public:
 	void Draw(const Camera& camera);
 
 
-	void Move(float speed);
+	void Move(float speed, bool flag);
 
 	// 弾の初期化
 	void BulletInitialize(Vector3 pos);
@@ -198,50 +198,44 @@ private:
 	// 行動タイマー
 	int behaviorTimer_;
 
-
+	// 手の攻撃
 	EnemyStageArm::AttackArm attack1_;
 	
+	// 規則正しい雷
+	EnemyThunder::AttackThunder attack2_;
 
+	// 弾
+	EnemyBullet::Bullet  attack3_;
 
-	// 攻撃2
-	struct Attack2
-	{
-		// 移動位置
-		Vector3 attackPos = { 0,50,0 };
-		// 上下移動切り替え
-		int clock = 1;
-		//　雷をうつ
-		bool isBulletShot = 0;
-		// t補間用
-		float transitionFactor = 0;
-	};
-	Attack2 attack2_;
-
-	// 攻撃3
-	struct Attack3 {
-		//移動位置
-		Vector3 attackPos = { 0,10,0 };
-		// 上下移動切り替え
-		int clock1 = 1;
-		//　弾をうつ
-		bool isBulletShot = 0;
-		// t補間用
-		float transitionFactor = 0;
-	};
-	Attack3 attack3_;
 
 	// 攻撃4
-	struct Attack4 {
-		//移動位置
-		Vector3 attackPos = { 0,10,0 };
-		// 上下移動切り替え
-		int clock1 = 1;
-		//　弾をうつ
-		bool isBulletShot = 0;
+	struct SpinAttack {
 		// t補間用
 		float transitionFactor = 0;
+		//腕が生えてから回転開始までの時間）
+		float armGrowthToSpinDelay = 0;
+		float MaxArmGrowthToSpinDelay = 30.0f;
+		// 追ってくる速度
+		float speed = 0.3f;
+
+		float rotateT = 0;
+		// 回転速度
+		float rotateSpeed = 0.1f;
+		// Max回転速度
+		float MaxRotateSpeed = 1.0f;
+		// Mim回転速度
+		float MinxRotateSpeed = 0.01f;
+		// ぐるぐるし続ける時間
+		float spinTime = 0;
+		float MaxSpinTime = 120.0f;
+		// 動きが止まるまでの時間
+		float stoppingTime = 0;
+		float MaxStoppingTime = 20;
+
+		// 動きが止まってから回復する（浮く）までの時間
+		float cooldownTime = 120;
 	};
-	Attack4 attack4_;
+	SpinAttack attack4_;
 
 
 

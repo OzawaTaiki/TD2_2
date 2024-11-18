@@ -71,7 +71,7 @@ void Enemy::Initialize()
 	attackCamera3_.rotate_ = { 0.55f,0,0 };
 
 
-	
+
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
@@ -93,6 +93,15 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
 	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
 	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
+	// 攻撃2
+	ConfigManager::GetInstance()->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
+	ConfigManager::GetInstance()->SetVariable("attack2", "attackPower", &attack2_.attackPower);
+	ConfigManager::GetInstance()->SetVariable("attack2", "landingTime", &attack2_.MaxLandingTime);
+	ConfigManager::GetInstance()->SetVariable("attack2", "expandTime", &attack2_.MaxExpandTime);
+	ConfigManager::GetInstance()->SetVariable("attack2", "thicknessStartTime", &attack2_.MaxThicknessStartTime);
+	ConfigManager::GetInstance()->SetVariable("attack2", "thunderStrikeTime", &attack2_.MaxThunderStrikeTime);
+	ConfigManager::GetInstance()->SetVariable("attack2", "maxSize", &attack2_.maxSize);
+	ConfigManager::GetInstance()->SetVariable("attack2", "minSize", &attack2_.minSize);
 
 
 }
@@ -201,6 +210,19 @@ void Enemy::Update()
 			ImGui::DragFloat("LandingTime", &attack1_.MaxLandingTime, 0.01f);
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("attack2"))
+		{
+			ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
+			ImGui::DragFloat("ExpandTime", &attack2_.MaxExpandTime, 0.01f);
+			ImGui::DragFloat("thicknessStartTime", &attack2_.MaxThicknessStartTime, 0.01f);
+			ImGui::DragFloat("attackPower", &attack2_.attackPower, 0.01f);
+			ImGui::DragFloat("poreparationTime", &attack2_.MaxAttackPreparationTime, 0.01f);
+			ImGui::DragFloat("thunderStrikeTime", &attack2_.MaxThunderStrikeTime, 0.01f);
+			ImGui::DragFloat("maxSize", &attack2_.maxSize, 0.01f);
+			ImGui::DragFloat("minSize", &attack2_.minSize, 0.01f);
+			ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 
@@ -294,7 +316,7 @@ void Enemy::StageArmInitialize(int num)
 
 	// 弾を生成し、初期化
 	auto newBullet = std::make_unique<EnemyStageArm>();
-	newBullet->Initialize(stagePos, velocityB, modelStageArm_,&attack1_);
+	newBullet->Initialize(stagePos, velocityB, modelStageArm_, &attack1_);
 
 	// 弾の親設定
 	newBullet->SetParent(worldTransform_.parent_);
@@ -314,7 +336,7 @@ void Enemy::BehaviorAttackInitialize()
 
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 
-	attack1_.armNum = 0;
+
 }
 
 void Enemy::BehaviorAttackUpdate()
@@ -349,24 +371,24 @@ void Enemy::BehaviorAttackUpdate()
 
 	// 上がった時の処理
 	if (attack1_.isBulletShot == true) {
-		if(++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
-		if (attack1_.armNum < attack1_.MaxArmNum) {
+		if (++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
+			if (attack1_.armNum < attack1_.MaxArmNum) {
 
-			
-			int newLocation;
-			do { 
-				newLocation = rand() % 4 + 1; 
-			} while (newLocation == attack1_.oldAttackSpawnLocation); 
-			
-			StageArmInitialize(attack1_.attackSpawnLocation);
 
-			attack1_.attackSpawnLocation = newLocation; 
-			attack1_.oldAttackSpawnLocation = newLocation;
-			attack1_.AttackToNextPredictionDelay = 0;
-			attack1_.armNum++;
-		}
+				int newLocation;
+				do {
+					newLocation = rand() % 4 + 1;
+				} while (newLocation == attack1_.oldAttackSpawnLocation);
 
-		
+				StageArmInitialize(attack1_.attackSpawnLocation);
+
+				attack1_.attackSpawnLocation = newLocation;
+				attack1_.oldAttackSpawnLocation = newLocation;
+				attack1_.AttackToNextPredictionDelay = 0;
+				attack1_.armNum++;
+			}
+
+
 
 		if (attack1_.armNum >= attack1_.MaxArmNum) {
 			if (++attack1_.landingTime >= attack1_.MaxLandingTime) {
@@ -387,8 +409,8 @@ void Enemy::BehaviorAttackUpdate()
 					worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack1_.transitionFactor);
 
 
-					
-			
+
+
 				}
 				if (++behaviorTimer_ >= 120) {
 					behaviorRequest_ = Behavior::kRoot;
@@ -427,7 +449,7 @@ void Enemy::ThunderInitialize(Vector3 pos)
 
 			// 弾を生成し、初期化
 			auto newBullet = std::make_unique<EnemyThunder>();
-			newBullet->Initialize(pospos, velocityB, modelThunder_);
+			newBullet->Initialize(pospos, velocityB, modelThunder_, &attack2_);
 
 			// 弾の親設定
 			newBullet->SetParent(worldTransform_.parent_);
@@ -443,6 +465,8 @@ void Enemy::BehaviorAttack2Initialize()
 	attack2_.isBulletShot = false;
 	attack2_.clock = 1;
 	attack2_.transitionFactor = 0;
+
+	attack2_.landingTime = 0;
 }
 
 void Enemy::BehaviorAttack2Update()
@@ -472,25 +496,26 @@ void Enemy::BehaviorAttack2Update()
 
 			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack2_.transitionFactor);
 		}
-		else  if (attack2_.clock == -1) {
-			// 補間の進行度を更新
-			if (attack2_.transitionFactor > 0.0f) {
-				attack2_.transitionFactor -= transitionSpeed * 3;
-				if (attack2_.transitionFactor < 0.5f) {
-					attack2_.isBulletShot = true;
-				}
-			}
-			else {
-				attack2_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
-				attack2_.clock *= -1;
-			}
+	}
 
-			targetPos.y = oldPos_.y;
-			targetPos.x = oldPos_.x;
-			targetPos.z = oldPos_.z;
-
-			worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack2_.transitionFactor);
+	if (++attack2_.landingTime >= attack2_.MaxLandingTime) {
+		// 補間の進行度を更新
+		if (attack2_.transitionFactor > 0.0f) {
+			attack2_.transitionFactor -= transitionSpeed * 3;
+			if (attack2_.transitionFactor < 0.5f) {
+				attack2_.isBulletShot = true;
+			}
 		}
+		else {
+			attack2_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
+			attack2_.clock *= -1;
+		}
+
+		targetPos.y = oldPos_.y;
+		targetPos.x = oldPos_.x;
+		targetPos.z = oldPos_.z;
+
+		worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack2_.transitionFactor);
 	}
 
 	if (attack2_.isBulletShot == true) {
@@ -509,26 +534,26 @@ void Enemy::BehaviorAttack2Update()
 
 void Enemy::BulletInitialize(Vector3 pos)
 {
-	const float kBulletSpeed = 0.4f;
+	const float kBulletSpeed = attack3_.speed;
 	Vector3 velocityB{};
 
-	const int numBullets = 16;
+	const int numBullets = attack3_.numElectricCount;
 	const float angleStep = 360.0f / numBullets;
 
 	for (int i = 0; i < numBullets; i++) {
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = float(behaviorTimer_ / 3000);
+		float rotate = float(attack3_.numShotsPerPhase / 3000);
 
-		Vector3 direction{ cosf(radian + behaviorTimer_) + pos.x, pos.y, sinf(radian + behaviorTimer_) + pos.z };
+		Vector3 direction{ cosf(radian + attack3_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + attack3_.numShotsPerPhase) + pos.z };
 
 		velocityB = Subtract(direction, pos);
 		velocityB = Multiply(Normalize(velocityB), kBulletSpeed);
 
 		// 弾を生成し、初期化
 		auto newBullet = std::make_unique<EnemyBullet>();
-		newBullet->Initialize(pos, velocityB, modelBullet_);
+		newBullet->Initialize(pos, velocityB, modelBullet_, &attack3_);
 
 		// 弾の親設定
 		newBullet->SetParent(worldTransform_.parent_);
@@ -566,14 +591,21 @@ void Enemy::BehaviorAttack3Initialize()
 	attack3_.isBulletShot = false;
 	attack3_.clock1 = 1;
 	attack3_.transitionFactor = 0;
+
+	attack3_.numShotsPerPhase = 0;
+	attack3_.attackCooldown = attack3_.MaxAttackCooldown;
 }
 
 void Enemy::BehaviorAttack3Update()
 {
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
+
 	Vector3 targetPos;
+	Vector3 topPos;
 	if (attack3_.isBulletShot == false) {
+
+
 		if (attack3_.clock1 == 1) {
 			// 補間の進行度を更新
 			if (attack3_.transitionFactor < 1.0f) {
@@ -583,19 +615,19 @@ void Enemy::BehaviorAttack3Update()
 				attack3_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
 				attack3_.clock1 *= -1;
 				attack3_.isBulletShot = false;
+
+				attack3_.MaxPosY = worldTransform_.transform_.y;
 			}
-
-
 			targetPos.x = worldTransform_.transform_.x;
 			targetPos.y = attack3_.attackPos.y;
 			targetPos.z = worldTransform_.transform_.z;
 
-			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack3_.transitionFactor);
+			worldTransform_.transform_ = StartEnd(worldTransform_.transform_, targetPos, attack3_.transitionFactor);
 		}
 		else  if (attack3_.clock1 == -1) {
 			// 補間の進行度を更新
 			if (attack3_.transitionFactor > 0.0f) {
-				attack3_.transitionFactor -= transitionSpeed * 3;
+				attack3_.transitionFactor -= transitionSpeed;
 				if (attack3_.transitionFactor < 0.5f) {
 					attack3_.isBulletShot = true;
 				}
@@ -609,19 +641,33 @@ void Enemy::BehaviorAttack3Update()
 			targetPos.x = worldTransform_.transform_.x;
 			targetPos.z = worldTransform_.transform_.z;
 
-			worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack3_.transitionFactor);
+			topPos = targetPos;
+
+			topPos.y = attack3_.MaxPosY;
+
+			worldTransform_.transform_ = StartEnd(topPos, targetPos, attack3_.transitionFactor);
 		}
 	}
 
 
+
+
+
+
+
 	if (attack3_.isBulletShot == true) {
-		if (behaviorTimer_ <= 60) {
-			if (behaviorTimer_ % 15 == 0 || behaviorTimer_ == 0) {
+		if (attack3_.numShotsPerPhase < attack3_.MaxNumShotsPerPhase) {
+			if (++attack3_.attackCooldown >= attack3_.MaxAttackCooldown) {
 				BulletInitialize(worldTransform_.GetWorldPosition());
+				attack3_.numShotsPerPhase++;
+				attack3_.attackCooldown = 0;
 			}
 		}
 
-		behaviorTimer_++;
+		if (attack3_.numShotsPerPhase >= attack3_.MaxNumShotsPerPhase) {
+			behaviorTimer_++;
+		}
+
 		if (behaviorTimer_ >= 120) {
 			behaviorRequest_ = Behavior::kRoot;
 			behaviorTimer_ = 0;
@@ -631,37 +677,76 @@ void Enemy::BehaviorAttack3Update()
 
 #pragma endregion // 攻撃3
 
-
 #pragma region Attack4
 
 void Enemy::BehaviorAttack4Initialize()
 {
 	attack4_.transitionFactor = 0;
+	worldTransformLeft_.transform_ = { 0,0,0 };
+	worldTransformRight_.transform_ = { 0,0,0 };
+	attack4_.spinTime = 0;
+	attack4_.armGrowthToSpinDelay = 0;
+	attack4_.stoppingTime = 0;
 }
 
-void Enemy::BehaviorAttack4Update(){
-	static float rotateY = 0.03f;
-	attack4_.transitionFactor += rotateY;
-	
+void Enemy::BehaviorAttack4Update() {
+	static float transitionFactor = 0.01f;
 
-	Move(0.3f);
+	attack4_.transitionFactor += transitionFactor;
 
-	if (behaviorTimer_ >= 30) {
-		worldTransformBody_.rotate_.y += easyInOutElastic(attack4_.transitionFactor);
+	float str = 0;
+	float end = 4;
+	float endm = -4;
+	if (++attack4_.armGrowthToSpinDelay <= attack4_.MaxArmGrowthToSpinDelay) {
+		worldTransformLeft_.transform_.x = StartEnd(str, endm, attack4_.transitionFactor);
+		worldTransformRight_.transform_.x = StartEnd(str, end, attack4_.transitionFactor);
+
 	}
 	else {
-		worldTransformLeft_.transform_.x -= 0.1f;
-		worldTransformRight_.transform_.x += 0.1f;
-	}
-	
-		
-	
+		if (++attack4_.spinTime <= attack4_.MaxSpinTime) {
+			Move(attack4_.speed, true);
 
-	behaviorTimer_++;
-	if (behaviorTimer_ >= 120) {
-		behaviorRequest_ = Behavior::kFear;
-		behaviorTimer_ = 0;
+			attack4_.rotateT += transitionFactor;
+			if (attack4_.rotateT >= 1.0f) {
+				attack4_.rotateT = 1;
+			}
+			attack4_.rotateSpeed = Lerp(attack4_.MinxRotateSpeed, attack4_.MaxRotateSpeed, attack4_.rotateT);
+
+			worldTransformBody_.rotate_.y += attack4_.rotateSpeed;
+
+
+		}
+		else {
+			attack4_.rotateT -= transitionFactor;
+			if (attack4_.rotateT <= 0.0f) {
+				attack4_.rotateT = 0.0f;
+			}
+
+			attack4_.rotateSpeed = Lerp(attack4_.MinxRotateSpeed, attack4_.MaxRotateSpeed, attack4_.rotateT);
+			if (attack4_.rotateSpeed <= 0.011f) {
+				attack4_.rotateSpeed = 0;
+
+			}
+			
+			worldTransformBody_.rotate_.y += attack4_.rotateSpeed;
+
+
+
+
+			if (attack4_.rotateT <= 0) {
+				behaviorTimer_++;
+				if (behaviorTimer_ >= attack4_.cooldownTime) {
+					behaviorRequest_ = Behavior::kRoot;
+					behaviorTimer_ = 0;
+				}
+			}
+		}
 	}
+
+
+
+
+
 }
 
 #pragma endregion // 攻撃4
@@ -677,7 +762,7 @@ void Enemy::BehaviorRootInitialize()
 
 void Enemy::BehaviorRootUpdate()
 {
-	//Move(0.1f);
+	Move(0.00001f, false);
 
 
 	// 浮遊ギミック
@@ -706,7 +791,7 @@ void Enemy::UpdateFloatingGimmick()
 	worldTransform_.transform_.y = std::sin(floatingParameter_) * floatingAmplitude;
 }
 
-void Enemy::Move(float speed)
+void Enemy::Move(float speed, bool flag)
 {
 	if (DistanceXZ(player_->GetWorldTransform().GetWorldPosition(), worldTransform_.GetWorldPosition()) >= 1) {
 		// 回転と移動量の設定
@@ -726,15 +811,12 @@ void Enemy::Move(float speed)
 
 		// Y軸周り角度
 		worldTransform_.rotate_.y = std::atan2(sub.x, sub.z);
+		if (flag) {
 
-
-		behaviorTimer_++;
-		if (behaviorTimer_ >= 180) {
-			behaviorTimer_ = 0;
-			//behaviorRequest_ = Behavior::kAttack2;
 		}
-
-		//
+		else {
+			worldTransformBody_.rotate_.y = 0;
+		}
 		oldPos_ = worldTransform_.transform_;
 
 		worldTransform_.transform_ += moveDirection;
