@@ -99,7 +99,8 @@ private:
 	// 攻撃コンボセット
 	void SetAttackCombo(int parameter);
 
-
+	// 移動時の傾き
+    void TiltMotion();
 
 
 private:
@@ -180,4 +181,12 @@ private:
 
 	// 移動フラグ
     bool isMove_ = false;
+	// 最大傾き:設定
+    float tiltMotionMaxRotate_ = 0.0f;
+    // 最大傾きまでににかかる時間(秒):設定
+    float tiltMotionDuration_ = 1.0f;
+	// 傾きタイマー
+    float tiltMotionTimer_ = 0.0f;
+    // 傾きの速度:計算
+    float tiltMotionSpeed_ = 0.0f;
 };

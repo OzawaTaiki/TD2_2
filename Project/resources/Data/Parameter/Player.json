@@ -2,6 +2,12 @@
     "Player": {
         "speed": [
             0.5600000023841858
+        ],
+        "tileMotionDuration": [
+            0.550000011920929
+        ],
+        "tiltMotionRotate": [
+            0.15000000596046448
         ]
     }
 }
