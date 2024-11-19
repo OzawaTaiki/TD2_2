@@ -295,7 +295,7 @@ void Player::BehaviorRootUpdate()
 
 	recastTime++;
 	if (pressedSPACE) {
-		if (recastTime >= 40) {
+		if (recastTime >= 30) {
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}

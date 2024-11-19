@@ -24,13 +24,13 @@ public:
 		float transitionFactor = 0;
 		// 着地時間
 		float landingTime;
-		// 最大
+		// 最大着地時間
 		float MaxLandingTime = 300.0f;
 
 		/// アーム関係
 		// 攻撃出現場所
 		int attackSpawnLocation = 1;
-
+		// 前回腕の出た場所
 		int oldAttackSpawnLocation = attackSpawnLocation;
 		// 出る腕の本数
 		int armNum = 0;
@@ -39,7 +39,10 @@ public:
 		// 予測が出てから攻撃するまでの時間(最大)
 		float MaxAttackPreparationTime = 120.0f;
 		// 伸びる時間(最大)
-		float MaxAttaskMoveTime = 60.0f;
+		//float MaxAttaskMoveTime = 60.0f;
+		// 伸びる長さ最大
+		float MaxLength = 30;
+
 		// 腕の突き出す速度
 		float armSpeed = 0.5f;
 		// 攻撃してから次の予測線が出る時間
@@ -108,8 +111,9 @@ private:
 	// 予測が出てから攻撃するまでの時間
 	float attackPreparationTime = 0.0f;
 	// 伸びる時間
-	float attaskMoveTime = 0.0f;
+	//float attaskMoveTime = 0.0f;
 	// 引っ込むまでの時間
 	float armRetractTime = 0.0f;
-
+	// 伸びる長さ
+	float length = 0;
 };
