@@ -3,6 +3,7 @@
 #include "RandomGenerator.h"
 #include "LineDrawer.h"
 #include "MatrixFunction.h"
+#include "ConfigManager.h"
 #include <imgui.h>
 
 void ParticleEmitter::Setting(const Vector3& _center, const Vector3& _rotate, uint32_t _countPerEmit, uint32_t _emitPerSec, uint32_t _maxParticle, bool _randomColor)
@@ -25,23 +26,45 @@ void ParticleEmitter::Setting(const Vector3& _center, const Vector3& _rotate, ui
     emitTime_ = 1.0f / static_cast<float> (emitPerSec_);
 }
 
+void ParticleEmitter::Setting(const std::string& _name)
+{
+    name_ = _name;
+
+    ConfigManager* instance = ConfigManager::GetInstance();
+
+    instance->SetVariable(name_, "lifeTime_min", &setting_.lifeTime.min);
+    instance->SetVariable(name_, "lifeTime_max", &setting_.lifeTime.max);
+    instance->SetVariable(name_, "size_min", &setting_.size.min);
+    instance->SetVariable(name_, "size_max", &setting_.size.max);
+    instance->SetVariable(name_, "rotate_min", &setting_.rotate.min);
+    instance->SetVariable(name_, "rotate_max", &setting_.rotate.max);
+    instance->SetVariable(name_, "spped_min", &setting_.spped.min);
+    instance->SetVariable(name_, "spped_max", &setting_.spped.max);
+    instance->SetVariable(name_, "direction_min", &setting_.direction.min);
+    instance->SetVariable(name_, "direction_max", &setting_.direction.max);
+    instance->SetVariable(name_, "acceleration_min", &setting_.acceleration.min);
+    instance->SetVariable(name_, "acceleration_max", &setting_.acceleration.max);
+    instance->SetVariable(name_, "color_min", &setting_.color.min);
+    instance->SetVariable(name_, "color_max", &setting_.color.max);
+
+    instance->SetVariable(name_, "countPerEmit", &countPerEmit_);
+    instance->SetVariable(name_, "emitPerSec", &emitPerSec_);
+    instance->SetVariable(name_, "maxParticles", &maxParticles_);
+    instance->SetVariable(name_, "randomColor", reinterpret_cast<uint32_t*> (&randomColor_));
+
+    instance->SetVariable(name_, "shape", reinterpret_cast<uint32_t*>(&shape_));
+    instance->SetVariable(name_, "size", &size_);
+    instance->SetVariable(name_, "radius", &radius_);
+    emitTime_ = 1.0f / static_cast<float> (emitPerSec_);
+}
+
 void ParticleEmitter::Update()
 {
     currentTime_ += deltaTime_;
-    //if()
+    if (!emit_) {
+        currentTime_ = 0;
+    }
     ImGui::Begin("emit");
-
-    //for (int i = 0; i < 5; i++)
-    //{
-    //    std::string num = std::to_string(i);
-    //    std::string str = "nasu" + num;
-    //    ImGui::BeginTabBar("nasu");
-    //    if(ImGui::BeginTabItem(str.c_str())){
-    //        ImGui::DragFloat("nasu", &setting_.spped.min);
-    //        ImGui::EndTabItem();
-    //    }
-    //    ImGui::EndTabBar();
-    //}
 
     if (emitTime_ <= currentTime_)
     {
@@ -52,8 +75,39 @@ void ParticleEmitter::Update()
             particles.push_back(GenerateParticleData());
         }
 
-        ParticleManager::GetInstance()->AddParticleToGroup("sample", particles);
+        ParticleManager::GetInstance()->AddParticleToGroup(name_, particles);
         currentTime_ = 0;
+    }
+
+    ImGui::BeginTabBar("setting");
+    if (ImGui::BeginTabItem("emitter"))
+    {
+        ImGui::DragInt("countPerEmit", reinterpret_cast<int*>(&countPerEmit_));
+        ImGui::DragInt("emitPerSec", reinterpret_cast<int*>(&emitPerSec_));
+        ImGui::DragInt("maxParticles", reinterpret_cast<int*>(&maxParticles_));
+        ImGui::Checkbox("randomColor", &randomColor_);
+        ImGui::EndTabItem();
+    }
+    if (ImGui::BeginTabItem("particles"))
+    {
+        ImGui::DragFloatRange2("lifeTime", &setting_.lifeTime.min, &setting_.lifeTime.max);
+        ImGui::DragFloat3("size_min", &setting_.size.min.x);
+        ImGui::DragFloat3("size_max", &setting_.size.max.x);
+        ImGui::DragFloat3("rotate_min", &setting_.rotate.min.x);
+        ImGui::DragFloat3("rotate_max", &setting_.rotate.max.x);
+        ImGui::DragFloatRange2("spped", &setting_.spped.min, &setting_.spped.max);
+        ImGui::DragFloat3("direction_min", &setting_.direction.min.x);
+        ImGui::DragFloat3("direction_max", &setting_.direction.max.x);
+        ImGui::DragFloat3("acceleration_min", &setting_.acceleration.min.x);
+        ImGui::DragFloat3("acceleration_max", &setting_.acceleration.max.x);
+        ImGui::ColorEdit4("color_min", &setting_.color.min.x);
+        ImGui::ColorEdit4("color_max", &setting_.color.max.x);
+        ImGui::EndTabItem();
+    }
+    ImGui::EndTabBar();
+    if(ImGui::Button("save"))
+    {
+        ConfigManager::GetInstance()->SaveData(name_);
     }
 
     if (ImGui::Button("add"))
@@ -65,7 +119,7 @@ void ParticleEmitter::Update()
             particles.push_back(GenerateParticleData());
         }
 
-        ParticleManager::GetInstance()->AddParticleToGroup("sample", particles);
+        ParticleManager::GetInstance()->AddParticleToGroup(name_, particles);
         currentTime_ = 0;
     }
     ImGui::End();

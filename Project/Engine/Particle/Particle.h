@@ -24,6 +24,9 @@ public:
     bool IsAlive() const { return isAlive_; }
 
     Matrix4x4 GetWorldMatrix() const { return matWorld_; }
+    Vector3 GetPosition() const { return translate_; }
+    Vector3 GetRotation() const { return rotation_; }
+    Vector3 GetScale() const { return scale_; }
     Vector4 GetColor() const { return color_; }
 
 private:
