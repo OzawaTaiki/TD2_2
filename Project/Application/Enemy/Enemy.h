@@ -72,8 +72,10 @@ public:
 
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
-  // 衝突処理
-  void OnCollision();
+	 // 衝突処理
+	void OnCollision();
+	
+	void StageMovementRestrictions();
 
 private:
 	//通常行動初期化

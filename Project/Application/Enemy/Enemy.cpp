@@ -281,6 +281,7 @@ void Enemy::Update()
 	}
 
 
+	StageMovementRestrictions();
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
@@ -327,6 +328,25 @@ void Enemy::Draw(const Camera& camera)
 	collider_->Draw();
 }
 
+void Enemy::OnCollision()
+{
+
+}
+
+void Enemy::StageMovementRestrictions()
+{
+	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z ) {
+		worldTransform_.transform_.z = stage_->GetWallBack().z;
+	}else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z ) {
+		worldTransform_.transform_.z = stage_->GetWallFlont().z;
+	}
+	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x ) {
+		worldTransform_.transform_.x = stage_->GetWallLeft().x;
+	}else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x ) {
+		worldTransform_.transform_.x = stage_->GetWallRight().x;
+	}
+
+}
 
 
 #pragma region Attack1
@@ -643,9 +663,7 @@ void Enemy::BulletUpdate()
 	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
-void Enemy::OnCollision()
-{
-}
+
 
 void Enemy::BehaviorAttack3Initialize()
 {
