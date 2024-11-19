@@ -249,7 +249,7 @@ void Enemy::Update()
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("attack3"))
+		if (ImGui::BeginTabItem("attack4"))
 		{
 			ImGui::DragFloat3("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
 			ImGui::DragFloat("cooldown", &attack4_.cooldownTime, 0.01f);
