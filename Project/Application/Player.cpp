@@ -52,15 +52,6 @@ void Player::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-    // コライダーの初期化
-    collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-    collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
-	collider_->SetAtrribute("player");
-    collider_->SetMask({ "player" });
-
-    collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-    collider_->SetOnCollisionFunc([this]() { OnCollision(); });
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 }
@@ -150,7 +141,6 @@ void Player::Draw(const Camera& camera)
 		break;
 	}
 
-	collider_->Draw();
 }
 
 void Player::OnCollision()

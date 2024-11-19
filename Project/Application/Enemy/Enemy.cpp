@@ -1,6 +1,5 @@
 #include <MatrixFunction.h>
 #include "VectorFunction.h"
-#include "../Collider/CollisionManager.h"
 
 #include "Enemy.h"
 #include "../Player.h"
@@ -14,7 +13,7 @@ T Lerp(const T& a, const T& b, float t) {
 }
 
 float easyInOutElastic(float t) {
-	const float c5 = (2 * M_PI) / 4.5;
+	const float c5 = (2 * (float)M_PI) / 4.5f;
 	if (t == 0) {
 		return 0.0f;
 	}
@@ -22,10 +21,10 @@ float easyInOutElastic(float t) {
 		return 1.0f;
 	}
 	if (t < 0.5) {
-		return -(pow(2, 20 * t - 10) * sin((20 * t - 11.125) * c5)) / 2.0f;
+		return -(powf(2, 20 * t - 10) * sinf((20 * t - 11.125f) * c5)) / 2.0f;
 	}
 	else {
-		return (pow(2, -20 * t + 10) * sin((20 * t - 11.125) * c5)) / 2.0f + 1.0f;
+		return (powf(2, -20 * t + 10) * sinf((20 * t - 11.125f) * c5)) / 2.0f + 1.0f;
 	}
 }
 
@@ -270,7 +269,6 @@ void Enemy::Draw(const Camera& camera)
 		modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
 		break;
 	}
-	collider_->Draw();
 }
 
 
@@ -282,7 +280,7 @@ void Enemy::StageArmInitialize(int num)
 	const float kBulletSpeed = attack1_.armSpeed;
 	Vector3 velocityB{};
 
-	// 
+	//
 	Vector3 direction{};
 	Vector3 stagePos{};
 	direction = player_->GetWorldTransform().GetWorldPosition();
@@ -480,7 +478,7 @@ void Enemy::BehaviorAttack2Update()
 
 		if (attack2_.clock == 1) {
 			if (attack2_.transitionFactor == 0) {
-				ThunderInitialize(0);
+				ThunderInitialize({ 0,0,0 });
 			}
 			// 補間の進行度を更新
 			if (attack2_.transitionFactor < 1.0f) {
@@ -591,7 +589,7 @@ void Enemy::OnCollision()
 {
 }
 
-void Enemy::BehaviorRootInitialize()
+void Enemy::BehaviorAttack3Initialize()
 {
 	attack3_.isBulletShot = false;
 	attack3_.clock1 = 1;
@@ -732,7 +730,7 @@ void Enemy::BehaviorAttack4Update() {
 				attack4_.rotateSpeed = 0;
 
 			}
-			
+
 			worldTransformBody_.rotate_.y += attack4_.rotateSpeed;
 
 
@@ -747,11 +745,6 @@ void Enemy::BehaviorAttack4Update() {
 			}
 		}
 	}
-
-
-
-
-
 }
 
 #pragma endregion // 攻撃4

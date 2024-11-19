@@ -11,7 +11,6 @@
 #include "Input.h"
 #include "ObjectColor.h"
 #include "ConfigManager.h"
-#include "../Collider/Collider.h"
 
 // application
 #include "EnemyBullet.h"
@@ -175,8 +174,6 @@ private:
 	Camera attackCamera2_;
 	Camera attackCamera3_;
 
-    std::unique_ptr<Collider> collider_ = nullptr;
-  
 private:
 	// 速度
 	Vector3 velocity_ = {};

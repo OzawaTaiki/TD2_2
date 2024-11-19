@@ -17,7 +17,7 @@
 #include "Weapon.h"
 
 
-// 
+//
 #include <list>
 #include <optional>
 
@@ -82,7 +82,7 @@ private:
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
 
-	
+
 	//攻撃行動更新
 	void BehaviorAttackUpdate();
 
@@ -92,12 +92,12 @@ private:
 	void SetAttackCombo(int parameter);
 
 
-	
+
 
 private:
 	// モデル
 	Model* model_ = nullptr;
-	
+
 	// モデルカラー
 	ObjectColor color_;
 
@@ -105,9 +105,6 @@ private:
 	WorldTransform worldTransform_;
 
 	std::unique_ptr<Weapon> weapon_;
-
-    // コライダー    
-	std::unique_ptr<Collider> collider_ = nullptr;
 
 
 	//
@@ -153,7 +150,7 @@ private:
 	struct Direction
 	{
 
-	}; 
+	};
 	Vector2 direction_;
 
 	float attackParameter;
