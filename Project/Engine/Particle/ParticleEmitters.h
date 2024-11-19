@@ -3,6 +3,10 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Matrix4x4.h"
+
+#include <string>
+
 
 template<class T>
 struct Range
@@ -13,16 +17,16 @@ struct Range
 // パーティクル生成時の初期設定
 struct EmitParticleSettings
 {
-    Range<float>            lifeTime;           // 有効時間
+    Range<float>            lifeTime = {1,1};           // 有効時間
 
-    Range<Vector3>          size;               // サイズ
-    Range<Vector3>          rotate;             // 回転
+    Range<Vector3>          size = { {1,1,1},{1,1,1} };               // サイズ
+    Range<Vector3>          rotate = { {},{} };             // 回転
 
-    Range<float>            spped;              // スピード
-    Range<Vector3>          direction;          // 方向
-    Range<Vector3>          acceleration;       // 加速度，重力
+    Range<float>            spped = {0,1};              // スピード
+    Range<Vector3>          direction = { {},{} };          // 方向
+    Range<Vector3>          acceleration = { {},{} };       // 加速度，重力
 
-    Range<Vector4>          color;              // 色
+    Range<Vector4>          color = { {1,1,1,1},{1,1,1,1} };              // 色
 
 };
 enum class EmitterShape
@@ -66,6 +70,7 @@ public:
     void SetShape_Sphere(float _radius ) ;
     void SetShape_Circle(float _radius);
 
+    void SetWorldMatrix(const Matrix4x4* _mat) { parentMatWorld_ = _mat; }
     void SetCenter(const Vector3& _center) { position_ = _center; }
     void SetEmit(bool _emit) { emit_ = _emit; }
 
@@ -81,7 +86,9 @@ private:
     float                   emitTime_               = 0;
 
     EmitterShape            shape_ = EmitterShape::None;
+    const Matrix4x4*        parentMatWorld_ = nullptr;
     Vector3                 position_;
+    Vector3                 offset_;
     Vector3                 rotate_;
     Vector3                 size_;
     float                   radius_;

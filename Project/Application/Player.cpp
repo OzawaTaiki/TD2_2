@@ -153,6 +153,7 @@ void Player::Draw(const Camera& camera)
 		break;
 	}
 
+	dustParticle_->Draw();
 }
 
 void Player::OnCollision()
