@@ -765,3 +765,27 @@ Vector3 CalculatePointCatmullRom(const Vector3& _cPoint0, const Vector3& _cPoint
 //	vertices[7] = this->center - rotateAxis[0] - rotateAxis[1] - rotateAxis[2];
 //}
 
+
+float DegreesToRadians(float degrees) { return float(degrees * ((float)M_PI / 180.0)); }
+
+Vector3 DegreesToRadians(Vector3 degrees) {
+	Vector3 resurt;
+
+	resurt.x = float(degrees.x * ((float)M_PI / 180.0));
+	resurt.y = float(degrees.y * ((float)M_PI / 180.0));
+	resurt.z = float(degrees.z * ((float)M_PI / 180.0));
+
+	return resurt;
+}
+
+float RadiansToDegrees(float radians) { return float(radians * (180.0 / (float)M_PI)); }
+
+Vector3 RadiansToDegrees(Vector3 radians) {
+	Vector3 resurt;
+
+	resurt.x = float(radians.x * (180.0 / (float)M_PI));
+	resurt.y = float(radians.y * (180.0 / (float)M_PI));
+	resurt.z = float(radians.z * (180.0 / (float)M_PI));
+
+	return resurt;
+}

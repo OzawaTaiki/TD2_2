@@ -9,6 +9,8 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "ConfigManager.h"
+#include "MyLib.h"
 #include "../Collider/Collider.h"
 
 //Application

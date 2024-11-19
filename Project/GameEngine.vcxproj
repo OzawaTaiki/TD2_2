@@ -119,8 +119,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyStageArm.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyThunder.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
     <ClCompile Include="Application\Player.cpp" />
+    <ClCompile Include="Application\Stage\Stage.cpp" />
     <ClCompile Include="Application\Weapon.cpp" />
     <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
@@ -243,8 +246,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyBullet.h" />
+    <ClInclude Include="Application\Enemy\EnemyStageArm.h" />
+    <ClInclude Include="Application\Enemy\EnemyThunder.h" />
     <ClInclude Include="Application\FollowCamera.h" />
     <ClInclude Include="Application\Player.h" />
+    <ClInclude Include="Application\Stage\Stage.h" />
     <ClInclude Include="Application\Weapon.h" />
     <ClInclude Include="Engine\AnimationModel\AnimationModel.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />

@@ -1,0 +1,28 @@
+{
+    "attack2": {
+        "attackPower": [
+            1.0
+        ],
+        "attackPreparationTime": [
+            120.0
+        ],
+        "expandTime": [
+            15.0
+        ],
+        "landingTime": [
+            100.0
+        ],
+        "maxSize": [
+            5.0
+        ],
+        "minSize": [
+            1.0
+        ],
+        "thicknessStartTime": [
+            10.0
+        ],
+        "thunderStrikeTime": [
+            30.0
+        ]
+    }
+}

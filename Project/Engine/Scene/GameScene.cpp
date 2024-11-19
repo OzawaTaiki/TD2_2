@@ -21,12 +21,18 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
+    ConfigManager::GetInstance()->LoadData();
+  
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
     camera_->Initialize();
     camera_->translate_ = Vector3{ 0,18,-50 };
     camera_->rotate_ = Vector3{ 0.34f,0,0 };
+
+    // ステージ
+    stage_ = std::make_unique<Stage>();
+    stage_->Initialize();
 
 
     debugCamera_ = std::make_unique<DebugCamera>();
@@ -39,35 +45,36 @@ void GameScene::Initialize()
     audio_->Initialize();
 
 
-    worldTransform.Initialize();
-    worldTransform.transform_ = Vector3{ 0,-3.0f,0 };
-    worldTransform.rotate_.y = { 1.57f };
-
-    model_ = Model::CreateFromObj("Stage/Stage.obj");
-
-
-    color_.Initialize();
-    color_.SetColor(Vector4{ 1, 1, 1, 1 });
-
+    // フォローカメラ
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
 
+
+    // プレイヤ
     player_ = std::make_unique<Player>();
     player_->Initialize();
     player_->SetCamera(&followCamera_->GetCamera());
 
     followCamera_->SetTarget(&player_->GetWorldTransform());
 
-
+    // 敵
     enemy_ = std::make_unique<Enemy>();
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
+    enemy_->SetStage(stage_.get());
+    
 
 }
 
 void GameScene::Update()
 {
     ImGui::Begin("Engine");
+
+        if (ImGui::Button("save")) {
+            ConfigManager::GetInstance()->SaveData();
+            //JsonLoader::SaveJson()
+        }
+
     input_->Update();
     CollisionManager::GetInstance()->ResetColliderList();
 
@@ -77,34 +84,57 @@ void GameScene::Update()
     }
 
     //<-----------------------
-
+    camera_->Update();
     // プレイヤー
     player_->Update();
 
     // 敵
     enemy_->Update();
 
-    worldTransform.UpdateData();
+    // ステージ
+    stage_->Update();
 
+    
 
-    // 追従カメラの更新
-    followCamera_->Update();
-
-
-  if (activeDebugCamera_)
+    if (activeDebugCamera_)
     {
         debugCamera_->Update();
         camera_->matView_ = debugCamera_->matView_;
         camera_->TransferData();
     }
-    else
-    {
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
+        followCamera_->Update();
+        followCamera_->SetRotateY(0);
+        camera_->matView_ = enemy_->GetCamera().matView_;
+        camera_->matProjection_ = enemy_->GetCamera().matProjection_;
+    }
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack2) {
+        followCamera_->Update();
+        followCamera_->SetRotateY(0);
+        camera_->matView_ = enemy_->GetCamera2().matView_;
+        camera_->matProjection_ = enemy_->GetCamera2().matProjection_;
+    }
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack3) {
+        followCamera_->Update();
+        followCamera_->SetRotateY(0);
+        camera_->matView_ = enemy_->GetCamera3().matView_;
+        camera_->matProjection_ = enemy_->GetCamera3().matProjection_;
+    }
+    else {
+
+        // 追従カメラの更新
+        followCamera_->Update();
         camera_->matView_ = followCamera_->GetCamera().matView_;
         camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
-        camera_->TransferData();
     }
 
+   
+    //camera_->UpdateMatrix();
+    camera_->TransferData();
 
+
+    // 追従カメラの更新
+    followCamera_->Update();
     CollisionManager::GetInstance()->CheckAllCollision();
     //<-----------------------
     ImGui::End();
@@ -121,7 +151,10 @@ void GameScene::Draw()
     enemy_->Draw(*camera_);
 
     // モデル
-    model_->Draw(worldTransform, camera_.get(), &color_);
+    stage_->Draw(*camera_);
+
+
+
     //<------------------------
 
     ModelManager::GetInstance()->PreDrawForAnimationModel();

@@ -12,13 +12,13 @@
 // 8方向の角度テーブル（関数外で定義）
 constexpr float destinationRotationYTable[] = {
 	std::numbers::pi_v<float> / 2.0f,                      // 右
-	std::numbers::pi_v<float> *3.0f / 2.0f,               // 左
+	std::numbers::pi_v<float> * 3.0f / 2.0f,               // 左
 	0.0f,                                                  // 後ろ
-	std::numbers::pi_v<float>,                             // 前
-	std::numbers::pi_v<float> *1.0f / 4.0f,               // 右前
-	std::numbers::pi_v<float> *7.0f / 4.0f,               // 右後ろ
-	std::numbers::pi_v<float> *3.0f / 4.0f,               // 左前
-	std::numbers::pi_v<float> *5.0f / 4.0f                // 左後ろ
+	std::numbers::pi_v<float>,	 // 前
+	std::numbers::pi_v<float> * 1.0f / 4.0f,               // 右前
+	std::numbers::pi_v<float> * 7.0f / 4.0f,               // 右後ろ
+	std::numbers::pi_v<float> * 3.0f / 4.0f,               // 左前
+	std::numbers::pi_v<float> * 5.0f / 4.0f,                // 左後ろ
 };
 
 // 角度差を -π ～ +π の範囲に正規化する関数
@@ -35,30 +35,6 @@ float EaseOut(float t, float str, float end) {
 }
 
 
-float DegreesToRadians(float degrees) { return float(degrees * ((float)M_PI / 180.0)); }
-
-Vector3 DegreesToRadians(Vector3 degrees) {
-	Vector3 resurt;
-
-	resurt.x = float(degrees.x * ((float)M_PI / 180.0));
-	resurt.y = float(degrees.y * ((float)M_PI / 180.0));
-	resurt.z = float(degrees.z * ((float)M_PI / 180.0));
-
-	return resurt;
-}
-
-float RadiansToDegrees(float radians) { return float(radians * (180.0 / (float)M_PI)); }
-
-Vector3 RadiansToDegrees(Vector3 radians) {
-	Vector3 resurt;
-
-	resurt.x = float(radians.x * (180.0 / (float)M_PI));
-	resurt.y = float(radians.y * (180.0 / (float)M_PI));
-	resurt.z = float(radians.z * (180.0 / (float)M_PI));
-
-	return resurt;
-}
-
 
 void Player::Initialize()
 {
@@ -71,7 +47,7 @@ void Player::Initialize()
 	weapon_->SetPosition(Vector3{ 0.0f, 0.5f, 1.0f });
 	weapon_->GetWorldTransform().parent_ = &worldTransform_; // 本体が親
 
-	model_ = Model::CreateFromObj("Arrow/Arrow.obj");
+	model_ = Model::CreateFromObj("playerBody/playerBody.obj");
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
@@ -86,13 +62,12 @@ void Player::Initialize()
     collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
     collider_->SetOnCollisionFunc([this]() { OnCollision(); });
 
-
-
+	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 }
 
 void Player::Update()
 {
-	if (ImGui::BeginTabBar("player"))
+	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("player"))
 		{
@@ -101,12 +76,19 @@ void Player::Update()
 			ImGui::DragFloat3("translateMat", &mat.x, 0.01f);
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
+			ImGui::DragFloat("speed", &speed, 0.01f);
+
+			
+			if (ImGui::Button("save")) {
+				ConfigManager::GetInstance()->SaveData();
+			}
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
 	}
 
-
+	
 
 	if (behaviorRequest_) {
 		// ふるまいを変更する
@@ -145,7 +127,6 @@ void Player::Update()
 		isAlive = false;
 	}
 
-    CollisionManager::GetInstance()->RegisterCollider(collider_.get());
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
 	worldTransform_.UpdateData();
@@ -188,7 +169,7 @@ void Player::BehaviorRootUpdate()
 
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
-	speed = 0.2f;
+	//speed = 0.2f;
 
 	// 入力判定
 	bool pressedW = Input::GetInstance()->IsKeyPressed(DIK_W);

@@ -1,0 +1,35 @@
+{
+    "attack1": {
+        "ToNextPredictionDelay": [
+            30.0
+        ],
+        "andingTime": [
+            300.0
+        ],
+        "armNum": [
+            4.590373509435236e-41
+        ],
+        "armSpeed": [
+            0.5
+        ],
+        "attackPos": [
+            [
+                0.0,
+                10.0,
+                0.0
+            ]
+        ],
+        "attackPower": [
+            1.0
+        ],
+        "moveTime": [
+            60.0
+        ],
+        "preparationTime": [
+            120.0
+        ],
+        "weakArm": [
+            10.0
+        ]
+    }
+}
