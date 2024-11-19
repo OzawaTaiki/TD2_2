@@ -72,14 +72,14 @@ void Enemy::Initialize()
 
 
 	// コライダーの初期化
-	collider_ = std::make_unique<Collider>();
+	/*collider_ = std::make_unique<Collider>();
 	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
 	collider_->SetAtrribute("enemy");
 	collider_->SetMask({ "enemy" });
 
 	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
+	collider_->SetOnCollisionFunc([this]() { OnCollision(); });*/
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
