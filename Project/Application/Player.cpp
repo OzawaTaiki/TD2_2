@@ -58,6 +58,9 @@ void Player::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
+    dustParticle_ = std::make_unique<PlayerDustParticle>();
+    dustParticle_->Initialize();
+	dustParticle_->SetPlayerMat(&worldTransform_);
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 }
@@ -124,7 +127,7 @@ void Player::Update()
 		isAlive = false;
 	}
 
-
+	dustParticle_->Update(isMove_);
 
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
@@ -182,6 +185,7 @@ void Player::BehaviorRootUpdate()
 {
 #pragma region Move
 
+	isMove_ = false;
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 	//speed = 0.2f;
@@ -207,6 +211,8 @@ void Player::BehaviorRootUpdate()
 	if (pressedD) {
 		inputDirection.x += 1.0f;
 	}
+
+    if (pressedW || pressedA || pressedS || pressedD) isMove_ = true;
 
 	// 入力がある場合、カメラの向きに基づいた移動方向を計算
 	if (inputDirection.x != 0.0f || inputDirection.z != 0.0f) {

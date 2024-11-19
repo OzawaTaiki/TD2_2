@@ -57,6 +57,8 @@ public:
                  uint32_t _maxParticle,
                  bool _randomColor
                  );
+    void Setting(const std::string& _name);
+
     void Update();
     void Draw();
 
@@ -64,8 +66,15 @@ public:
     void SetShape_Sphere(float _radius ) ;
     void SetShape_Circle(float _radius);
 
+    void SetCenter(const Vector3& _center) { position_ = _center; }
+    void SetEmit(bool _emit) { emit_ = _emit; }
+
+    std::string GetName() const { return name_; }
+
     EmitParticleSettings    setting_{};
 private:
+
+    std::string             name_;
 
     float                   currentTime_            = 0;
     float                   deltaTime_              = 1.0f / 60.0f;
@@ -85,6 +94,8 @@ private:
     uint32_t                maxParticles_;      // 最大数
     uint32_t                countPerEmit_;      // 回当たりの発生数
     uint32_t                emitPerSec_;        // 秒あたりの発生回数
+
+    bool                    emit_ = false;
 
     Particle GenerateParticleData();
 };

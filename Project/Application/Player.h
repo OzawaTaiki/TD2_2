@@ -15,6 +15,7 @@
 
 //Application
 #include "Weapon.h"
+#include "PlayerDustParticle.h"
 
 
 //
@@ -118,6 +119,7 @@ private:
 	// 武器
 	std::unique_ptr<Weapon> weapon_;
 
+    std::unique_ptr< PlayerDustParticle> dustParticle_;
 
 	//
 	const Camera* camera_ = nullptr;
@@ -175,4 +177,7 @@ private:
 
 	int hp = 100;
 	bool isAlive = true;
+
+	// 移動フラグ
+    bool isMove_ = false;
 };

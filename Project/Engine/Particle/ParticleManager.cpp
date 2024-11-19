@@ -34,10 +34,11 @@ void ParticleManager::Initialize()
    rootsignature_ = rootSignature.value();
 }
 
-void ParticleManager::Update()
+void ParticleManager::Update(const Camera* _camera)
 {
     // billBordはshaderで計算したい
 
+    Matrix4x4 billboradMat = MakeAffineMatrix(_camera->scale_, _camera->rotate_, { 0,0,0 });
 
     for (auto& [name, group] : groups_)
     {
@@ -49,7 +50,11 @@ void ParticleManager::Update()
                 it = group.particles.erase(it);
             else
             {
-                group.constMap[group.instanceNum].matWorld = it->GetWorldMatrix();
+                Matrix4x4 mat = MakeScaleMatrix(it->GetScale());
+                mat = mat * billboradMat;
+                mat = mat * MakeRotateMatrix(it->GetRotation());
+                mat = mat * MakeTranslateMatrix(it->GetPosition());
+                group.constMap[group.instanceNum].matWorld = mat;
                 group.constMap[group.instanceNum].color = it->GetColor();
                 group.instanceNum++;
                 ++it;
