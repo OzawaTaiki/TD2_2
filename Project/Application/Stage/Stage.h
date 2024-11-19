@@ -8,6 +8,9 @@
 #include "ObjectColor.h"
 #include "MyLib.h"
 
+
+#include "ConfigManager.h"
+
 /// <summary>
 /// ステージ
 /// </summary>

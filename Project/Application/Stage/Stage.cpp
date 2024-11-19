@@ -31,6 +31,19 @@ void Stage::Initialize()
 
     color_.Initialize();
     color_.SetColor(Vector4{ 1, 1, 1, 1 });
+
+    ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_translate", &worldFloor_.transform_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_rotate", &worldFloor_.rotate_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_translate", &worldWallFlont.transform_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_rotate", &worldWallFlont.rotate_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_translate", &worldWallBack.transform_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_rotate", &worldWallBack.rotate_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_translate", &worldWallLeft.transform_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_rotate", &worldWallLeft.rotate_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_translate", &worldWallRight.transform_);
+    ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_rotate", &worldWallRight.rotate_);
+
+
 }
 
 void Stage::Update()
@@ -40,9 +53,17 @@ void Stage::Update()
         if (ImGui::BeginTabItem("stage"))
         {
             
-
-            ImGui::DragFloat3("translate", &worldWallLeft.transform_.x, 0.01f);
-            ImGui::DragFloat3("rotate", &worldWallLeft.rotate_.x, 0.01f);
+            
+            ImGui::DragFloat3("flontTranslate", &worldWallFlont.transform_.x, 0.1f);
+            ImGui::DragFloat3("flontRotate", &worldWallFlont.rotate_.x, 0.1f);
+            ImGui::DragFloat3("backTranslate", &worldWallBack.transform_.x, 0.1f);
+            ImGui::DragFloat3("backRotate", &worldWallBack.rotate_.x, 0.1f);
+            ImGui::DragFloat3("rightTranslate", &worldWallRight.transform_.x, 0.1f);
+            ImGui::DragFloat3("rightTrotate", &worldWallRight.rotate_.x, 0.1f);
+            ImGui::DragFloat3("leftTranslate", &worldWallLeft.transform_.x, 0.1f);
+            ImGui::DragFloat3("leftTotate", &worldWallLeft.rotate_.x, 0.1f);
+            ImGui::DragFloat3("floorTranslate", &worldFloor_.transform_.x, 0.1f);
+            ImGui::DragFloat3("floorRotate", &worldFloor_.rotate_.x, 0.1f);
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();

@@ -22,6 +22,7 @@
 #include <optional>
 
 
+class Stage;
 
 // 8方向の列挙型
 enum class LRDirection {
@@ -69,6 +70,12 @@ public :
 
 	const float& GetRotateY() { return worldTransform_.rotate_.y; };
 
+	void SetStage(Stage* stage) { stage_ = stage; }
+
+
+	// 移動制限
+	void StageMovementRestrictions();
+
 private:
 
 
@@ -103,7 +110,12 @@ private:
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+	//
+	WorldTransform oldWorldTransform_;
 
+	// すてーじ
+	Stage* stage_;
+	// 武器
 	std::unique_ptr<Weapon> weapon_;
 
 

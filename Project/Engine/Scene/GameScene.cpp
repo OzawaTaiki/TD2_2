@@ -54,6 +54,7 @@ void GameScene::Initialize()
     player_ = std::make_unique<Player>();
     player_->Initialize();
     player_->SetCamera(&followCamera_->GetCamera());
+    player_->SetStage(stage_.get());
 
     followCamera_->SetTarget(&player_->GetWorldTransform());
 
@@ -114,14 +115,7 @@ void GameScene::Update()
         camera_->matView_ = enemy_->GetCamera2().matView_;
         camera_->matProjection_ = enemy_->GetCamera2().matProjection_;
     }
-    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack3) {
-        followCamera_->Update();
-        followCamera_->SetRotateY(0);
-        camera_->matView_ = enemy_->GetCamera3().matView_;
-        camera_->matProjection_ = enemy_->GetCamera3().matProjection_;
-    }
     else {
-
         // 追従カメラの更新
         followCamera_->Update();
         camera_->matView_ = followCamera_->GetCamera().matView_;

@@ -1,0 +1,16 @@
+{
+    "attack3": {
+        "attackPower": [
+            1.0
+        ],
+        "cooldown": [
+            20.0
+        ],
+        "numShotsPerPhase": [
+            0.0
+        ],
+        "speed": [
+            0.30000001192092896
+        ]
+    }
+}

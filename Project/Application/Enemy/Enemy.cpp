@@ -35,7 +35,7 @@ void Enemy::Initialize()
 
 	worldTransformBody_.Initialize();
 	worldTransformBody_.parent_ = &worldTransform_;
-
+	worldTransformBody_.transform_ = Vector3{ 0,0,0 };
 
 	worldTransformLeft_.Initialize();
 	worldTransformLeft_.parent_ = &worldTransformBody_;
@@ -71,7 +71,15 @@ void Enemy::Initialize()
 	attackCamera3_.rotate_ = { 0.55f,0,0 };
 
 
+	// コライダーの初期化
+	collider_ = std::make_unique<Collider>();
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
+	collider_->SetAtrribute("enemy");
+	collider_->SetMask({ "enemy" });
 
+	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
+	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
@@ -102,6 +110,23 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack2", "thunderStrikeTime", &attack2_.MaxThunderStrikeTime);
 	ConfigManager::GetInstance()->SetVariable("attack2", "maxSize", &attack2_.maxSize);
 	ConfigManager::GetInstance()->SetVariable("attack2", "minSize", &attack2_.minSize);
+
+	// 攻撃3
+	ConfigManager::GetInstance()->SetVariable("attack3", "cooldown", &attack3_.MaxAttackCooldown);
+	ConfigManager::GetInstance()->SetVariable("attack3", "attackPower", &attack3_.attackPower);
+	float ShotsPerPhase = int(attack3_.MaxNumShotsPerPhase);
+	ConfigManager::GetInstance()->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
+	ConfigManager::GetInstance()->SetVariable("attack3", "speed", &attack3_.speed);
+	
+	// 攻撃4
+	ConfigManager::GetInstance()->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "MinRotateSpeed", &attack4_.MinxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
+	ConfigManager::GetInstance()->SetVariable("attack4", "speed", &attack4_.speed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
+	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
+	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
+	
 
 }
 
@@ -196,6 +221,15 @@ void Enemy::Update()
 
 	if (ImGui::BeginTabBar("Boss"))
 	{
+		if (ImGui::BeginTabItem("worldTransfom"))
+		{
+			ImGui::DragFloat3("worldTransform_.transform_", &worldTransform_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformBody_.transform_", &worldTransformBody_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformLeft_.transform_", &worldTransformLeft_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformRight_.transform_", &worldTransformRight_.transform_.x, 0.01f);
+			ImGui::EndTabItem();
+		}
+
 		if (ImGui::BeginTabItem("attack1"))
 		{
 			ImGui::DragFloat3("pos", &attack1_.attackPos.x, 0.01f);
@@ -222,10 +256,31 @@ void Enemy::Update()
 			ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("attack3"))
+		{
+			ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
+			ImGui::DragFloat("cooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 0.01f);
+			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
+			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("attack4"))
+		{
+			ImGui::DragFloat3("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
+			ImGui::DragFloat("cooldown", &attack4_.cooldownTime, 0.01f);
+			ImGui::DragFloat("SpinTime", &attack4_.MaxSpinTime, 0.01f);
+			ImGui::DragFloat("MaxRotateSpeed", &attack4_.MaxRotateSpeed, 0.01f);
+			ImGui::DragFloat("MinRotateSpeed", &attack4_.MinxRotateSpeed, 0.01f);
+			ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
+			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 
 
+	StageMovementRestrictions();
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
@@ -271,6 +326,25 @@ void Enemy::Draw(const Camera& camera)
 	}
 }
 
+void Enemy::OnCollision()
+{
+
+}
+
+void Enemy::StageMovementRestrictions()
+{
+	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z ) {
+		worldTransform_.transform_.z = stage_->GetWallBack().z;
+	}else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z ) {
+		worldTransform_.transform_.z = stage_->GetWallFlont().z;
+	}
+	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x ) {
+		worldTransform_.transform_.x = stage_->GetWallLeft().x;
+	}else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x ) {
+		worldTransform_.transform_.x = stage_->GetWallRight().x;
+	}
+
+}
 
 
 #pragma region Attack1
@@ -473,12 +547,17 @@ void Enemy::BehaviorAttack2Update()
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
 	Vector3 targetPos;
+	Vector3 pos{};
+	pos;
 	if (attack2_.isBulletShot == false) {
 
 
 		if (attack2_.clock == 1) {
 			if (attack2_.transitionFactor == 0) {
-				ThunderInitialize({ 0,0,0 });
+
+				ThunderInitialize(pos);
+
+
 			}
 			// 補間の進行度を更新
 			if (attack2_.transitionFactor < 1.0f) {
@@ -511,8 +590,8 @@ void Enemy::BehaviorAttack2Update()
 		}
 
 		targetPos.y = oldPos_.y;
-		targetPos.x = oldPos_.x;
-		targetPos.z = oldPos_.z;
+		targetPos.x = worldTransform_.transform_.x;
+		targetPos.z = worldTransform_.transform_.z;
 
 		worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack2_.transitionFactor);
 	}
@@ -543,7 +622,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = static_cast<float> (behaviorTimer_) / 3000.0f;
+		float rotate = float(attack3_.numShotsPerPhase / 3000);
 
 		Vector3 direction{ cosf(radian + attack3_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + attack3_.numShotsPerPhase) + pos.z };
 
@@ -585,9 +664,7 @@ void Enemy::BulletUpdate()
 	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
-void Enemy::OnCollision()
-{
-}
+
 
 void Enemy::BehaviorAttack3Initialize()
 {

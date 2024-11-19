@@ -3,6 +3,8 @@
 #include "../Collider/CollisionManager.h"
 #include <imgui.h>
 
+#include "../../../Application/Stage/Stage.h"
+
 #include <algorithm>
 #include <cassert>
 #include <numbers>
@@ -42,12 +44,16 @@ void Player::Initialize()
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = Vector3{ 0,0,0 };
 
+	oldWorldTransform_.Initialize();
+	oldWorldTransform_ = worldTransform_;
+
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
 	weapon_->SetPosition(Vector3{ 0.0f, 0.5f, 1.0f });
 	weapon_->GetWorldTransform().parent_ = &worldTransform_; // 本体が親
 
 	model_ = Model::CreateFromObj("playerBody/playerBody.obj");
+
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
@@ -58,6 +64,7 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	
 	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("player"))
@@ -68,18 +75,17 @@ void Player::Update()
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
 			ImGui::DragFloat("speed", &speed, 0.01f);
-
-			
-			if (ImGui::Button("save")) {
-				ConfigManager::GetInstance()->SaveData();
-			}
-
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
 	}
 
 	
+	StageMovementRestrictions();
+
+
+	//oldWorldTransform_ = worldTransform_;
+
 
 	if (behaviorRequest_) {
 		// ふるまいを変更する
@@ -118,8 +124,11 @@ void Player::Update()
 		isAlive = false;
 	}
 
+
+	
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
+	worldTransform_.UpdateData();
 	worldTransform_.UpdateData();
 }
 
@@ -145,6 +154,22 @@ void Player::Draw(const Camera& camera)
 
 void Player::OnCollision()
 {
+}
+
+void Player::StageMovementRestrictions()
+{
+	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z) {
+		worldTransform_.transform_.z = stage_->GetWallBack().z ;
+	}
+	else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z) {
+		worldTransform_.transform_.z = stage_->GetWallFlont().z ;
+	}
+	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x) {
+		worldTransform_.transform_.x = stage_->GetWallLeft().x;
+	}
+	else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x) {
+		worldTransform_.transform_.x = stage_->GetWallRight().x ;
+	}
 }
 
 void Player::BehaviorRootInitialize()
