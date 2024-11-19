@@ -36,7 +36,7 @@ void Enemy::Initialize()
 
 	worldTransformBody_.Initialize();
 	worldTransformBody_.parent_ = &worldTransform_;
-
+	worldTransformBody_.transform_ = Vector3{ 0,0,0 };
 
 	worldTransformLeft_.Initialize();
 	worldTransformLeft_.parent_ = &worldTransformBody_;
@@ -72,7 +72,15 @@ void Enemy::Initialize()
 	attackCamera3_.rotate_ = { 0.55f,0,0 };
 
 
+	// コライダーの初期化
+	collider_ = std::make_unique<Collider>();
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
+	collider_->SetAtrribute("enemy");
+	collider_->SetMask({ "enemy" });
 
+	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
+	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
@@ -214,6 +222,15 @@ void Enemy::Update()
 
 	if (ImGui::BeginTabBar("Boss"))
 	{
+		if (ImGui::BeginTabItem("worldTransfom"))
+		{
+			ImGui::DragFloat3("worldTransform_.transform_", &worldTransform_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformBody_.transform_", &worldTransformBody_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformLeft_.transform_", &worldTransformLeft_.transform_.x, 0.01f);
+			ImGui::DragFloat3("worldTransformRight_.transform_", &worldTransformRight_.transform_.x, 0.01f);
+			ImGui::EndTabItem();
+		}
+
 		if (ImGui::BeginTabItem("attack1"))
 		{
 			ImGui::DragFloat3("pos", &attack1_.attackPos.x, 0.01f);
@@ -512,12 +529,14 @@ void Enemy::BehaviorAttack2Update()
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
 	Vector3 targetPos;
+	Vector3 pos{};
+	pos;
 	if (attack2_.isBulletShot == false) {
 
 
 		if (attack2_.clock == 1) {
 			if (attack2_.transitionFactor == 0) {
-				ThunderInitialize(0);
+				ThunderInitialize(pos);
 			}
 			// 補間の進行度を更新
 			if (attack2_.transitionFactor < 1.0f) {
@@ -550,8 +569,8 @@ void Enemy::BehaviorAttack2Update()
 		}
 
 		targetPos.y = oldPos_.y;
-		targetPos.x = oldPos_.x;
-		targetPos.z = oldPos_.z;
+		targetPos.x = worldTransform_.transform_.x;
+		targetPos.z = worldTransform_.transform_.z;
 
 		worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack2_.transitionFactor);
 	}
@@ -628,7 +647,7 @@ void Enemy::OnCollision()
 {
 }
 
-void Enemy::BehaviorRootInitialize()
+void Enemy::BehaviorAttack3Initialize()
 {
 	attack3_.isBulletShot = false;
 	attack3_.clock1 = 1;
