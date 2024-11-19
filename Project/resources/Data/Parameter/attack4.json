@@ -1,0 +1,25 @@
+{
+    "attack4": {
+        "ArmGrowthToSpinDelay": [
+            30.0
+        ],
+        "MaxRotateSpeed": [
+            1.0
+        ],
+        "MinRotateSpeed": [
+            0.009999999776482582
+        ],
+        "SpinTime": [
+            120.0
+        ],
+        "StoppingTime": [
+            20.0
+        ],
+        "cooldownTime": [
+            120.0
+        ],
+        "speed": [
+            0.30000001192092896
+        ]
+    }
+}

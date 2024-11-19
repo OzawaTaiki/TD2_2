@@ -104,6 +104,23 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack2", "maxSize", &attack2_.maxSize);
 	ConfigManager::GetInstance()->SetVariable("attack2", "minSize", &attack2_.minSize);
 
+	// 攻撃3
+	ConfigManager::GetInstance()->SetVariable("attack3", "cooldown", &attack3_.MaxAttackCooldown);
+	ConfigManager::GetInstance()->SetVariable("attack3", "attackPower", &attack3_.attackPower);
+	float ShotsPerPhase = int(attack3_.MaxNumShotsPerPhase);
+	ConfigManager::GetInstance()->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
+	ConfigManager::GetInstance()->SetVariable("attack3", "speed", &attack3_.speed);
+	
+	// 攻撃4
+	ConfigManager::GetInstance()->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "MinRotateSpeed", &attack4_.MinxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
+	ConfigManager::GetInstance()->SetVariable("attack4", "speed", &attack4_.speed);
+	ConfigManager::GetInstance()->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
+	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
+	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
+	
+
 }
 
 void Enemy::Update()
@@ -221,6 +238,26 @@ void Enemy::Update()
 			ImGui::DragFloat("maxSize", &attack2_.maxSize, 0.01f);
 			ImGui::DragFloat("minSize", &attack2_.minSize, 0.01f);
 			ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("attack3"))
+		{
+			ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
+			ImGui::DragFloat("cooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 0.01f);
+			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
+			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("attack3"))
+		{
+			ImGui::DragFloat3("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
+			ImGui::DragFloat("cooldown", &attack4_.cooldownTime, 0.01f);
+			ImGui::DragFloat("SpinTime", &attack4_.MaxSpinTime, 0.01f);
+			ImGui::DragFloat("MaxRotateSpeed", &attack4_.MaxRotateSpeed, 0.01f);
+			ImGui::DragFloat("MinRotateSpeed", &attack4_.MinxRotateSpeed, 0.01f);
+			ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
+			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -545,7 +582,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = static_cast<float> (behaviorTimer_) / 3000.0f;
+		float rotate = float(attack3_.numShotsPerPhase / 3000);
 
 		Vector3 direction{ cosf(radian + attack3_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + attack3_.numShotsPerPhase) + pos.z };
 

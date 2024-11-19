@@ -1,0 +1,74 @@
+{
+    "stage": {
+        "worldFloor_rotate": [
+            [
+                0.0,
+                1.5700000524520874,
+                0.0
+            ]
+        ],
+        "worldFloor_translate": [
+            [
+                0.0,
+                -3.0,
+                0.0
+            ]
+        ],
+        "worldWallBack_rotate": [
+            [
+                0.0,
+                -3.140000104904175,
+                0.0
+            ]
+        ],
+        "worldWallBack_translate": [
+            [
+                0.0,
+                0.0,
+                70.0
+            ]
+        ],
+        "worldWallFlont_rotate": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "worldWallFlont_translate": [
+            [
+                0.0,
+                0.0,
+                -70.0
+            ]
+        ],
+        "worldWallLeft_rotate": [
+            [
+                0.0,
+                1.5707963705062866,
+                0.0
+            ]
+        ],
+        "worldWallLeft_translate": [
+            [
+                -70.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "worldWallRight_rotate": [
+            [
+                0.0,
+                -1.5707963705062866,
+                0.0
+            ]
+        ],
+        "worldWallRight_translate": [
+            [
+                70.0,
+                0.0,
+                0.0
+            ]
+        ]
+    }
+}
