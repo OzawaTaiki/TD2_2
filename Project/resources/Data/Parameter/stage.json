@@ -25,7 +25,7 @@
             [
                 0.0,
                 0.0,
-                70.0
+                50.0
             ]
         ],
         "worldWallFlont_rotate": [
@@ -39,7 +39,7 @@
             [
                 0.0,
                 0.0,
-                -70.0
+                -50.0
             ]
         ],
         "worldWallLeft_rotate": [
@@ -51,7 +51,7 @@
         ],
         "worldWallLeft_translate": [
             [
-                -70.0,
+                -50.0,
                 0.0,
                 0.0
             ]
@@ -65,7 +65,7 @@
         ],
         "worldWallRight_translate": [
             [
-                70.0,
+                50.0,
                 0.0,
                 0.0
             ]
