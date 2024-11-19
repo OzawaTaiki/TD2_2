@@ -848,6 +848,7 @@ void Enemy::InitializeParticleEmitter()
 	{
 		ParticleManager::GetInstance()->CreateParticleGroup(particleEmitter_[index].GetName(), "plane/plane.obj", &particleEmitter_[index], th);
         particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
+		particleEmitter_[index].SetEmit(1);
 	}
 }
 

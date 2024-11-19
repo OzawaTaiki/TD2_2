@@ -137,7 +137,6 @@ void Player::Update()
 
 void Player::Draw(const Camera& camera)
 {
-
 	model_->Draw(worldTransform_, &camera, &color_);
 
 

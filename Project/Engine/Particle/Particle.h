@@ -16,8 +16,10 @@ public:
                     const Vector4& _color,
                     float _speed,
                     const Vector3& _direction,
-                    const Vector3& _acceleration
-                    );
+                    const Vector3& _acceleration,
+                    bool _fade,
+                    float _faderatio = 0.0f
+    );
     void Update();
     void Draw();
 
@@ -47,6 +49,11 @@ private:
     Vector3 direction_;
     Vector3 acceleration_;
     Vector3 velocity_;
+
+    // フェードするか否か
+    bool isFade_;
+    // フェードを始める割合
+    float fadeRatio_;
 
 
 };

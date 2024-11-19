@@ -59,7 +59,9 @@ public:
                  uint32_t _countPerEmit,
                  uint32_t _emitPerSec,
                  uint32_t _maxParticle,
-                 bool _randomColor
+                 bool _randomColor,
+                 bool _fadeAlpha,
+                 float _fadeStartRatio
                  );
     void Setting(const std::string& _name);
 
