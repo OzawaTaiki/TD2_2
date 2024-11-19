@@ -453,7 +453,7 @@ void Player::TiltMotion()
 {
 	if (!isMove_)
 	{
-		tiltMotionTimer_ -= 1.0f / 30.0f;
+		tiltMotionTimer_ -= 1.0f / 15.0f;
         if (tiltMotionTimer_ <= 0.0f)
         {
             tiltMotionTimer_ = 0.0f;
