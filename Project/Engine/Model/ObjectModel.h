@@ -3,7 +3,7 @@
 #include "WorldTransform.h"
 #include "ObjectColor.h"
 #include "Camera.h"
-
+#include "../Collider/Collider.h"
 
 class ObjectModel
 {

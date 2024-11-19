@@ -11,6 +11,7 @@
 #include "Input.h"
 #include "ObjectColor.h"
 #include "ConfigManager.h"
+#include "../Collider/Collider.h"
 
 // application
 #include "EnemyBullet.h"
@@ -71,6 +72,8 @@ public:
 
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
+  // 衝突処理
+  void OnCollision();
 
 private:
 	//通常行動初期化
@@ -172,6 +175,8 @@ private:
 	Camera attackCamera2_;
 	Camera attackCamera3_;
 
+    std::unique_ptr<Collider> collider_ = nullptr;
+  
 private:
 	// 速度
 	Vector3 velocity_ = {};

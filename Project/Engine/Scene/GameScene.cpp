@@ -3,6 +3,9 @@
 #include "Sprite.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "../Collider/Collider.h"
+#include "../Collider/CollisionManager.h"
+
 #include <chrono>
 #include <imgui.h>
 
@@ -18,9 +21,8 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-
     ConfigManager::GetInstance()->LoadData();
-
+  
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -32,6 +34,9 @@ void GameScene::Initialize()
     stage_ = std::make_unique<Stage>();
     stage_->Initialize();
 
+
+    debugCamera_ = std::make_unique<DebugCamera>();
+    debugCamera_->Initialize();
 
     lineDrawer_ = LineDrawer::GetInstance();
     lineDrawer_->SetCameraPtr(camera_.get());
@@ -63,21 +68,23 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-
     ImGui::Begin("Engine");
 
-   //if (ImGui::BeginTabBar("GameScene"))
-    //{
         if (ImGui::Button("save")) {
             ConfigManager::GetInstance()->SaveData();
             //JsonLoader::SaveJson()
         }
-    //}
 
     input_->Update();
+    CollisionManager::GetInstance()->ResetColliderList();
+
+    if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
+    {
+        activeDebugCamera_ = !activeDebugCamera_;
+    }
+
     //<-----------------------
     camera_->Update();
-
     // プレイヤー
     player_->Update();
 
@@ -89,8 +96,13 @@ void GameScene::Update()
 
     
 
-
-    if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
+    if (activeDebugCamera_)
+    {
+        debugCamera_->Update();
+        camera_->matView_ = debugCamera_->matView_;
+        camera_->TransferData();
+    }
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
         followCamera_->Update();
         followCamera_->SetRotateY(0);
         camera_->matView_ = enemy_->GetCamera().matView_;
@@ -119,6 +131,11 @@ void GameScene::Update()
    
     //camera_->UpdateMatrix();
     camera_->TransferData();
+
+
+    // 追従カメラの更新
+    followCamera_->Update();
+    CollisionManager::GetInstance()->CheckAllCollision();
     //<-----------------------
     ImGui::End();
 }

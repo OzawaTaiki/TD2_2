@@ -1,5 +1,6 @@
 #include <MatrixFunction.h>
 #include "VectorFunction.h"
+#include "../Collider/CollisionManager.h"
 
 #include "Enemy.h"
 #include "../Player.h"
@@ -102,7 +103,6 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack2", "thunderStrikeTime", &attack2_.MaxThunderStrikeTime);
 	ConfigManager::GetInstance()->SetVariable("attack2", "maxSize", &attack2_.maxSize);
 	ConfigManager::GetInstance()->SetVariable("attack2", "minSize", &attack2_.minSize);
-
 
 }
 
@@ -270,6 +270,7 @@ void Enemy::Draw(const Camera& camera)
 		modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
 		break;
 	}
+	collider_->Draw();
 }
 
 
@@ -544,7 +545,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = float(attack3_.numShotsPerPhase / 3000);
+		float rotate = static_cast<float> (behaviorTimer_) / 3000.0f;
 
 		Vector3 direction{ cosf(radian + attack3_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + attack3_.numShotsPerPhase) + pos.z };
 
@@ -586,7 +587,11 @@ void Enemy::BulletUpdate()
 	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
-void Enemy::BehaviorAttack3Initialize()
+void Enemy::OnCollision()
+{
+}
+
+void Enemy::BehaviorRootInitialize()
 {
 	attack3_.isBulletShot = false;
 	attack3_.clock1 = 1;

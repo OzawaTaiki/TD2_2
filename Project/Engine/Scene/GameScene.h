@@ -11,7 +11,7 @@
 #include "ParticleManager.h"
 #include "ParticleEmitters.h"
 #include "ConfigManager.h"
-
+#include "DebugCamera.h"
 
 //Application
 #include "../../Application/Player.h"
@@ -39,6 +39,8 @@ private:
     Input* input_ = nullptr;
     LineDrawer* lineDrawer_ = nullptr;
     std::unique_ptr<Camera> camera_ = nullptr;
+    std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
+    bool activeDebugCamera_ = false;
     std::unique_ptr<Audio> audio_;
     uint32_t handle_;
 

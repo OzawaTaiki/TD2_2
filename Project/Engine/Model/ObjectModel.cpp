@@ -2,6 +2,7 @@
 #include "DXCommon.h"
 #include "ModelManager.h"
 #include "MatrixFunction.h"
+#include "../Collider/CollisionManager.h"
 
 void ObjectModel::Initialize(const std::string& _filePath)
 {
@@ -10,6 +11,7 @@ void ObjectModel::Initialize(const std::string& _filePath)
     worldTransform_.Initialize();
     objectColor_ = std::make_unique<ObjectColor>();
     objectColor_->Initialize();
+
 
 }
 
@@ -33,7 +35,8 @@ void ObjectModel::Draw(const Camera* _camera, const Vector4& _color)
     objectColor_->QueueCommand(commandList, 3);
     model_->QueueCommandAndDraw(commandList);// BVB IBV MTL2 TEX4 LIGHT567
 
-    model_->DrawSkeleton(worldTransform_.matWorld_);
+
+    //model_->DrawSkeleton(worldTransform_.matWorld_);
 }
 
 #ifdef _DEBUG

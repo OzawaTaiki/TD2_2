@@ -11,6 +11,7 @@
 #include "ObjectColor.h"
 #include "ConfigManager.h"
 #include "MyLib.h"
+#include "../Collider/Collider.h"
 
 //Application
 #include "Weapon.h"
@@ -55,6 +56,10 @@ public :
 	/// </summary>
 	void Draw(const Camera& camera);
 
+    /// <summary>
+    /// 衝突処理
+    /// </summary>
+	void OnCollision();
 
 	// カメラのビュープロジェクション
 	void SetCamera(const Camera* camera) { camera_ = camera; };
@@ -100,6 +105,10 @@ private:
 	WorldTransform worldTransform_;
 
 	std::unique_ptr<Weapon> weapon_;
+
+    // コライダー    
+	std::unique_ptr<Collider> collider_ = nullptr;
+
 
 	//
 	const Camera* camera_ = nullptr;

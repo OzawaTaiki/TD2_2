@@ -135,10 +135,9 @@ Vector2 Input::GetMousePosition() const
 
     return result;
 }
-
 void Input::GetMove(Vector3& _move, float _spped) const
 {
-    _move = { 0 };
+    _move = { 0,0,0 };
     if (keys_[DIK_W])
         _move.z += 1.0f;
     if (keys_[DIK_A])
@@ -162,7 +161,6 @@ void Input::GetRotate(Vector3& _rot, float _sensi) const
     _rot.y = mouse_.lX * _sensi;
     _rot.x = mouse_.lY * _sensi;
 }
-
 bool Input::IsPadTriggered(PadButton _button) const
 {
     if (xInputState_.Gamepad.wButtons & static_cast<WORD>(_button) && !(preXInputState_.Gamepad.wButtons & static_cast<WORD>(_button)))
