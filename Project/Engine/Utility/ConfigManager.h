@@ -22,6 +22,7 @@ public:
 
     void LoadData();
     void SaveData();
+    void SaveData(const std::string& _groupName);
 
     template<typename T>
     void SetVariable(const std::string& _groupName, const std::string& _variableName, T* _variablePtr);
