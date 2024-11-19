@@ -63,9 +63,11 @@ void Camera::UpdateMatrix()
     matProjection_ = MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
     matViewProjection_ = matView_ * matProjection_;
 
+
     constMap_->pos = translate_;
     constMap_->view = matView_;
     constMap_->proj = matProjection_;
+
 }
 
 void Camera::QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index) const
