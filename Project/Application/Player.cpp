@@ -64,7 +64,7 @@ void Player::Initialize()
 
 void Player::Update()
 {
-	
+
 	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("player"))
@@ -80,7 +80,7 @@ void Player::Update()
 		ImGui::EndTabBar();
 	}
 
-	
+
 	StageMovementRestrictions();
 
 
@@ -125,7 +125,7 @@ void Player::Update()
 	}
 
 
-	
+
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
 	worldTransform_.UpdateData();
