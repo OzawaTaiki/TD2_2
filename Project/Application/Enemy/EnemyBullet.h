@@ -35,6 +35,8 @@ public:
 		bool isBulletShot = 0;
 		// t補間用
 		float transitionFactor = 0;
+		// プレイヤーのold位置
+		Vector3 oldTraget{};
 		// start
 
 

@@ -43,6 +43,11 @@ public:
 		float maxSize = 5.0f;
 		//攻撃力
 		float attackPower = 1;
+		// 一列行
+		int num = 4;
+		// 間隔
+		float positionInterval = 20;
+
 	};
 
 	/// <summary>

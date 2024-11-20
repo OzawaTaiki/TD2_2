@@ -172,6 +172,13 @@ public:
 
 	// 弾の初期化
 	void BulletInitialize(Vector3 pos);
+	
+	void NormalBulletInitialize(Vector3 pos);
+	
+	void Normal2BulletInitialize(Vector3 pos);
+	
+	
+
 
 	// 弾更新
 	void BulletUpdate();
@@ -233,6 +240,8 @@ private:
 
 	// 電気弾
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	// 電気弾
+	std::list<std::unique_ptr<EnemyBullet>> normalbullets_;
 	// ステージアーム攻撃
 	std::list<std::unique_ptr<EnemyStageArm>> stageArm;
 	// 雷攻撃
@@ -275,6 +284,8 @@ private:
 
 	// 弾
 	EnemyBullet::Bullet  attack3_;
+	EnemyBullet::Bullet  normalAttackBullet_;
+	EnemyBullet::Bullet  normal2AttackBullet_;
 
 
 	// 攻撃4
