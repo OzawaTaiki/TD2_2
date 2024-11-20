@@ -17,6 +17,8 @@
 #include "EnemyStageArm.h"
 #include "EnemyThunder.h"
 
+#include "ParticleEmitters.h"
+
 // 
 #include <list>
 #include <optional>
@@ -238,7 +240,7 @@ private:
 	// 雷攻撃
 	std::list<std::unique_ptr<EnemyThunder>> thunder_;
 
-
+	std::array<ParticleEmitter, 3>particleEmitter_;
 
 
 	Camera attackCamera_;

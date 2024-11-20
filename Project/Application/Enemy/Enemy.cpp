@@ -4,6 +4,8 @@
 #include "Enemy.h"
 #include "../Player.h"
 #include "../../../Application/Stage/Stage.h"
+#include "ParticleManager.h"
+#include "TextureManager.h"
 
 #include "imgui.h"
 
@@ -70,6 +72,7 @@ void Enemy::Initialize()
 	attackCamera3_.translate_ = { 0,250,-200 };
 	attackCamera3_.rotate_ = { 0.55f,0,0 };
 
+	InitializeParticleEmitter();
 
 	// コライダーの初期化
 	/*collider_ = std::make_unique<Collider>();
@@ -114,7 +117,7 @@ void Enemy::Initialize()
 	// 攻撃3
 	ConfigManager::GetInstance()->SetVariable("attack3", "cooldown", &attack3_.MaxAttackCooldown);
 	ConfigManager::GetInstance()->SetVariable("attack3", "attackPower", &attack3_.attackPower);
-	float ShotsPerPhase = int(attack3_.MaxNumShotsPerPhase);
+	float ShotsPerPhase = float(attack3_.MaxNumShotsPerPhase);
 	ConfigManager::GetInstance()->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
 	ConfigManager::GetInstance()->SetVariable("attack3", "speed", &attack3_.speed);
 
@@ -239,6 +242,7 @@ void Enemy::Update()
 			ImGui::DragFloat("LandingTime", &attack1_.MaxLandingTime, 0.01f);
 			ImGui::EndTabItem();
 		}
+
 		if (ImGui::BeginTabItem("attack2"))
 		{
 			ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
@@ -276,6 +280,9 @@ void Enemy::Update()
 	}
 
 	StageMovementRestrictions();
+
+	// エミッターの更新
+    UpdateParticleEmitter();
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
@@ -327,6 +334,12 @@ void Enemy::Draw(const Camera& camera)
 		}
 		break;
 	}
+
+    // エミッターの描画
+	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
+        particleEmitter_[index].Draw();
+
+
 }
 
 void Enemy::OnCollision()
@@ -1077,6 +1090,29 @@ void Enemy::SpecialAttack4Update()
 			}
 		}
 
+	}
+}
+
+void Enemy::InitializeParticleEmitter()
+{
+	particleEmitter_[0].Setting("enemyFloating0");
+	particleEmitter_[1].Setting("enemyFloating1");
+	particleEmitter_[2].Setting("enemyFloating2");
+
+	uint32_t th = TextureManager::GetInstance()->Load("circle.png");
+	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
+	{
+		ParticleManager::GetInstance()->CreateParticleGroup(particleEmitter_[index].GetName(), "plane/plane.obj", &particleEmitter_[index], th);
+        particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
+		particleEmitter_[index].SetEmit(1);
+	}
+}
+
+void Enemy::UpdateParticleEmitter()
+{
+	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
+	{
+		particleEmitter_[index].Update();
 	}
 }
 

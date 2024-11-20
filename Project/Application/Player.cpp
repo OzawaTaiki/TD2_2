@@ -146,7 +146,6 @@ void Player::Update()
 
 void Player::Draw(const Camera& camera)
 {
-
 	model_->Draw(worldTransform_, &camera, &color_);
 
 
@@ -162,6 +161,7 @@ void Player::Draw(const Camera& camera)
 		break;
 	}
 
+	dustParticle_->Draw();
 }
 
 void Player::OnCollision()

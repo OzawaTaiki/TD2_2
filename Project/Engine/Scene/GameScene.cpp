@@ -87,7 +87,8 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
     // プレイヤー
-    player_->Update();
+    if(!activeDebugCamera_)
+        player_->Update();
 
     // 敵
     enemy_->Update();
@@ -123,7 +124,7 @@ void GameScene::Update()
 
     // 追従カメラの更新
     followCamera_->Update();
-    ParticleManager::GetInstance()->Update(&followCamera_->GetCamera());
+    ParticleManager::GetInstance()->Update(camera_.get());
     CollisionManager::GetInstance()->CheckAllCollision();
     //<-----------------------
     ImGui::End();
