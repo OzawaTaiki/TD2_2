@@ -253,7 +253,7 @@ void Enemy::Update()
 		}
 		if (ImGui::BeginTabItem("attack2"))
 		{
-			ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
+			//ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
 			ImGui::DragFloat("ExpandTime", &attack2_.MaxExpandTime, 0.01f);
 			ImGui::DragFloat("thicknessStartTime", &attack2_.MaxThicknessStartTime, 0.01f);
 			ImGui::DragFloat("attackPower", &attack2_.attackPower, 0.01f);
@@ -307,7 +307,7 @@ void Enemy::Draw(const Camera& camera)
 	for (const auto& bullet : bullets_) {
 		bullet->Draw(camera);
 	}
-	
+
 	for (const auto& bullet : normalbullets_) {
 		bullet->Draw(camera);
 	}
@@ -787,7 +787,7 @@ void Enemy::ThunderInitialize(Vector3 pos)
 			Vector3 direction{};
 			pospos.x = float(x * attack2_.positionInterval) - ((attack2_.num - 1) * (attack2_.positionInterval / 2));
 			pospos.y = stage_->GetWallFloor().y;
-			pospos.z = float(z * attack2_.positionInterval) - ((attack2_.num-1) * (attack2_.positionInterval / 2));
+			pospos.z = float(z * attack2_.positionInterval) - ((attack2_.num - 1) * (attack2_.positionInterval / 2));
 
 			direction = pospos;
 			direction.y = pospos.y + 2;
@@ -813,7 +813,7 @@ void Enemy::SpecialAttack2Initialize()
 	attack2_.isBulletShot = false;
 	attack2_.clock = 1;
 	attack2_.transitionFactor = 0;
-
+	attack2_.deathTimer_ = 0;
 	attack2_.landingTime = 0;
 }
 
@@ -822,8 +822,8 @@ void Enemy::SpecialAttack2Update()
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
 	Vector3 targetPos;
-	Vector3 pos{};
-	pos;
+	Vector3 pos{ 0,0,0 };
+	Vector3 startPos;
 	if (attack2_.isBulletShot == false) {
 
 
@@ -839,42 +839,49 @@ void Enemy::SpecialAttack2Update()
 				attack2_.transitionFactor += transitionSpeed;
 			}
 			else {
-				attack2_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
+				attack2_.transitionFactor = 0.0f; // 補間が完了したら1.0fで固定
 				attack2_.clock *= -1;
 				attack2_.isBulletShot = false;
 			}
 
 
-			targetPos = attack2_.attackPos;
 
-			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack2_.transitionFactor);
+			startPos = worldTransform_.transform_;
+			startPos.y = attack2_.attackMinPos;
+
+			targetPos = worldTransform_.transform_;
+			targetPos.y = attack2_.attackMaxPos;
+
+
+			worldTransform_.transform_ = Lerp(startPos, targetPos, attack2_.transitionFactor);
 		}
-	}
-
-	if (++attack2_.landingTime >= attack2_.MaxLandingTime) {
-		// 補間の進行度を更新
-		if (attack2_.transitionFactor > 0.0f) {
-			attack2_.transitionFactor -= transitionSpeed * 3;
-			if (attack2_.transitionFactor < 0.5f) {
+		if (attack2_.clock == -1) {
+			// 補間の進行度を更新
+			if (attack2_.transitionFactor < 1.0f) {
+				attack2_.transitionFactor += transitionSpeed * 6;
+			}
+			else {
+				attack2_.transitionFactor = 1.0f;
 				attack2_.isBulletShot = true;
 			}
-		}
-		else {
-			attack2_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
-			attack2_.clock *= -1;
-		}
 
-		targetPos.y = oldPos_.y;
-		targetPos.x = worldTransform_.transform_.x;
-		targetPos.z = worldTransform_.transform_.z;
+			startPos = worldTransform_.transform_;
+			startPos.y = attack2_.attackMaxPos;
 
-		worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack2_.transitionFactor);
+
+			targetPos = worldTransform_.transform_;
+			targetPos.y = attack2_.attackMinPos;
+
+			worldTransform_.transform_ = Lerp(startPos, targetPos, attack2_.transitionFactor);
+
+			
+		}
 	}
 
+	
 	if (attack2_.isBulletShot == true) {
-
 		behaviorTimer_++;
-		if (behaviorTimer_ >= 180) {
+		if (behaviorTimer_ >= 60) {
 			behaviorRequest_ = Behavior::kRoot;
 			behaviorTimer_ = 0;
 		}

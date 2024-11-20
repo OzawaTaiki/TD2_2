@@ -15,7 +15,9 @@ public:
 	struct AttackThunder
 	{
 		// 移動位置
-		Vector3 attackPos = { 0,50,0 };
+		//Vector3 attackPos = { 0,50,0 };
+		float attackMinPos = 0;
+		float attackMaxPos = 50;
 		// 上下移動切り替え
 		int clock = 1;
 		//　雷をうつ
@@ -47,6 +49,9 @@ public:
 		int num = 4;
 		// 間隔
 		float positionInterval = 20;
+		// 消える時間
+		float deathTimer_;
+		float MaxDeathTimer_ = 20.0f;
 
 	};
 
@@ -93,7 +98,7 @@ private:
 	static const int32_t kLifeTime = 60 * 4;
 
 	// デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	int32_t deathTimer_ = 0;// kLifeTime;
 
 	// デスフラグ
 	bool isDead_ = false;

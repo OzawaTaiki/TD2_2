@@ -103,12 +103,12 @@ void GameScene::Update()
         camera_->matView_ = debugCamera_->matView_;
         camera_->TransferData();
     }
-   /* else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack && enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack2) {
+    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack && enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack2) {
         followCamera_->Update();
         followCamera_->SetRotateY(0);
         camera_->matView_ = enemy_->GetCamera2().matView_;
         camera_->matProjection_ = enemy_->GetCamera2().matProjection_;
-    }*/
+    }
     else {
         // 追従カメラの更新
         followCamera_->Update();
