@@ -13,10 +13,21 @@ public:
 	// 攻撃3
 	struct Bullet {
 		//移動位置
-		Vector3 attackPos = { 0,10,0 };
-
+		
 		// 最高度
-		float MaxPosY;
+		float MaxPosY = 10;
+		// 最低位置
+		float MinPosY = 0;
+
+		// 最高高度にいる時間
+		float MaxYTime = 20;
+		float maxYTime = 0;
+
+		// 最低位置にいる時間
+		float MinYTime = 20;
+		float minYTime = 0;
+
+
 
 		// 上下移動切り替え
 		int clock1 = 1;

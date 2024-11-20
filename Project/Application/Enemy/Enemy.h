@@ -29,21 +29,131 @@ class Stage;
 
 class Enemy
 {
-public:
+public: //ふるまい関係
 	// 振るまい
 	enum class Behavior {
 		kRoot,		// 通常状態
 		kFear,      // 怯み状態
+		kAttack,	// 攻撃選択
+	};
+
+	//振るまい
+	Behavior behavior_ = Behavior::kRoot;
+	// 次の振るまいリクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	// 攻撃選択
+	enum class AttackBehavior
+	{
+		kNormal,	// 通常攻撃
+		kSpecial,	// 必殺攻撃
+	};
+
+	// 攻撃選択
+	AttackBehavior attackBehavior_ = AttackBehavior::kNormal;
+	std::optional<AttackBehavior> attackBehaviorRequest_ = std::nullopt;
+
+	// 通常攻撃方法
+	enum class NormalAttack {
+		kAttackShort1,
+		kAttackShort2,
+		kAttackLong1,
+		kAttackLong2,
+	};
+
+	NormalAttack normalAttackBehavior_ = NormalAttack::kAttackShort1;
+	std::optional<NormalAttack> normalAttackBehaviorRequest_ = std::nullopt;
+
+	// 必殺技攻撃方法
+	enum class SpecialAttack {
 		kAttack,	// 攻撃1中
 		kAttack2,   // 攻撃2中
 		kAttack3,   // 攻撃3中
 		kAttack4,   // 攻撃4中
-		kAttack5,   // 攻撃5中
-		kAttack6,   // 攻撃6中
 	};
 
+	SpecialAttack specialAttackBehavior_ = SpecialAttack::kAttack;
+	std::optional<SpecialAttack> specialAttackBehaviorRequest_ = std::nullopt;
+
+private: //状態
+
+	/// <summary>
+	/// 行動遷移 
+	/// </summary>
+	
+	//通常行動初期化
+	void BehaviorRootInitialize();
+
+	//通常行動更新
+	void BehaviorRootUpdate();
+	
+	//攻撃行動初期化
+	void BehaviorAttackInitialize();
+
+	//攻撃行動更新
+	void BehaviorAttackUpdate();
+	
+	//怯み行動初期化
+	void BehaviorFearInitialize();
+
+	//怯み行動更新
+	void BehaviorFearUpdate();
+
+	
+	/// <summary>
+	/// 通常攻撃 
+	/// </summary>
+	
+	// 通常近距離攻撃1
+	void NormalShotAttack1Initialize();
+
+	void NormalShotAttack1Update();
+
+	// 通常近距離攻撃2
+	void NormalShotAttack2Initialize();
+
+	void NormalShotAttack2Update();
+
+	// 通常近距離攻撃1
+	void NormalLongAttack1Initialize();
+
+	void NormalLongAttack1Update();
+
+	// 通常近距離攻撃2
+	void NormalLongAttack2Initialize();
+
+	void NormalLongAttack2Update();
+
+	/// <summary>
+	/// 必殺技 
+	/// </summary>
+	 
+	// 攻撃行動初期化
+	void SpecialAttackInitialize();
+	
+	// 攻撃行動更新
+	void SpecialAttackUpdate();
+
+	// 攻撃行動初期化
+	void SpecialAttack2Initialize();
+
+	// 攻撃行動更新
+	void SpecialAttack2Update();
+
+	// 攻撃行動初期化
+	void SpecialAttack3Initialize();
+
+	// 攻撃行動更新
+	void SpecialAttack3Update();
+
+	// 攻撃行動初期化
+	void SpecialAttack4Initialize();
+
+	// 攻撃行動更新
+	void SpecialAttack4Update();
 
 
+public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -78,64 +188,18 @@ public:
 	
 	void StageMovementRestrictions();
 
-private:
-	//通常行動初期化
-	void BehaviorRootInitialize();
-
-	//通常行動更新
-	void BehaviorRootUpdate();
-
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
 
 	// 浮遊ギミック更新
 	void UpdateFloatingGimmick();
 
-	//怯み行動初期化
-	void BehaviorFearInitialize();
-
-	//怯み行動更新
-	void BehaviorFearUpdate();
-
-
-	//攻撃行動初期化
-	void BehaviorAttackInitialize();
-
-	//攻撃行動更新
-	void BehaviorAttackUpdate();
-
-	//攻撃行動初期化
-	void BehaviorAttack2Initialize();
-
-	//攻撃行動更新
-	void BehaviorAttack2Update();
-
-	//攻撃行動初期化
-	void BehaviorAttack3Initialize();
-
-	//攻撃行動更新
-	void BehaviorAttack3Update();
-
-	//攻撃行動初期化
-	void BehaviorAttack4Initialize();
-
-	//攻撃行動更新
-	void BehaviorAttack4Update();
-
-
-
-    // エミッターの初期化
-    void InitializeParticleEmitter();
-
-    // エミッターの更新
-    void UpdateParticleEmitter();
-
-
-
 public:
 	void SetPlayer(Player* player) { player_ = player; };
 	void SetStage(Stage* stage) { stage_ = stage; }
 	const Behavior& GetBehavior() const { return behavior_; };
+	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
+	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
 
 	const Camera& GetCamera() { return attackCamera_; };
 	const Camera& GetCamera2() { return attackCamera2_; };
@@ -157,10 +221,10 @@ private:
 	ObjectColor color_;
 
 	// ワールドトランスフォーム
-	WorldTransform worldTransform_;
-	WorldTransform worldTransformBody_;
-	WorldTransform worldTransformLeft_;
-	WorldTransform worldTransformRight_;
+	WorldTransform worldTransform_;			//ベース
+	WorldTransform worldTransformBody_;		//体
+	WorldTransform worldTransformLeft_;		//左手
+	WorldTransform worldTransformRight_;	//右手
 	//
 	Vector3 oldPos_;
 	//
@@ -169,10 +233,11 @@ private:
 	Player* player_;
 	Stage* stage_;
 
+	// 電気弾
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-
+	// ステージアーム攻撃
 	std::list<std::unique_ptr<EnemyStageArm>> stageArm;
-
+	// 雷攻撃
 	std::list<std::unique_ptr<EnemyThunder>> thunder_;
 
 	std::array<ParticleEmitter, 3>particleEmitter_;
@@ -185,15 +250,11 @@ private:
 private:
 	// 速度
 	Vector3 velocity_ = {};
-
+	//
 	float speed;
 
 
-	//振るまい
-	Behavior behavior_ = Behavior::kRoot;
-	// 次の振るまいリクエスト
-	std::optional<Behavior> behaviorRequest_ = std::nullopt;
-
+	bool  isDebugAttack = false;
 
 	// 浮遊ギミック媒介変数
 	float floatingParameter_ = 0.0f;
@@ -244,14 +305,11 @@ private:
 
 		// 動きが止まってから回復する（浮く）までの時間
 		float cooldownTime = 120;
+
+		// 反動時間
+		float recoilTime = 0;
+		float MaxRecoilTime = 10;
+
 	};
 	SpinAttack attack4_;
-
-
-
-
-
-
-
-
 };

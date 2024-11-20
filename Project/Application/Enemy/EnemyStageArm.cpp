@@ -14,14 +14,14 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 	attack_ = attack;
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = {5, 5, 5};
+	worldTransform2_.scale_ = { 5, 5, 5 };
 
 	model2_ = Model::CreateFromObj("PredictionBox/PredictionBox.obj");
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 	color2_.Initialize();
-	color2_.SetColor(Vector4{ 1, 0, 0, 0.6f });
+	color2_.SetColor(Vector4{ 1, 0, 0, 1 });
 
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = Velocity;
@@ -48,14 +48,14 @@ void EnemyStageArm::Update()
 
 	attackPreparationTime++;
 	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
-		attaskMoveTime++;
-		// 移動時間まで前に出る
-		if (attaskMoveTime < attack_->MaxAttaskMoveTime) {
+		
+		if (length <= attack_->MaxLength) {
 			worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
-			
-		}// 時間が過ぎたら
+			length += std::abs(velocity_.x);
+			length += std::abs(velocity_.y);
+			length += std::abs(velocity_.z);
+		}
 		else {
-			// 引っ込むまでの時間＋＋
 			armRetractTime++;
 		}
 
@@ -66,9 +66,9 @@ void EnemyStageArm::Update()
 
 
 	}
-	
-	
-	
+
+
+
 
 	worldTransform_.UpdateData();
 	worldTransform2_.UpdateData();

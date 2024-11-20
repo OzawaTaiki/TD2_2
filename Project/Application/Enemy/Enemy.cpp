@@ -99,7 +99,7 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack1", "andingTime", &attack1_.MaxLandingTime);
 	float armmax = float(attack1_.MaxArmNum);
 	ConfigManager::GetInstance()->SetVariable("attack1", "armNum", &armmax);
-	ConfigManager::GetInstance()->SetVariable("attack1", "moveTime", &attack1_.MaxAttaskMoveTime);
+	ConfigManager::GetInstance()->SetVariable("attack1", "MaxLength", &attack1_.MaxLength);
 	ConfigManager::GetInstance()->SetVariable("attack1", "preparationTime", &attack1_.MaxAttackPreparationTime);
 	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
 	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
@@ -130,7 +130,7 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
-
+	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
 void Enemy::Update()
@@ -149,19 +149,11 @@ void Enemy::Update()
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
-		case Behavior::kAttack2:
-			BehaviorAttack2Initialize();
-			break;
-		case Behavior::kAttack3:
-			BehaviorAttack3Initialize();
-			break;
-		case Behavior::kAttack4:
-			BehaviorAttack4Initialize();
-			break;
 		}
 		// ふるまいリクエストリセット
 		behaviorRequest_ = std::nullopt;
 	}
+
 	switch (behavior_) {
 	case Behavior::kRoot: // 通常行動更新
 		BehaviorRootUpdate();
@@ -172,16 +164,9 @@ void Enemy::Update()
 	case Behavior::kAttack: // 攻撃行動更新
 		BehaviorAttackUpdate();
 		break;
-	case Behavior::kAttack2:
-		BehaviorAttack2Update(); // 攻撃行動更新
-		break;
-	case Behavior::kAttack3:
-		BehaviorAttack3Update(); // 攻撃行動更新
-		break;
-	case Behavior::kAttack4:
-		BehaviorAttack4Update(); // 攻撃行動更新
-		break;
 	}
+
+
 
 	//
 	BulletUpdate();
@@ -195,27 +180,38 @@ void Enemy::Update()
 	{
 		if (ImGui::BeginTabItem("enemy"))
 		{
+
 			ImGui::DragFloat3("AttackCamera translate", &attackCamera_.translate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera rotate", &attackCamera_.rotate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera2 translate", &attackCamera2_.translate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera2 rotate", &attackCamera2_.rotate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera3 translate", &attackCamera3_.translate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera3 rotate", &attackCamera3_.rotate_.x, 0.01f);
+			ImGui::Checkbox("debugAttack", &isDebugAttack);
 			if (ImGui::Button("attack")) {
 				behaviorTimer_ = 0;
 				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kSpecial;
+				specialAttackBehaviorRequest_ = SpecialAttack::kAttack;
 			}
 			if (ImGui::Button("attack2")) {
 				behaviorTimer_ = 0;
-				behaviorRequest_ = Behavior::kAttack2;
+
+				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kSpecial;
+				specialAttackBehaviorRequest_ = SpecialAttack::kAttack2;
 			}
 			if (ImGui::Button("attack3")) {
 				behaviorTimer_ = 0;
-				behaviorRequest_ = Behavior::kAttack3;
+				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kSpecial;
+				specialAttackBehaviorRequest_ = SpecialAttack::kAttack3;
 			}
 			if (ImGui::Button("attack4")) {
 				behaviorTimer_ = 0;
-				behaviorRequest_ = Behavior::kAttack4;
+				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kSpecial;
+				specialAttackBehaviorRequest_ = SpecialAttack::kAttack4;
 			}
 			ImGui::EndTabItem();
 		}
@@ -240,7 +236,7 @@ void Enemy::Update()
 			ImGui::DragInt("armNum", &attack1_.MaxArmNum, 0.01f);
 			ImGui::DragFloat("attackPower", &attack1_.attackPower, 0.01f);
 			ImGui::DragFloat("poreparationTime", &attack1_.MaxAttackPreparationTime, 0.01f);
-			ImGui::DragFloat("moveTime", &attack1_.MaxAttaskMoveTime, 0.01f);
+			ImGui::DragFloat("MaxLength", &attack1_.MaxLength, 0.01f);
 			ImGui::DragFloat("armRetractTime", &attack1_.MaxArmRetractTime, 0.01f);
 			ImGui::DragFloat("ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay, 0.01f);
 			ImGui::DragFloat("LandingTime", &attack1_.MaxLandingTime, 0.01f);
@@ -262,7 +258,7 @@ void Enemy::Update()
 		}
 		if (ImGui::BeginTabItem("attack3"))
 		{
-			ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
+			//ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
 			ImGui::DragFloat("cooldown", &attack3_.MaxAttackCooldown, 0.01f);
 			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 0.01f);
 			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
@@ -282,7 +278,6 @@ void Enemy::Update()
 		}
 		ImGui::EndTabBar();
 	}
-
 
 	StageMovementRestrictions();
 
@@ -321,14 +316,22 @@ void Enemy::Draw(const Camera& camera)
 	default:
 		break;
 	case Behavior::kAttack:
-		break;
-	case Behavior::kAttack2:
-		break;
-	case Behavior::kAttack3:
-		break;
-	case Behavior::kAttack4:
-		modelLeftArm_->Draw(worldTransformLeft_, &camera, &color_);
-		modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
+
+		switch (specialAttackBehavior_)
+		{
+		case Enemy::SpecialAttack::kAttack:
+			break;
+		case Enemy::SpecialAttack::kAttack2:
+			break;
+		case Enemy::SpecialAttack::kAttack3:
+			break;
+		case Enemy::SpecialAttack::kAttack4:
+			modelLeftArm_->Draw(worldTransformLeft_, &camera, &color_);
+			modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
+			break;
+		default:
+			break;
+		}
 		break;
 	}
 
@@ -346,21 +349,353 @@ void Enemy::OnCollision()
 
 void Enemy::StageMovementRestrictions()
 {
-	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z ) {
+	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z) {
 		worldTransform_.transform_.z = stage_->GetWallBack().z;
-	}else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z ) {
+	}
+	else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z) {
 		worldTransform_.transform_.z = stage_->GetWallFlont().z;
 	}
-	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x ) {
+	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x) {
 		worldTransform_.transform_.x = stage_->GetWallLeft().x;
-	}else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x ) {
+	}
+	else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x) {
 		worldTransform_.transform_.x = stage_->GetWallRight().x;
 	}
 
 }
 
 
+#pragma region 状態遷移
+
+#pragma region Root
+
+void Enemy::BehaviorRootInitialize()
+{
+	// 浮遊ギミック
+	InitializeFloatingGimmick();
+}
+
+void Enemy::BehaviorRootUpdate()
+{
+	Move(0.00001f, false);
+
+
+	// 浮遊ギミック
+	UpdateFloatingGimmick();
+
+	if (!isDebugAttack) {
+		behaviorTimer_++;
+		if (behaviorTimer_ >= 120) {
+			behaviorTimer_ = 0;
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
+
+}
+
+void Enemy::InitializeFloatingGimmick()
+{
+	floatingParameter_ = 0.0f;
+}
+
+void Enemy::UpdateFloatingGimmick()
+{
+	float pi = 3.141592f;
+	// 1フレームでのパラメータ加算値
+	const float step = 2.0f * pi / floatingPeriod;
+	// パラメータを1ステップ分加算
+	floatingParameter_ += step;
+
+	// 2πを超えたら0に戻す
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi);
+
+	float floatingAmplitude = 0.5f;
+
+	// 浮遊を座標に反映
+	worldTransform_.transform_.y = std::sin(floatingParameter_) * floatingAmplitude;
+}
+
+void Enemy::Move(float speed, bool flag)
+{
+	if (DistanceXZ(player_->GetWorldTransform().GetWorldPosition(), worldTransform_.GetWorldPosition()) >= 1) {
+		// 回転と移動量の設定
+		const float kMoveSpeed = speed; // 移動速度
+		// worldTransformBase_.rotation_.y += 0.00f; // 一定量のY軸回転
+
+		// 向いている方向への移動ベクトルの計算
+		Vector3 moveDirection = { 0.0f, 0.0f, kMoveSpeed };
+		Matrix4x4 rotationMatrix = MakeRotateYMatrix(worldTransform_.rotate_.y);
+		moveDirection = Transform(moveDirection, rotationMatrix);
+
+		// ロックオン座標
+		Vector3 lockOnPosition = player_->GetWorldTransform().GetWorldPosition();
+
+		// 追跡対象からロックオン対象へのベクトル
+		Vector3 sub = Subtract(lockOnPosition, worldTransform_.transform_);
+
+		// Y軸周り角度
+		worldTransform_.rotate_.y = std::atan2(sub.x, sub.z);
+		if (flag) {
+
+		}
+		else {
+			worldTransformBody_.rotate_.y = 0;
+		}
+		oldPos_ = worldTransform_.transform_;
+
+		worldTransform_.transform_ += moveDirection;
+	}
+}
+
+#pragma endregion // 通常行動
+
+#pragma region Attack
+
+void Enemy::BehaviorAttackInitialize()
+{
+
+	if (!isDebugAttack) {
+		if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
+			attackBehaviorRequest_ = AttackBehavior::kSpecial;
+
+			specialAttackBehaviorRequest_ = SpecialAttack::kAttack4;
+
+		}
+		else {
+			attackBehaviorRequest_ = AttackBehavior::kSpecial;
+
+			specialAttackBehaviorRequest_ = SpecialAttack::kAttack3;
+
+		}
+	}
+
+
+	if (attackBehaviorRequest_) {
+		// ふるまいを変更する
+		attackBehavior_ = attackBehaviorRequest_.value();
+		// 各ふるまいごとの初期化を実行
+		switch (attackBehavior_) {
+		case AttackBehavior::kNormal: // 通常攻撃の場合
+
+			if (normalAttackBehaviorRequest_) {
+				// ふるまい
+				normalAttackBehavior_ = normalAttackBehaviorRequest_.value();
+				switch (normalAttackBehavior_)
+				{
+				case Enemy::NormalAttack::kAttackShort1: // 近距離1
+					NormalShotAttack1Initialize();
+					break;
+				case Enemy::NormalAttack::kAttackShort2: // 近距離2
+					NormalShotAttack2Initialize();
+					break;
+				case Enemy::NormalAttack::kAttackLong1:  // 遠距離1
+					NormalLongAttack1Initialize();
+					break;
+				case Enemy::NormalAttack::kAttackLong2:  // 遠距離2
+					NormalLongAttack2Initialize();
+					break;
+				default:
+					break;
+				}
+				normalAttackBehaviorRequest_ = std::nullopt;
+			}
+			break;
+		case AttackBehavior::kSpecial: // 必殺技攻撃の場合
+
+			if (specialAttackBehaviorRequest_) {
+				specialAttackBehavior_ = specialAttackBehaviorRequest_.value();
+
+				switch (specialAttackBehavior_)
+				{
+				case Enemy::SpecialAttack::kAttack:		// 攻撃1
+					SpecialAttackInitialize();
+					break;
+				case Enemy::SpecialAttack::kAttack2:	// 攻撃2
+					SpecialAttack2Initialize();
+					break;
+				case Enemy::SpecialAttack::kAttack3:	// 攻撃3
+					SpecialAttack3Initialize();
+					break;
+				case Enemy::SpecialAttack::kAttack4:	// 攻撃4
+					SpecialAttack4Initialize();
+					break;
+				default:
+					break;
+				}
+
+				specialAttackBehaviorRequest_ = std::nullopt;
+			}
+			break;
+		}
+		// ふるまいリクエストリセット
+		attackBehaviorRequest_ = std::nullopt;
+	}
+}
+
+void Enemy::BehaviorAttackUpdate()
+{
+
+	// 攻撃遷移
+	switch (attackBehavior_) {
+	case AttackBehavior::kNormal: // 通常攻撃の場合
+		switch (normalAttackBehavior_)
+		{
+		case Enemy::NormalAttack::kAttackShort1: // 近距離1
+			NormalShotAttack1Update();
+			break;
+		case Enemy::NormalAttack::kAttackShort2: // 近距離2
+			NormalShotAttack2Update();
+			break;
+		case Enemy::NormalAttack::kAttackLong1:  // 遠距離1
+			NormalLongAttack1Update();
+			break;
+		case Enemy::NormalAttack::kAttackLong2:  // 遠距離2
+			NormalLongAttack2Update();
+			break;
+		default:
+			break;
+		}
+		break;
+	case AttackBehavior::kSpecial: // 必殺技攻撃の場合
+		switch (specialAttackBehavior_)
+		{
+		case Enemy::SpecialAttack::kAttack:		// 攻撃1
+			SpecialAttackUpdate();
+			break;
+		case Enemy::SpecialAttack::kAttack2:	// 攻撃2
+			SpecialAttack2Update();
+			break;
+		case Enemy::SpecialAttack::kAttack3:	// 攻撃3
+			SpecialAttack3Update();
+			break;
+		case Enemy::SpecialAttack::kAttack4:	// 攻撃4
+			SpecialAttack4Update();
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+}
+
+#pragma endregion // 攻撃行動
+
+#pragma region Fear
+
+void Enemy::BehaviorFearInitialize()
+{
+
+}
+
+void Enemy::BehaviorFearUpdate()
+{
+	behaviorTimer_++;
+	if (behaviorTimer_ >= 180) {
+		behaviorRequest_ = Behavior::kRoot;
+		behaviorTimer_ = 0;
+	}
+}
+
+#pragma endregion // 怯み行動
+
+#pragma endregion // 大まかな状態
+
+
+
+#pragma region Special
+
 #pragma region Attack1
+
+void Enemy::SpecialAttackInitialize()
+{
+	attack1_.isBulletShot = false;
+	attack1_.clock1 = 1;
+	attack1_.transitionFactor = 0;
+
+	attack1_.armNum = 0;
+	attack1_.landingTime = 0;
+
+}
+
+void Enemy::SpecialAttackUpdate()
+{
+	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
+
+	Vector3 targetPos;
+	// 上に上がる処理
+	if (attack1_.isBulletShot == false) {
+		if (attack1_.clock1 == 1) {
+			// 補間の進行度を更新
+			if (attack1_.transitionFactor < 1.0f) {
+				attack1_.transitionFactor += transitionSpeed;
+			}
+			else {
+				attack1_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
+				attack1_.clock1 *= -1;
+				attack1_.isBulletShot = true;
+			}
+
+
+			targetPos.x = worldTransform_.transform_.x;
+			targetPos.y = attack1_.attackPos.y;
+			targetPos.z = worldTransform_.transform_.z;
+
+			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack1_.transitionFactor);
+		}
+	}
+
+	// 上がった時の処理
+	if (attack1_.isBulletShot == true) {
+		if (++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
+			if (attack1_.armNum < attack1_.MaxArmNum) {
+
+
+				int newLocation;
+				do {
+					newLocation = rand() % 4 + 1;
+
+				} while (newLocation == attack1_.oldAttackSpawnLocation);
+
+				StageArmInitialize(attack1_.attackSpawnLocation);
+
+				attack1_.attackSpawnLocation = newLocation;
+				attack1_.oldAttackSpawnLocation = newLocation;
+				attack1_.AttackToNextPredictionDelay = 0;
+				attack1_.armNum++;
+			}
+
+
+
+		if (attack1_.armNum >= attack1_.MaxArmNum) {
+			if (++attack1_.landingTime >= attack1_.MaxLandingTime) {
+				if (attack1_.clock1 == -1) {
+					// 補間の進行度を更新
+					if (attack1_.transitionFactor > 0.0f) {
+						attack1_.transitionFactor -= transitionSpeed * 3;
+					}
+					else {
+						attack1_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
+						attack1_.clock1 *= -1;
+					}
+
+					targetPos.y = oldPos_.y;
+					targetPos.x = oldPos_.x;
+					targetPos.z = oldPos_.z;
+
+					worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack1_.transitionFactor);
+
+
+
+
+				}
+				if (++behaviorTimer_ >= 120) {
+					behaviorRequest_ = Behavior::kRoot;
+					behaviorTimer_ = 0;
+				}
+			}
+		}
+	}
+}
 
 void Enemy::StageArmInitialize(int num)
 {
@@ -411,102 +746,6 @@ void Enemy::StageArmInitialize(int num)
 	stageArm.push_back(std::move(newBullet));
 }
 
-void Enemy::BehaviorAttackInitialize()
-{
-	attack1_.isBulletShot = false;
-	attack1_.clock1 = 1;
-	attack1_.transitionFactor = 0;
-
-	attack1_.armNum = 0;
-	attack1_.landingTime = 0;
-
-	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
-
-
-}
-
-void Enemy::BehaviorAttackUpdate()
-{
-	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
-
-
-
-
-	Vector3 targetPos;
-	// 上に上がる処理
-	if (attack1_.isBulletShot == false) {
-		if (attack1_.clock1 == 1) {
-			// 補間の進行度を更新
-			if (attack1_.transitionFactor < 1.0f) {
-				attack1_.transitionFactor += transitionSpeed;
-			}
-			else {
-				attack1_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
-				attack1_.clock1 *= -1;
-				attack1_.isBulletShot = true;
-			}
-
-
-			targetPos.x = worldTransform_.transform_.x;
-			targetPos.y = attack1_.attackPos.y;
-			targetPos.z = worldTransform_.transform_.z;
-
-			worldTransform_.transform_ = Lerp(worldTransform_.transform_, targetPos, attack1_.transitionFactor);
-		}
-	}
-
-	// 上がった時の処理
-	if (attack1_.isBulletShot == true) {
-		if (++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
-			if (attack1_.armNum < attack1_.MaxArmNum) {
-
-
-				int newLocation;
-				do {
-					newLocation = rand() % 4 + 1;
-				} while (newLocation == attack1_.oldAttackSpawnLocation);
-
-				StageArmInitialize(attack1_.attackSpawnLocation);
-
-				attack1_.attackSpawnLocation = newLocation;
-				attack1_.oldAttackSpawnLocation = newLocation;
-				attack1_.AttackToNextPredictionDelay = 0;
-				attack1_.armNum++;
-			}
-
-
-
-		if (attack1_.armNum >= attack1_.MaxArmNum) {
-			if (++attack1_.landingTime >= attack1_.MaxLandingTime) {
-				if (attack1_.clock1 == -1) {
-					// 補間の進行度を更新
-					if (attack1_.transitionFactor > 0.0f) {
-						attack1_.transitionFactor -= transitionSpeed * 3;
-					}
-					else {
-						attack1_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
-						attack1_.clock1 *= -1;
-					}
-
-					targetPos.y = oldPos_.y;
-					targetPos.x = oldPos_.x;
-					targetPos.z = oldPos_.z;
-
-					worldTransform_.transform_ = Lerp(targetPos, worldTransform_.transform_, attack1_.transitionFactor);
-
-
-
-
-				}
-				if (++behaviorTimer_ >= 120) {
-					behaviorRequest_ = Behavior::kRoot;
-					behaviorTimer_ = 0;
-				}
-			}
-		}
-	}
-}
-
 #pragma endregion // 攻撃1
 
 #pragma region Attack2
@@ -546,7 +785,7 @@ void Enemy::ThunderInitialize(Vector3 pos)
 	}
 }
 
-void Enemy::BehaviorAttack2Initialize()
+void Enemy::SpecialAttack2Initialize()
 {
 	attack2_.isBulletShot = false;
 	attack2_.clock = 1;
@@ -555,7 +794,7 @@ void Enemy::BehaviorAttack2Initialize()
 	attack2_.landingTime = 0;
 }
 
-void Enemy::BehaviorAttack2Update()
+void Enemy::SpecialAttack2Update()
 {
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
@@ -677,9 +916,7 @@ void Enemy::BulletUpdate()
 	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
 }
 
-
-
-void Enemy::BehaviorAttack3Initialize()
+void Enemy::SpecialAttack3Initialize()
 {
 	attack3_.isBulletShot = false;
 	attack3_.clock1 = 1;
@@ -687,65 +924,78 @@ void Enemy::BehaviorAttack3Initialize()
 
 	attack3_.numShotsPerPhase = 0;
 	attack3_.attackCooldown = attack3_.MaxAttackCooldown;
+	attack3_.minYTime = 0;
+	attack3_.maxYTime = 0;
+	//attack3_.
+	behaviorTimer_ = 0;
 }
 
-void Enemy::BehaviorAttack3Update()
-{
+void Enemy::SpecialAttack3Update() {
+
 	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
 
 	Vector3 targetPos;
-	Vector3 topPos;
+	Vector3 startPos;
 	if (attack3_.isBulletShot == false) {
-
-
 		if (attack3_.clock1 == 1) {
-			// 補間の進行度を更新
+			targetPos.x = worldTransform_.transform_.x;
+			targetPos.y = attack3_.MaxPosY;
+			targetPos.z = worldTransform_.transform_.z;
+
+
+			startPos = worldTransform_.transform_;
+			startPos.y = attack3_.MinPosY;
+
 			if (attack3_.transitionFactor < 1.0f) {
-				attack3_.transitionFactor += transitionSpeed;
+				attack3_.transitionFactor += transitionSpeed * 5.0f;
 			}
 			else {
 				attack3_.transitionFactor = 1.0f; // 補間が完了したら1.0fで固定
-				attack3_.clock1 *= -1;
 				attack3_.isBulletShot = false;
 
-				attack3_.MaxPosY = worldTransform_.transform_.y;
-			}
-			targetPos.x = worldTransform_.transform_.x;
-			targetPos.y = attack3_.attackPos.y;
-			targetPos.z = worldTransform_.transform_.z;
-
-			worldTransform_.transform_ = StartEnd(worldTransform_.transform_, targetPos, attack3_.transitionFactor);
-		}
-		else  if (attack3_.clock1 == -1) {
-			// 補間の進行度を更新
-			if (attack3_.transitionFactor > 0.0f) {
-				attack3_.transitionFactor -= transitionSpeed;
-				if (attack3_.transitionFactor < 0.5f) {
-					attack3_.isBulletShot = true;
+				if (++attack3_.maxYTime >= attack3_.MaxYTime) {
+					attack3_.clock1 *= -1;
+					attack3_.transitionFactor = 0.0f;
 				}
 			}
+
+
+			worldTransform_.transform_ = StartEnd(startPos, targetPos, attack3_.transitionFactor);
+		}
+		if (attack3_.clock1 == -1) {
+			targetPos.y = attack3_.MinPosY;
+			targetPos.x = worldTransform_.transform_.x;
+			targetPos.z = worldTransform_.transform_.z;
+
+
+			startPos = worldTransform_.transform_;
+			startPos.y = attack3_.MaxPosY;
+
+			// 補間の進行度を更新
+			if (attack3_.transitionFactor < 1.0f) {
+				attack3_.transitionFactor += transitionSpeed * 10.0f;
+
+			}
 			else {
-				attack3_.transitionFactor = 0.0f; // 補間が完了したら0.0fで固定
+				attack3_.isBulletShot = true;
+				attack3_.transitionFactor = 1.0f;
 				attack3_.clock1 *= -1;
 			}
 
-			targetPos.y = oldPos_.y;
-			targetPos.x = worldTransform_.transform_.x;
-			targetPos.z = worldTransform_.transform_.z;
 
-			topPos = targetPos;
 
-			topPos.y = attack3_.MaxPosY;
-
-			worldTransform_.transform_ = StartEnd(topPos, targetPos, attack3_.transitionFactor);
+			worldTransform_.transform_ = StartEnd(startPos, targetPos, attack3_.transitionFactor);
 		}
 	}
 
 
 
 
-
+	ImGui::Begin("attac3");
+	ImGui::InputFloat("transitionFactor", &attack3_.transitionFactor);
+	ImGui::Checkbox("isBulletShot", &attack3_.isBulletShot);
+	ImGui::End();
 
 
 	if (attack3_.isBulletShot == true) {
@@ -756,7 +1006,6 @@ void Enemy::BehaviorAttack3Update()
 				attack3_.attackCooldown = 0;
 			}
 		}
-
 		if (attack3_.numShotsPerPhase >= attack3_.MaxNumShotsPerPhase) {
 			behaviorTimer_++;
 		}
@@ -772,7 +1021,7 @@ void Enemy::BehaviorAttack3Update()
 
 #pragma region Attack4
 
-void Enemy::BehaviorAttack4Initialize()
+void Enemy::SpecialAttack4Initialize()
 {
 	attack4_.transitionFactor = 0;
 	worldTransformLeft_.transform_ = { 0,0,0 };
@@ -780,9 +1029,11 @@ void Enemy::BehaviorAttack4Initialize()
 	attack4_.spinTime = 0;
 	attack4_.armGrowthToSpinDelay = 0;
 	attack4_.stoppingTime = 0;
+	attack4_.recoilTime = 0;
 }
 
-void Enemy::BehaviorAttack4Update() {
+void Enemy::SpecialAttack4Update()
+{
 	static float transitionFactor = 0.01f;
 
 	attack4_.transitionFactor += transitionFactor;
@@ -793,9 +1044,12 @@ void Enemy::BehaviorAttack4Update() {
 	if (++attack4_.armGrowthToSpinDelay <= attack4_.MaxArmGrowthToSpinDelay) {
 		worldTransformLeft_.transform_.x = StartEnd(str, endm, attack4_.transitionFactor);
 		worldTransformRight_.transform_.x = StartEnd(str, end, attack4_.transitionFactor);
-
+		if (worldTransformLeft_.transform_.x >= endm) {
+			worldTransformBody_.rotate_.y -= 0.01f;
+		}
 	}
 	else {
+
 		if (++attack4_.spinTime <= attack4_.MaxSpinTime) {
 			Move(attack4_.speed, true);
 
@@ -804,6 +1058,7 @@ void Enemy::BehaviorAttack4Update() {
 				attack4_.rotateT = 1;
 			}
 			attack4_.rotateSpeed = Lerp(attack4_.MinxRotateSpeed, attack4_.MaxRotateSpeed, attack4_.rotateT);
+
 
 			worldTransformBody_.rotate_.y += attack4_.rotateSpeed;
 
@@ -834,6 +1089,7 @@ void Enemy::BehaviorAttack4Update() {
 				}
 			}
 		}
+
 	}
 }
 
@@ -863,93 +1119,46 @@ void Enemy::UpdateParticleEmitter()
 #pragma endregion // 攻撃4
 
 
-#pragma region Root
+#pragma endregion //必殺技
 
-void Enemy::BehaviorRootInitialize()
+
+#pragma region Noraml
+
+void Enemy::NormalShotAttack1Initialize()
 {
-	// 浮遊ギミック
-	InitializeFloatingGimmick();
 }
 
-void Enemy::BehaviorRootUpdate()
+void Enemy::NormalShotAttack1Update()
 {
-	Move(0.00001f, false);
-
-
-	// 浮遊ギミック
-	UpdateFloatingGimmick();
 }
 
-void Enemy::InitializeFloatingGimmick()
+void Enemy::NormalShotAttack2Initialize()
 {
-	floatingParameter_ = 0.0f;
 }
 
-void Enemy::UpdateFloatingGimmick()
+void Enemy::NormalShotAttack2Update()
 {
-	float pi = 3.141592f;
-	// 1フレームでのパラメータ加算値
-	const float step = 2.0f * pi / floatingPeriod;
-	// パラメータを1ステップ分加算
-	floatingParameter_ += step;
-
-	// 2πを超えたら0に戻す
-	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi);
-
-	float floatingAmplitude = 0.5f;
-
-	// 浮遊を座標に反映
-	worldTransform_.transform_.y = std::sin(floatingParameter_) * floatingAmplitude;
 }
 
-void Enemy::Move(float speed, bool flag)
+void Enemy::NormalLongAttack1Initialize()
 {
-	if (DistanceXZ(player_->GetWorldTransform().GetWorldPosition(), worldTransform_.GetWorldPosition()) >= 1) {
-		// 回転と移動量の設定
-		const float kMoveSpeed = speed; // 移動速度
-		// worldTransformBase_.rotation_.y += 0.00f; // 一定量のY軸回転
-
-		// 向いている方向への移動ベクトルの計算
-		Vector3 moveDirection = { 0.0f, 0.0f, kMoveSpeed };
-		Matrix4x4 rotationMatrix = MakeRotateYMatrix(worldTransform_.rotate_.y);
-		moveDirection = Transform(moveDirection, rotationMatrix);
-
-		// ロックオン座標
-		Vector3 lockOnPosition = player_->GetWorldTransform().GetWorldPosition();
-
-		// 追跡対象からロックオン対象へのベクトル
-		Vector3 sub = Subtract(lockOnPosition, worldTransform_.transform_);
-
-		// Y軸周り角度
-		worldTransform_.rotate_.y = std::atan2(sub.x, sub.z);
-		if (flag) {
-
-		}
-		else {
-			worldTransformBody_.rotate_.y = 0;
-		}
-		oldPos_ = worldTransform_.transform_;
-
-		worldTransform_.transform_ += moveDirection;
-	}
 }
 
-#pragma endregion // 通常行動
-
-#pragma region Fear
-
-void Enemy::BehaviorFearInitialize()
+void Enemy::NormalLongAttack1Update()
 {
-
 }
 
-void Enemy::BehaviorFearUpdate()
+void Enemy::NormalLongAttack2Initialize()
 {
-	behaviorTimer_++;
-	if (behaviorTimer_ >= 180) {
-		behaviorRequest_ = Behavior::kRoot;
-		behaviorTimer_ = 0;
-	}
 }
 
-#pragma endregion // 怯み
+void Enemy::NormalLongAttack2Update()
+{
+}
+
+
+#pragma endregion 通常攻撃
+
+
+
+

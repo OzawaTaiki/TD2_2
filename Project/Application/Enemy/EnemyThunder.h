@@ -33,7 +33,7 @@ public:
 		float MaxAttackPreparationTime = 120.0f;
 		// 雷が出る時間(最大)
 		float MaxThunderStrikeTime = 30.0f;
-		// 細→太が始まる時間
+		// 細→太が始まるまで時間
 		float MaxThicknessStartTime = 10.0f;
 		// 細→太くなるまでの時間
 		float MaxExpandTime = 15.0f;

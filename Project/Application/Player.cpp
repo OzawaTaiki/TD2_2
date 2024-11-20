@@ -63,6 +63,8 @@ void Player::Initialize()
 	dustParticle_->SetPlayerMat(&worldTransform_);
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
+	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
+    ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 }
 
 void Player::Update()
@@ -78,9 +80,16 @@ void Player::Update()
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
 			ImGui::DragFloat("speed", &speed, 0.01f);
+			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
+			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
+			if (ImGui::Button("save"))
+			{
+				ConfigManager::GetInstance()->SaveData("Player");
+			}
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
+
 	}
 
 
@@ -257,6 +266,9 @@ void Player::BehaviorRootUpdate()
 	// 移動量に速さを反映
 	worldTransform_.transform_ += velocity_;
 
+	// 移動時の傾き
+	TiltMotion();
+
 	// 旋回制御
 	if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
 		// 移動中なら常に旋回処理を行う
@@ -301,7 +313,7 @@ void Player::BehaviorRootUpdate()
 
 	recastTime++;
 	if (pressedSPACE) {
-		if (recastTime >= 40) {
+		if (recastTime >= 30) {
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
@@ -435,6 +447,32 @@ void Player::SetAttackCombo(int parameter)
 			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
+}
+
+void Player::TiltMotion()
+{
+	if (!isMove_)
+	{
+		tiltMotionTimer_ -= 1.0f / 15.0f;
+        if (tiltMotionTimer_ <= 0.0f)
+        {
+            tiltMotionTimer_ = 0.0f;
+        }
+		worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, tiltMotionTimer_ / tiltMotionDuration_);
+
+		return;
+	}
+
+    tiltMotionTimer_ += 1.0f / 60.0f;
+    if (tiltMotionTimer_ >= tiltMotionDuration_)
+    {
+        tiltMotionTimer_ = tiltMotionDuration_;
+    }
+
+	float t = tiltMotionTimer_ / tiltMotionDuration_;
+	t = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t) * (1.0f - t);
+	worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, t);
+
 }
 
 
