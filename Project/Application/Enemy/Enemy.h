@@ -19,7 +19,7 @@
 
 #include "ParticleEmitters.h"
 
-// 
+//
 #include <list>
 #include <optional>
 
@@ -78,32 +78,32 @@ public: //ふるまい関係
 private: //状態
 
 	/// <summary>
-	/// 行動遷移 
+	/// 行動遷移
 	/// </summary>
-	
+
 	//通常行動初期化
 	void BehaviorRootInitialize();
 
 	//通常行動更新
 	void BehaviorRootUpdate();
-	
+
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
 
 	//攻撃行動更新
 	void BehaviorAttackUpdate();
-	
+
 	//怯み行動初期化
 	void BehaviorFearInitialize();
 
 	//怯み行動更新
 	void BehaviorFearUpdate();
 
-	
+
 	/// <summary>
-	/// 通常攻撃 
+	/// 通常攻撃
 	/// </summary>
-	
+
 	// 通常近距離攻撃1
 	void NormalShotAttack1Initialize();
 
@@ -125,12 +125,12 @@ private: //状態
 	void NormalLongAttack2Update();
 
 	/// <summary>
-	/// 必殺技 
+	/// 必殺技
 	/// </summary>
-	 
+
 	// 攻撃行動初期化
 	void SpecialAttackInitialize();
-	
+
 	// 攻撃行動更新
 	void SpecialAttackUpdate();
 
@@ -152,6 +152,13 @@ private: //状態
 	// 攻撃行動更新
 	void SpecialAttack4Update();
 
+
+
+	// エミッターの初期化
+	void InitializeParticleEmitter();
+
+	// エミッターの更新
+	void UpdateParticleEmitter();
 
 public:
 	/// <summary>
@@ -185,7 +192,7 @@ public:
 	void ThunderInitialize(Vector3 pos);
 	 // 衝突処理
 	void OnCollision();
-	
+
 	void StageMovementRestrictions();
 
 	// 浮遊ギミック初期化
@@ -271,7 +278,7 @@ private:
 
 	// 手の攻撃
 	EnemyStageArm::AttackArm attack1_;
-	
+
 	// 規則正しい雷
 	EnemyThunder::AttackThunder attack2_;
 
