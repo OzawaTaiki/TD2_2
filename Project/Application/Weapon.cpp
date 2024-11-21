@@ -1,6 +1,7 @@
 #include "Weapon.h"
 #include "../Collider/CollisionManager.h"
 #include "ParticleManager.h"
+#include "TextureManager.h"
 
 void Weapon::Initialize()
 {
@@ -18,6 +19,7 @@ void Weapon::Initialize()
     collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
+	uint32_t texture=TextureManager::GetInstance()->Load()
     hitPatricles_ = std::make_unique<ParticleEmitter>();
 	hitPatricles_->Setting("HitParticle");
 	hitPatricles_->SetWorldMatrix(&worldTransform_.matWorld_);
@@ -50,12 +52,9 @@ void Weapon::OnCollision(const Collider* _other)
 
     if (name == "enemy")
     {
-        // プレイヤーの攻撃が当たった
+        // プレイヤーの攻撃が当たった瞬間
 		// エフェクト出す
-        hitPatricles_->SetEmit(true);
-
+        if (collider_->IsCollisionEnter())
+			hitPatricles_->SetEmit(true);
     }
-
-
-
 }

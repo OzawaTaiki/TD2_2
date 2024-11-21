@@ -110,6 +110,15 @@ void Collider::SetShape(const Vector3& _min, const Vector3& _max)
 }
 
 
+void Collider::OnCollision(const Collider* _other)
+{
+    if (fOnCollision_)
+    {
+        isHit_ = true;
+        fOnCollision_(_other);
+    }
+}
+
 void Collider::SetAtrribute(const std::string& _atrribute)
 {
     atrribute_ = CollisionManager::GetInstance()->GetAtttibute(_atrribute);

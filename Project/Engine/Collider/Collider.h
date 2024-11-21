@@ -60,7 +60,7 @@ public:
     // ワールド行列を取得する
     Matrix4x4 GetWorldMatrix()const { return fGetWorldMatrix_(); }
     // 衝突時の処理を行う
-    void OnCollision(const Collider* _other)const { fOnCollision_(_other); }
+    void OnCollision(const Collider* _other);
 
     // 判定属性を設定する
     // _atrribute->自信の属性
@@ -86,6 +86,16 @@ public:
 
     std::string GetName()const { return name_; }
 
+    void NotHit() { preIsHit_ = isHit_; isHit_ = false; }
+
+    // 衝突した瞬間
+    bool IsCollisionEnter()const { return isHit_ && !preIsHit_; }
+
+    // 衝突中
+    bool IsCollisionStay()const { return isHit_; }
+
+    // 衝突から離れた瞬間
+    bool IsCollisionExit()const { return !isHit_ && preIsHit_; }
 
 private:
 
@@ -94,6 +104,8 @@ private:
     // 衝突判定のサイズ
     Vector3 size_ = {};
 
+    bool isHit_ = false;
+    bool preIsHit_ = false;
 
     BoundingBox boundingBox_ = BoundingBox::NONE;
     uint32_t atrribute_ = 0x0;
