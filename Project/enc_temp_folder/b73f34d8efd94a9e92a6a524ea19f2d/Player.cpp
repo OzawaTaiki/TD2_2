@@ -62,17 +62,17 @@ void Player::Initialize()
     dustParticle_->Initialize();
 	dustParticle_->SetPlayerMat(&worldTransform_);
 
-	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
-	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
-	ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+	//ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
+	//ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
+	//ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 
-	ConfigManager::GetInstance()->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
+	//ConfigManager::GetInstance()->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
 
 
-	// hitColor関連
-    ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
-    ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
-    ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
+	//// hitColor関連
+ //   ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
+ //   ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
+ //   ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
 
 
     collider_ = std::make_unique<Collider>();

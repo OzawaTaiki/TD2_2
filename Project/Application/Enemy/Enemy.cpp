@@ -110,6 +110,7 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
 	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
 	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
+	
 	// 攻撃2
 	ConfigManager::GetInstance()->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
 	ConfigManager::GetInstance()->SetVariable("attack2", "attackPower", &attack2_.attackPower);
