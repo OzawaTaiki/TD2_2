@@ -1,19 +1,22 @@
 {
     "attack1": {
         "MaxLength": [
-            30.0
+            20.0
         ],
         "ToNextPredictionDelay": [
-            30.0
+            40.0
         ],
         "andingTime": [
-            300.0
+            350.0
         ],
         "armNum": [
-            0.0
+            6.880375459834852e-43
+        ],
+        "armRetractTime": [
+            180.0
         ],
         "armSpeed": [
-            0.5
+            2.0
         ],
         "attackPos": [
             [
@@ -29,7 +32,7 @@
             60.0
         ],
         "preparationTime": [
-            120.0
+            180.0
         ],
         "weakArm": [
             10.0

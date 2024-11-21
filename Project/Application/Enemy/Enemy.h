@@ -90,6 +90,8 @@ public: //ふるまい関係
 
 		// t補間用
 		float transitionFactor = 0;
+		// t補間スピード
+		float transitionSpeed = 0.01f;
 		// 追ってくる速度
 		float speed = 0.3f;
 		// 移動時間
@@ -101,6 +103,14 @@ public: //ふるまい関係
 		int MaxNumMovePhase = 1;
 		int MaxRandMovePhase = 3;
 		int numMovePhase = 0;
+		// 
+		float coolTime = 0;
+		float MaxCoolTime = 30;
+		int MaxRandCoolTime = 30;
+		
+
+		int MaxMove = 50;
+
 
 		// 
 		bool isBehavior_ = false;
@@ -138,11 +148,6 @@ private: //状態
 
 	//怯み行動更新
 	void BehaviorFearUpdate();
-
-
-
-
-
 	
 #pragma region Attack
 
