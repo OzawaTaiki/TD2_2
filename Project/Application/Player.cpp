@@ -64,7 +64,10 @@ void Player::Initialize()
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
-    ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+  ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+
+	ConfigManager::GetInstance()->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
+
 
 	// hitColor関連
     ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
@@ -81,6 +84,7 @@ void Player::Initialize()
     collider_->SetOnCollisionFunc([this]() {OnCollision(); });
 
 
+
 }
 
 void Player::Update()
@@ -95,6 +99,9 @@ void Player::Update()
 			ImGui::DragFloat3("translateMat", &mat.x, 0.01f);
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
+			int time = MaxRecastTime;
+			ImGui::DragInt("MaxRecastTime", &time, 1.0f);
+			MaxRecastTime = uint32_t(time);
 			ImGui::DragFloat("speed", &speed, 0.01f);
 			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
 			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
@@ -346,7 +353,7 @@ void Player::BehaviorRootUpdate()
 
 	recastTime++;
 	if (pressedSPACE) {
-		if (recastTime >= 30) {
+		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}

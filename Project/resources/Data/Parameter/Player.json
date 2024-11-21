@@ -1,5 +1,8 @@
 {
     "Player": {
+        "AttackRecastTime": [
+            30
+
         "defaultColor": [
             [
                 1.0,
@@ -18,6 +21,7 @@
         ],
         "hitColorDuration": [
             0.10000000149011612
+
         ],
         "speed": [
             0.5600000023841858
