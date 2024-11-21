@@ -34,7 +34,7 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 	color2_.Initialize();
-	color2_.SetColor(Vector4{ 1, 0, 0, 0.6f });
+	color2_.SetColor(Vector4{ 1, 0, 0, 1.0f });
 
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = Velocity;
@@ -54,21 +54,27 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 void EnemyThunder::Update()
 {
-	// 時間経過でデス
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
-	}
 
-	attackPreparationTime_++;
-	if (attackPreparationTime_ > attack_->MaxAttackPreparationTime) {
-		if (++thicknessStartTime > attack_->MaxThicknessStartTime) {
-			if (++thunderStrikeTime > attack_->MaxThunderStrikeTime) {
-				expandTime_++;
-				worldTransform2_.scale_.x = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.x);
-				worldTransform2_.scale_.z = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.z);
+
+	if (++attackPreparationTime_ > attack_->MaxAttackPreparationTime) {
+		//if (++thicknessStartTime > attack_->MaxThicknessStartTime) {
+			//if (++thunderStrikeTime > attack_->MaxThunderStrikeTime) {
+		if (attack_->transitionFactor >= 0.9f) {
+			expandTime_++;
+			worldTransform2_.scale_.x = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.x);
+			worldTransform2_.scale_.z = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.z);
+			//}
+		}
+
+		//}
+			// 時間経過でデス
+		if (worldTransform2_.scale_.z >= attack_->maxSize) {
+			if (++deathTimer_ >= attack_->MaxDeathTimer_) {
+				isDead_ = true;
 			}
 		}
 	}
+
 
 
 
@@ -81,7 +87,7 @@ void EnemyThunder::Update()
 
 void EnemyThunder::Draw(const Camera& camera)
 {
-	if (thicknessStartTime > attack_->MaxThicknessStartTime) {
+	if (attack_->clock == -1) {
 		model2_->Draw(worldTransform2_, &camera, &color2_);
 	}
 	model_->Draw(worldTransform_, &camera, &color_);

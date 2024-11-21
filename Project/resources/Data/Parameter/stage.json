@@ -24,7 +24,7 @@
         "worldWallBack_translate": [
             [
                 0.0,
-                0.0,
+                -10.0,
                 50.0
             ]
         ],
@@ -38,7 +38,7 @@
         "worldWallFlont_translate": [
             [
                 0.0,
-                0.0,
+                -10.0,
                 -50.0
             ]
         ],
@@ -52,7 +52,7 @@
         "worldWallLeft_translate": [
             [
                 -50.0,
-                0.0,
+                -10.0,
                 0.0
             ]
         ],
@@ -66,7 +66,7 @@
         "worldWallRight_translate": [
             [
                 50.0,
-                0.0,
+                -10.0,
                 0.0
             ]
         ]
