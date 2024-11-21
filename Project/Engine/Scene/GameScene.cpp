@@ -71,10 +71,10 @@ void GameScene::Update()
 {
     ImGui::Begin("Engine");
 
-        if (ImGui::Button("save")) {
-            ConfigManager::GetInstance()->SaveData();
-            //JsonLoader::SaveJson()
-        }
+    if (ImGui::Button("save")) {
+        ConfigManager::GetInstance()->SaveData();
+        //JsonLoader::SaveJson()
+    }
 
     input_->Update();
     CollisionManager::GetInstance()->ResetColliderList();
