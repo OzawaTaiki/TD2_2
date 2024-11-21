@@ -117,6 +117,10 @@ void Enemy::Initialize()
 	float ShotsPerPhase = int(attack3_.MaxNumShotsPerPhase);
 	ConfigManager::GetInstance()->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
 	ConfigManager::GetInstance()->SetVariable("attack3", "speed", &attack3_.speed);
+	ConfigManager::GetInstance()->SetVariable("attack3", "MaxYTime", &attack3_.MaxYTime);
+	ConfigManager::GetInstance()->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
+	ConfigManager::GetInstance()->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
+	ConfigManager::GetInstance()->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
 
 	// 攻撃4
 	ConfigManager::GetInstance()->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
@@ -255,19 +259,24 @@ void Enemy::Update()
 		{
 			//ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
 			ImGui::DragFloat("ExpandTime", &attack2_.MaxExpandTime, 0.01f);
-			ImGui::DragFloat("thicknessStartTime", &attack2_.MaxThicknessStartTime, 0.01f);
+			//ImGui::DragFloat("thicknessStartTime", &attack2_.MaxThicknessStartTime, 0.01f);
 			ImGui::DragFloat("attackPower", &attack2_.attackPower, 0.01f);
 			ImGui::DragFloat("poreparationTime", &attack2_.MaxAttackPreparationTime, 0.01f);
-			ImGui::DragFloat("thunderStrikeTime", &attack2_.MaxThunderStrikeTime, 0.01f);
+			//ImGui::DragFloat("thunderStrikeTime", &attack2_.MaxThunderStrikeTime, 0.01f);
 			ImGui::DragFloat("maxSize", &attack2_.maxSize, 0.01f);
 			ImGui::DragFloat("minSize", &attack2_.minSize, 0.01f);
-			ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
+			//ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
+			ImGui::DragFloat("MaxDeathTimer_", &attack2_.MaxDeathTimer_, 0.01f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("attack3"))
 		{
 			//ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
 			ImGui::DragFloat("cooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			ImGui::DragFloat("MinPosY", &attack3_.MinPosY, 0.01f);
+			ImGui::DragFloat("MaxPosY", &attack3_.MaxPosY, 0.01f);
+			ImGui::DragFloat("MinYTime", &attack3_.MinYTime, 0.01f);
+			ImGui::DragFloat("MaxYTime", &attack3_.MaxYTime, 0.01f);
 			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 1.0f);
 			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
@@ -396,24 +405,54 @@ void Enemy::BehaviorRootInitialize()
 {
 	// 浮遊ギミック
 	InitializeFloatingGimmick();
+
+
+	// 不規則な移動数
+	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
+	rootMove_.isBehavior_ = false;
 }
 
 void Enemy::BehaviorRootUpdate()
 {
-	Move(0.00001f, false);
+	//float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
+	//rootMove_.transitionFactor += transitionSpeed;
+
+
+
+	//if (rootMove_.isBehavior_ == false) {
+	//	//if(rootMove_.transitionFactor >= 1.0f){
+	//	if (++rootMove_.moveTime <= rootMove_.MaxMoveTime) {
+
+	//		rootMove_.startPos
+
+	//	}
+
+
+	//	if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
+	//		rootMove_.transitionFactor = 0.0f;
+
+
+	//	}
+	//	else {
+	//		rootMove_.isBehavior_ = true;
+	//	}
+	//	//}
+	//}
+	//else {
+	Move(0.01f, false);
+
+	/*	if (!isDebugAttack) {
+			behaviorTimer_++;
+			if (behaviorTimer_ >= 120) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kAttack;
+			}
+		}
+	}*/
 
 	// 浮遊ギミック
 	UpdateFloatingGimmick();
-
-	if (!isDebugAttack) {
-		behaviorTimer_++;
-		if (behaviorTimer_ >= 120) {
-			behaviorTimer_ = 0;
-			behaviorRequest_ = Behavior::kAttack;
-		}
-	}
-
 }
 
 void Enemy::InitializeFloatingGimmick()
@@ -622,7 +661,6 @@ void Enemy::BehaviorFearUpdate()
 #pragma endregion // 怯み行動
 
 #pragma endregion // 大まかな状態
-
 
 
 #pragma region Special
@@ -874,11 +912,11 @@ void Enemy::SpecialAttack2Update()
 
 			worldTransform_.transform_ = Lerp(startPos, targetPos, attack2_.transitionFactor);
 
-			
+
 		}
 	}
 
-	
+
 	if (attack2_.isBulletShot == true) {
 		behaviorTimer_++;
 		if (behaviorTimer_ >= 60) {
@@ -1029,10 +1067,6 @@ void Enemy::SpecialAttack3Update() {
 
 
 
-	ImGui::Begin("attac3");
-	ImGui::InputFloat("transitionFactor", &attack3_.transitionFactor);
-	ImGui::Checkbox("isBulletShot", &attack3_.isBulletShot);
-	ImGui::End();
 
 
 	if (attack3_.isBulletShot == true) {

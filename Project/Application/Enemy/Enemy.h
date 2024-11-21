@@ -40,6 +40,9 @@ public: //ふるまい関係
 	// 次の振るまいリクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+
+#pragma region Attack
+
 	// 攻撃選択
 	enum class AttackBehavior
 	{
@@ -73,6 +76,42 @@ public: //ふるまい関係
 	SpecialAttack specialAttackBehavior_ = SpecialAttack::kAttack;
 	std::optional<SpecialAttack> specialAttackBehaviorRequest_ = std::nullopt;
 
+#pragma endregion // 攻撃関係
+
+#pragma region Move
+	// 移動
+	struct RootMove {
+
+		Vector3 startPos;
+		Vector3 targetPos;
+
+		// t補間用
+		float transitionFactor = 0;
+		// 追ってくる速度
+		float speed = 0.3f;
+		// 移動時間
+		float moveTime;
+		float MaxMoveTime = 60;
+
+
+		// 
+		int MaxNumMovePhase = 1;
+		int MaxRandMovePhase = 3;
+		int numMovePhase = 0;
+
+		// 
+		bool isBehavior_ = false;
+	};
+	RootMove rootMove_;
+
+#pragma endregion // 通常行動関係
+
+
+	
+
+
+
+
 private: //状態
 
 	/// <summary>
@@ -97,7 +136,23 @@ private: //状態
 	//怯み行動更新
 	void BehaviorFearUpdate();
 
+
+#pragma region root
+
+	// 通常行動移動初期化
+	void RootMoveInitialize();
+
+	// 通常行動移動更新
+	void RootMoveUpdate();
+
+
+
+#pragma endregion // 通常行動関係
+
+
 	
+#pragma region Attack
+
 	/// <summary>
 	/// 通常攻撃 
 	/// </summary>
@@ -149,6 +204,8 @@ private: //状態
 
 	// 攻撃行動更新
 	void SpecialAttack4Update();
+
+#pragma endregion // 攻撃行動関係
 
 
 public:
