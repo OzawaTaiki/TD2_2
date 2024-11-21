@@ -15,6 +15,11 @@ T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
+// easeInOutSine 関数 
+float easeInOutSine(float t) { 
+	return -(cos(M_PI * t) - 1) / 2; 
+}
+
 float easyInOutElastic(float t) {
 	const float c5 = (2 * (float)M_PI) / 4.5f;
 	if (t == 0) {
@@ -448,39 +453,63 @@ void Enemy::BehaviorRootInitialize()
 	// 浮遊ギミック
 	InitializeFloatingGimmick();
 
-
+	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 	// 不規則な移動数
 	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
 	rootMove_.isBehavior_ = false;
+	rootMove_.startPos = worldTransform_.transform_;
+	rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+	rootMove_.targetPos.z = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+	rootMove_.targetPos.y = worldTransform_.transform_.y;
+	rootMove_.transitionFactor = 0;
+	rootMove_.numMovePhase = 0;
+	rootMove_.coolTime = 0;
 }
 
 void Enemy::BehaviorRootUpdate()
 {
-	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
-
-	
+	//float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
 	// 行動遷移しない
 	if (rootMove_.isBehavior_ == false) {
 		// フェーズを繰り返す
-		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
-			//if (++rootMove_.moveTime <= rootMove_.MaxMoveTime) {
-
-				//rootMove_.startPos
-
-			//}
-
+		if (rootMove_.numMovePhase <= rootMove_.MaxNumMovePhase) {
 			// 移動
-			//worldTransform_.transform_ = Lerp(rootMove_.startPos, rootMove_.targetPos, rootMove_.transitionFactor);
 
-			rootMove_.transitionFactor += transitionSpeed;
+			rootMove_.transitionFactor += rootMove_.transitionSpeed;
 
 
 			if (rootMove_.transitionFactor >= 1.0f) {
 
-			}
+				if (++rootMove_.coolTime >= rootMove_.MaxCoolTime) {
+					// 0に
 
-			rootMove_.transitionFactor = 0.0f;
+					// クールタイムを0に
+					rootMove_.coolTime = 0;
+					// 始点を現在の位置に
+					rootMove_.startPos = worldTransform_.transform_;
+
+					// 終点をランダムに(一旦)
+					rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+					rootMove_.targetPos.z = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+					rootMove_.targetPos.y = worldTransform_.transform_.y;
+					rootMove_.MaxCoolTime = float(rand() % rootMove_.MaxRandCoolTime + 10);
+
+					rootMove_.transitionSpeed = float(float(float(rand() % 100 + 100) / 10000.0f));
+
+					//フェーズを加算
+					rootMove_.numMovePhase++;
+					rootMove_.transitionFactor = 0.0f;
+				}
+				else {
+					rootMove_.transitionFactor = 1.0f;
+				}
+			}
+			else {
+				// 移動
+				worldTransform_.transform_ = Lerp(rootMove_.startPos, rootMove_.targetPos, easeInOutSine(rootMove_.transitionFactor));
+				Move(0.0f, false);
+			}
 		}
 		else {
 			rootMove_.isBehavior_ = true;
