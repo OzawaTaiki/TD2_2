@@ -3,6 +3,9 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "ObjectColor.h"
+#include "../Collider/Collider.h"
+
+#include <memory>
 
 class Weapon
 {
@@ -38,6 +41,9 @@ public:
 	// ワールドトランスフォーム
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 
+	void RegisterCollider();
+	void OnCollision();
+
 private:
 	// ハンマー武器
 	Model* model_;
@@ -46,5 +52,7 @@ private:
 
 	// モデルカラー
 	ObjectColor color_;
+
+    std::unique_ptr<Collider> collider_;
 };
 

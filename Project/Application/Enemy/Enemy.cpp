@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 
 #include "imgui.h"
+#include "../Collider/CollisionManager.h"
 
 template<typename T>
 T Lerp(const T& a, const T& b, float t) {
@@ -53,7 +54,7 @@ void Enemy::Initialize()
 	modelRightArm_ = Model::CreateFromObj("bossAtackArm/bossAtackArmRight.obj");
 
 	color_.Initialize();
-	color_.SetColor(Vector4{ 1, 1, 1, 1 });
+	color_.SetColor(defaultColor_);
 
 	modelBullet_ = Model::CreateFromObj("electricBall/electricBall.obj");;
 	modelStageArm_ = Model::CreateFromObj("bossAtackArm/bossAtackArm.obj");;
@@ -75,14 +76,14 @@ void Enemy::Initialize()
 	InitializeParticleEmitter();
 
 	// コライダーの初期化
-	/*collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	collider_ = std::make_unique<Collider>();
+	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
 	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
 	collider_->SetAtrribute("enemy");
 	collider_->SetMask({ "enemy" });
 
 	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-	collider_->SetOnCollisionFunc([this]() { OnCollision(); });*/
+	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
@@ -133,6 +134,14 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
 	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
+
+
+	// hitcolorの設定
+    ConfigManager::GetInstance()->SetVariable("enemy", "defaultColor", &defaultColor_);
+    ConfigManager::GetInstance()->SetVariable("enemy", "hitColor", &hitColor_);
+    ConfigManager::GetInstance()->SetVariable("enemy", "hitColorMaxTime", &hitColorMaxTime_);
+
+
 
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
@@ -229,6 +238,17 @@ void Enemy::Update()
 				attackBehaviorRequest_ = AttackBehavior::kNormal;
 				normalAttackBehaviorRequest_ = NormalAttack::kAttackLong2;
 			}
+      if (ImGui::TreeNode("HitColor"))
+      {
+          ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
+          ImGui::ColorEdit4("hitColor", &hitColor_.x);
+          ImGui::DragFloat("hitColorMaxTime", &hitColorMaxTime_, 0.01f);
+          if (ImGui::Button("save hitColor"))
+          {
+              ConfigManager::GetInstance()->SaveData("enemy");
+          }
+          ImGui::TreePop();
+      }
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -314,6 +334,13 @@ void Enemy::Update()
 	attackCamera_.UpdateMatrix();
 	attackCamera2_.UpdateMatrix();
 	attackCamera3_.UpdateMatrix();
+
+	if(isAlive)
+	{
+		UpdateHitColor();
+		CollisionManager::GetInstance()->RegisterCollider(collider_.get());
+	}
+
 }
 
 void Enemy::Draw(const Camera& camera)
@@ -384,12 +411,14 @@ void Enemy::Draw(const Camera& camera)
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
         particleEmitter_[index].Draw();
 
+    collider_->Draw();
 
 }
 
 void Enemy::OnCollision()
 {
-
+    color_.SetColor(hitColor_);
+	isHitColor_ = true;
 }
 
 void Enemy::StageMovementRestrictions()
@@ -1197,6 +1226,20 @@ void Enemy::UpdateParticleEmitter()
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
 	{
 		particleEmitter_[index].Update();
+	}
+}
+
+void Enemy::UpdateHitColor()
+{
+	if (isHitColor_)
+	{
+		hitColorTimer_ += 1.0f / 60.0f;
+		if (hitColorTimer_ >= hitColorMaxTime_)
+		{
+			hitColorTimer_ = 0;
+			isHitColor_ = false;
+			color_.SetColor(defaultColor_);
+		}
 	}
 }
 

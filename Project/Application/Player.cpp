@@ -65,6 +65,22 @@ void Player::Initialize()
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
     ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+
+	// hitColor関連
+    ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
+    ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
+    ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
+
+
+    collider_ = std::make_unique<Collider>();
+	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
+    collider_->SetShape(model_->GetMin(), model_->GetMax());
+	collider_->SetAtrribute("player");
+	collider_->SetMask({ "player","weapon" });
+    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this]() {OnCollision(); });
+
+
 }
 
 void Player::Update()
@@ -82,6 +98,13 @@ void Player::Update()
 			ImGui::DragFloat("speed", &speed, 0.01f);
 			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
 			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
+            if (ImGui::TreeNode("hitColor"))
+			{
+				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
+				ImGui::ColorEdit4("hitColor", &hitColor_.x);
+				ImGui::DragFloat("hitColorDuration", &hitColorDuration_, 0.01f, 0.0f, 10.0f);
+				ImGui::TreePop();
+			}
 			if (ImGui::Button("save"))
 			{
 				ConfigManager::GetInstance()->SaveData("Player");
@@ -142,6 +165,12 @@ void Player::Update()
 	weapon_->UpdateWorldTransform();
 	worldTransform_.UpdateData();
 	worldTransform_.UpdateData();
+
+	if(isAlive)
+	{
+		CollisionManager::GetInstance()->RegisterCollider(collider_.get());
+		UpdateHitColor();
+	}
 }
 
 void Player::Draw(const Camera& camera)
@@ -162,10 +191,14 @@ void Player::Draw(const Camera& camera)
 	}
 
 	dustParticle_->Draw();
+
+    collider_->Draw();
 }
 
 void Player::OnCollision()
 {
+	isHitColor_ = true;
+	color_.SetColor(hitColor_);
 }
 
 void Player::StageMovementRestrictions()
@@ -340,7 +373,7 @@ void Player::BehaviorAttackUpdate()
 		}
 	}
 
-
+	weapon_->RegisterCollider();
 
 
 	// コンボ段階によってモーションを分岐
@@ -473,6 +506,20 @@ void Player::TiltMotion()
 	t = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t) * (1.0f - t);
 	worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, t);
 
+}
+
+void Player::UpdateHitColor()
+{
+    if (isHitColor_)
+    {
+        hitColorTimer_ += 1.0f / 60.0f;
+        if (hitColorTimer_ >= hitColorDuration_)
+        {
+            hitColorTimer_ = 0.0f;
+            isHitColor_ = false;
+            color_.SetColor(defaultColor_);
+        }
+    }
 }
 
 
