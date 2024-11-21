@@ -72,8 +72,6 @@ void ParticleEmitter::Setting(const std::string& _name)
     instance->SetVariable(name_, "direction", reinterpret_cast<uint32_t*>(&particleDirection_));
     instance->SetVariable(name_, "size", &size_);
     instance->SetVariable(name_, "radius", &radius_);
-    instance->SetVariable(name_, "position", &position_);
-    instance->SetVariable(name_, "rotate", &rotate_);
     instance->SetVariable(name_, "offset", &offset_);
     emitTime_ = 1.0f / static_cast<float> (emitPerSec_);
 
