@@ -1,5 +1,8 @@
 {
     "Player": {
+        "AttackRecastTime": [
+            30
+        ],
         "speed": [
             0.5600000023841858
         ],

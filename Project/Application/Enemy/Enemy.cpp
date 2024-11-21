@@ -427,42 +427,48 @@ void Enemy::BehaviorRootInitialize()
 
 void Enemy::BehaviorRootUpdate()
 {
-	//float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
+	float transitionSpeed = 0.01f; // 補間速度（0.0f〜1.0fの間）
 
-	//rootMove_.transitionFactor += transitionSpeed;
+	
+
+	// 行動遷移しない
+	if (rootMove_.isBehavior_ == false) {
+		// フェーズを繰り返す
+		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
+			//if (++rootMove_.moveTime <= rootMove_.MaxMoveTime) {
+
+				//rootMove_.startPos
+
+			//}
+
+			// 移動
+			//worldTransform_.transform_ = Lerp(rootMove_.startPos, rootMove_.targetPos, rootMove_.transitionFactor);
+
+			rootMove_.transitionFactor += transitionSpeed;
 
 
+			if (rootMove_.transitionFactor >= 1.0f) {
 
-	//if (rootMove_.isBehavior_ == false) {
-	//	//if(rootMove_.transitionFactor >= 1.0f){
-	//	if (++rootMove_.moveTime <= rootMove_.MaxMoveTime) {
+			}
 
-	//		rootMove_.startPos
+			rootMove_.transitionFactor = 0.0f;
+		}
+		else {
+			rootMove_.isBehavior_ = true;
+		}
+	}
+	else { // 行動遷移する
 
-	//	}
+		Move(0.01f, false);
 
-
-	//	if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
-	//		rootMove_.transitionFactor = 0.0f;
-
-
-	//	}
-	//	else {
-	//		rootMove_.isBehavior_ = true;
-	//	}
-	//	//}
-	//}
-	//else {
-	Move(0.01f, false);
-
-	/*	if (!isDebugAttack) {
+		if (!isDebugAttack) {
 			behaviorTimer_++;
 			if (behaviorTimer_ >= 120) {
 				behaviorTimer_ = 0;
 				behaviorRequest_ = Behavior::kAttack;
 			}
 		}
-	}*/
+	}
 
 	// 浮遊ギミック
 	UpdateFloatingGimmick();

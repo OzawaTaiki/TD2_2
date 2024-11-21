@@ -137,11 +137,6 @@ private: //状態
 
 	//怯み行動更新
 	void BehaviorFearUpdate();
-
-
-
-
-
 	
 #pragma region Attack
 

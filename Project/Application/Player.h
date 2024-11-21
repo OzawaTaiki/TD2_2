@@ -174,6 +174,7 @@ private:
 
 	// 攻撃再発動時間
 	int recastTime = 0;
+	uint32_t MaxRecastTime = 30;
 
 
 	int hp = 100;
