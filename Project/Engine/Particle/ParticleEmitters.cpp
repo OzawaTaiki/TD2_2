@@ -39,6 +39,7 @@ void ParticleEmitter::Setting(const std::string& _name)
 {
     name_ = _name;
 
+    
     ConfigManager* instance = ConfigManager::GetInstance();
 
     instance->SetVariable(name_, "lifeTime_min", &setting_.lifeTime.min);
