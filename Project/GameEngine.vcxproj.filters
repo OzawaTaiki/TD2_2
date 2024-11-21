@@ -324,6 +324,9 @@
     <ClCompile Include="Application\PlayerDustParticle.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Application\HitEffect.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -566,6 +569,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Particle\ParticleInitParam.h">
       <Filter>Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\HitEffect.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

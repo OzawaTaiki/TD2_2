@@ -1,5 +1,5 @@
 {
-    "HitParticle": {
+    "weaponHitParticle": {
         "acceleration_max": [
             [
                 2.740000009536743,

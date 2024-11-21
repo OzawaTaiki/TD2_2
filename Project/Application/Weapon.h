@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "ObjectColor.h"
 #include "../Collider/Collider.h"
-#include "ParticleEmitters.h"
+#include "HitEffect.h"
 
 #include <memory>
 
@@ -58,8 +58,7 @@ private:
 
     std::unique_ptr<Collider> collider_;
 
-    std::unique_ptr<ParticleEmitter> hitPatricles_ = nullptr;
-    std::unique_ptr<ParticleEmitter> hitPatricles2_ = nullptr;
+    std::unique_ptr<HitEffect> hitPatricles_ = nullptr;
 
 };
 
