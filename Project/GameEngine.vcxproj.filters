@@ -564,5 +564,8 @@
     <ClInclude Include="Application\PlayerDustParticle.h">
       <Filter>Application</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Particle\ParticleInitParam.h">
+      <Filter>Engine\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

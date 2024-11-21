@@ -19,18 +19,26 @@ void Weapon::Initialize()
     collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
-	uint32_t texture=TextureManager::GetInstance()->Load()
+	uint32_t texture = TextureManager::GetInstance()->Load("white.png");
     hitPatricles_ = std::make_unique<ParticleEmitter>();
 	hitPatricles_->Setting("HitParticle");
 	hitPatricles_->SetWorldMatrix(&worldTransform_.matWorld_);
-	ParticleManager::GetInstance()->CreateParticleGroup(hitPatricles_->GetName(), "cube/cube.obj", hitPatricles_.get());
+	ParticleManager::GetInstance()->CreateParticleGroup(hitPatricles_->GetName(), "sphere/sphere.obj", hitPatricles_.get(),texture);
+
+    hitPatricles2_ = std::make_unique<ParticleEmitter>();
+    hitPatricles2_->Setting("HitParticle2");
+    hitPatricles2_->SetWorldMatrix(&worldTransform_.matWorld_);
+    ParticleManager::GetInstance()->CreateParticleGroup(hitPatricles2_->GetName(), "sphere/sphere.obj", hitPatricles2_.get(), texture);
+
 }
 
 void Weapon::UpdateWorldTransform()
 {
 	worldTransform_.UpdateData();
+
 	hitPatricles_->Update();
-	hitPatricles_->SetEmit(false);
+    hitPatricles2_->Update();
+     
 }
 
 void Weapon::Draw(const Camera& camera)
@@ -38,6 +46,7 @@ void Weapon::Draw(const Camera& camera)
 	model_->Draw(worldTransform_, &camera, &color_);
 
 	hitPatricles_->Draw();
+    hitPatricles2_->Draw();
     collider_->Draw();
 }
 
@@ -55,6 +64,9 @@ void Weapon::OnCollision(const Collider* _other)
         // プレイヤーの攻撃が当たった瞬間
 		// エフェクト出す
         if (collider_->IsCollisionEnter())
-			hitPatricles_->SetEmit(true);
+        {
+            hitPatricles_->SetEmit(true);
+            hitPatricles2_->SetEmit(true);
+        }
     }
 }

@@ -59,6 +59,7 @@ private:
     std::unique_ptr<Collider> collider_;
 
     std::unique_ptr<ParticleEmitter> hitPatricles_ = nullptr;
+    std::unique_ptr<ParticleEmitter> hitPatricles2_ = nullptr;
 
 };
 
