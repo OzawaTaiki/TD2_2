@@ -26,6 +26,12 @@ uint32_t CollisionManager::GetMask(const std::string& _atrribute)
     return ~GetAtttibute(_atrribute);
 }
 
+void CollisionManager::RegisterCollider(Collider* _collider)
+{
+    _collider->Update();
+    colliders_.push_back(_collider);
+}
+
 void CollisionManager::CheckAllCollision()
 {
     for (auto itA = colliders_.begin(); itA != colliders_.end(); itA++)
@@ -215,7 +221,17 @@ bool CollisionManager::IsCollision(const Sphere& _sphere, const OBB& _obb)
     Matrix4x4 obbWorldMatInv = Inverse(_obb.worldMat);
 
     Vector3  centerInOBBLocalSphere = Transform(_sphere.center, obbWorldMatInv);
-    AABB aabbOBBLocal = { _obb.min,_obb.max };
+    AABB aabbOBBLocal;// = { _obb.min,_obb.max };
+    aabbOBBLocal.min = Transform(_obb.min, obbWorldMatInv);
+    aabbOBBLocal.max = Transform(_obb.max, obbWorldMatInv);
+    for (int i = 0; i < 3; i++)
+    {
+        if (aabbOBBLocal.min[i] > aabbOBBLocal.max[i])
+        {
+            std::swap(aabbOBBLocal.min[i], aabbOBBLocal.max[i]);
+        }
+    }
+
     Sphere sphereOBBLocal;
     sphereOBBLocal.center = centerInOBBLocalSphere;
     sphereOBBLocal.radius = _sphere.radius;

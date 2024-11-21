@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "ParticleManager.h"
 #include "../Collider/Collider.h"
 #include "../Collider/CollisionManager.h"
 
@@ -22,7 +23,7 @@ GameScene::~GameScene()
 void GameScene::Initialize()
 {
     ConfigManager::GetInstance()->LoadData();
-  
+
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -63,7 +64,6 @@ void GameScene::Initialize()
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
     enemy_->SetStage(stage_.get());
-    
 
 }
 
@@ -87,7 +87,8 @@ void GameScene::Update()
     //<-----------------------
     camera_->Update();
     // プレイヤー
-    player_->Update();
+    if(!activeDebugCamera_)
+        player_->Update();
 
     // 敵
     enemy_->Update();
@@ -95,7 +96,7 @@ void GameScene::Update()
     // ステージ
     stage_->Update();
 
-    
+
 
     if (activeDebugCamera_)
     {
@@ -116,13 +117,14 @@ void GameScene::Update()
         camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
     }
 
-   
+
     //camera_->UpdateMatrix();
     camera_->TransferData();
 
 
     // 追従カメラの更新
     followCamera_->Update();
+    ParticleManager::GetInstance()->Update(camera_.get());
     CollisionManager::GetInstance()->CheckAllCollision();
     //<-----------------------
     ImGui::End();
@@ -148,6 +150,8 @@ void GameScene::Draw()
     ModelManager::GetInstance()->PreDrawForAnimationModel();
     //<------------------------
 
+
+    ParticleManager::GetInstance()->Draw(camera_.get());
     //<------------------------
 
     Sprite::PreDraw();

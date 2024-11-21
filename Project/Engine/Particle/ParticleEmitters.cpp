@@ -3,9 +3,18 @@
 #include "RandomGenerator.h"
 #include "LineDrawer.h"
 #include "MatrixFunction.h"
+#include "ConfigManager.h"
+#include "VectorFunction.h"
 #include <imgui.h>
 
-void ParticleEmitter::Setting(const Vector3& _center, const Vector3& _rotate, uint32_t _countPerEmit, uint32_t _emitPerSec, uint32_t _maxParticle, bool _randomColor)
+void ParticleEmitter::Setting(const Vector3& _center,
+                              const Vector3& _rotate,
+                              uint32_t _countPerEmit,
+                              uint32_t _emitPerSec,
+                              uint32_t _maxParticle,
+                              bool _randomColor,
+                              bool _fadeAlpha,
+                              float _fadeStartRatio)
 {
     position_ = _center;
     rotate_ = _rotate;
@@ -25,23 +34,74 @@ void ParticleEmitter::Setting(const Vector3& _center, const Vector3& _rotate, ui
     emitTime_ = 1.0f / static_cast<float> (emitPerSec_);
 }
 
+void ParticleEmitter::Setting(const std::string& _name)
+{
+    name_ = _name;
+
+    ConfigManager* instance = ConfigManager::GetInstance();
+
+    instance->SetVariable(name_, "lifeTime_min", &setting_.lifeTime.min);
+    instance->SetVariable(name_, "lifeTime_max", &setting_.lifeTime.max);
+    instance->SetVariable(name_, "size_min", &setting_.size.min);
+    instance->SetVariable(name_, "size_max", &setting_.size.max);
+    instance->SetVariable(name_, "rotate_min", &setting_.rotate.min);
+    instance->SetVariable(name_, "rotate_max", &setting_.rotate.max);
+    instance->SetVariable(name_, "spped_min", &setting_.spped.min);
+    instance->SetVariable(name_, "spped_max", &setting_.spped.max);
+    instance->SetVariable(name_, "direction_min", &setting_.direction.min);
+    instance->SetVariable(name_, "direction_max", &setting_.direction.max);
+    instance->SetVariable(name_, "acceleration_min", &setting_.acceleration.min);
+    instance->SetVariable(name_, "acceleration_max", &setting_.acceleration.max);
+    instance->SetVariable(name_, "color_min", &setting_.color.min);
+    instance->SetVariable(name_, "color_max", &setting_.color.max);
+
+    instance->SetVariable(name_, "countPerEmit", &countPerEmit_);
+    instance->SetVariable(name_, "emitPerSec", &emitPerSec_);
+    instance->SetVariable(name_, "maxParticles", &maxParticles_);
+    //instance->SetVariable(name_, "randomColor", reinterpret_cast<uint32_t*> (&randomColor_));
+    instance->SetVariable(name_, "fadeAlpha", reinterpret_cast<uint32_t*> (&fadeAlpha_));
+    instance->SetVariable(name_, "fadeStartRatio", &fadeStartRatio_);
+
+
+    instance->SetVariable(name_, "shape", reinterpret_cast<uint32_t*>(&shape_));
+    instance->SetVariable(name_, "size", &size_);
+    instance->SetVariable(name_, "radius", &radius_);
+    instance->SetVariable(name_, "position", &position_);
+    instance->SetVariable(name_, "rotate", &rotate_);
+    instance->SetVariable(name_, "offset", &offset_);
+    emitTime_ = 1.0f / static_cast<float> (emitPerSec_);
+
+    switch (shape_)
+    {
+    case EmitterShape::Box:
+        SetShape_Box(size_);
+        break;
+    case EmitterShape::Shpere:
+        SetShape_Sphere(radius_);
+        break;
+    case EmitterShape::Circle:
+        SetShape_Circle(radius_);
+        break;
+    case EmitterShape::None:
+        break;
+    default:
+        break;
+    }
+}
+
 void ParticleEmitter::Update()
 {
-    currentTime_ += deltaTime_;
-    //if()
-    ImGui::Begin("emit");
+    if (parentMatWorld_)
+        position_ = Transform(offset_, *parentMatWorld_);
+    else
+        position_ = position_+offset_;
 
-    //for (int i = 0; i < 5; i++)
-    //{
-    //    std::string num = std::to_string(i);
-    //    std::string str = "nasu" + num;
-    //    ImGui::BeginTabBar("nasu");
-    //    if(ImGui::BeginTabItem(str.c_str())){
-    //        ImGui::DragFloat("nasu", &setting_.spped.min);
-    //        ImGui::EndTabItem();
-    //    }
-    //    ImGui::EndTabBar();
-    //}
+    currentTime_ += deltaTime_;
+    if (!emit_) {
+        currentTime_ = 0;
+    }
+    ImGui::Begin("emit");
+    static const char* combo[1024] = { "Box","Sphere","Circle","None" };
 
     if (emitTime_ <= currentTime_)
     {
@@ -52,27 +112,71 @@ void ParticleEmitter::Update()
             particles.push_back(GenerateParticleData());
         }
 
-        ParticleManager::GetInstance()->AddParticleToGroup("sample", particles);
+        ParticleManager::GetInstance()->AddParticleToGroup(name_, particles);
         currentTime_ = 0;
     }
 
-    if (ImGui::Button("add"))
+    ImGui::BeginTabBar("setting");
+    if (ImGui::BeginTabItem(name_.c_str()))
     {
-        std::vector<Particle> particles;
+        ImGui::Combo("shape", reinterpret_cast<int*>(&shape_), combo, 4);
 
-        for (uint32_t count = 0; count < countPerEmit_; ++count)
+        ImGui::SeparatorText("Emitter");
+        ImGui::DragFloat3("size", &size_.x,0.01f);
+        ImGui::DragFloat("radius", &radius_, 0.01f);
+        ImGui::DragFloat3("offset", &offset_.x, 0.01f);
+        ImGui::DragInt("countPerEmit", reinterpret_cast<int*>(&countPerEmit_),1,0);
+        ImGui::DragInt("emitPerSec", reinterpret_cast<int*>(&emitPerSec_),1,0);
+        ImGui::DragInt("maxParticles", reinterpret_cast<int*>(&maxParticles_),1,0);
+        ImGui::Checkbox("randomColor", &randomColor_);
+        ImGui::DragFloat("fadeStartRatio", &fadeStartRatio_, 0.01f, 0, 1);
+        ImGui::Checkbox("fadeAlpha", &fadeAlpha_);
+
+        ImGui::Spacing();
+
+        ImGui::SeparatorText("Particle_Init");
+        ImGui::DragFloatRange2("lifeTime", &setting_.lifeTime.min, &setting_.lifeTime.max,0.01f);
+        ImGui::DragFloat3("size_min", &setting_.size.min.x, 0.01f);
+        ImGui::DragFloat3("size_max", &setting_.size.max.x, 0.01f);
+        ImGui::DragFloat3("rotate_min", &setting_.rotate.min.x, 0.01f);
+        ImGui::DragFloat3("rotate_max", &setting_.rotate.max.x, 0.01f);
+        ImGui::DragFloatRange2("spped", &setting_.spped.min, &setting_.spped.max,0.01f);
+        ImGui::DragFloat3("direction_min", &setting_.direction.min.x, 0.01f);
+        ImGui::DragFloat3("direction_max", &setting_.direction.max.x, 0.01f);
+        ImGui::DragFloat3("acceleration_min", &setting_.acceleration.min.x, 0.01f);
+        ImGui::DragFloat3("acceleration_max", &setting_.acceleration.max.x, 0.01f);
+        ImGui::ColorEdit4("color_min", &setting_.color.min.x);
+        ImGui::ColorEdit4("color_max", &setting_.color.max.x);
+
+        if (ImGui::Button("save"))
         {
-            particles.push_back(GenerateParticleData());
+            ConfigManager::GetInstance()->SaveData(name_);
         }
 
-        ParticleManager::GetInstance()->AddParticleToGroup("sample", particles);
-        currentTime_ = 0;
+        if (ImGui::Button("add"))
+        {
+            std::vector<Particle> particles;
+
+            for (uint32_t count = 0; count < countPerEmit_; ++count)
+            {
+                particles.push_back(GenerateParticleData());
+            }
+
+            ParticleManager::GetInstance()->AddParticleToGroup(name_, particles);
+            currentTime_ = 0;
+        }
+        ImGui::EndTabItem();
     }
+    ImGui::EndTabBar();
     ImGui::End();
 }
 
 void ParticleEmitter::Draw()
 {
+#ifndef _DEBUG
+    return;
+#endif // _DEBUG
+
     switch (shape_)
     {
     case EmitterShape::Box:
@@ -82,6 +186,8 @@ void ParticleEmitter::Draw()
         }
         break;
     case EmitterShape::Shpere:
+        Matrix4x4 affine = MakeAffineMatrix({ radius_ }, rotate_, position_ );
+        LineDrawer::GetInstance()->DrawSphere(affine);
         break;
     case EmitterShape::Circle:
         break;
@@ -164,6 +270,6 @@ Particle ParticleEmitter::GenerateParticleData()
 
     pos += position_;
 
-    particle.Initialize(lifeTIme, size, rotate, pos, color, speed, direction, acceleration);
+    particle.Initialize(lifeTIme, size, rotate, pos, color, speed, direction, acceleration, fadeAlpha_, fadeStartRatio_);
     return particle;
 }

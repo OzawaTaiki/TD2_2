@@ -16,14 +16,19 @@ public:
                     const Vector4& _color,
                     float _speed,
                     const Vector3& _direction,
-                    const Vector3& _acceleration
-                    );
+                    const Vector3& _acceleration,
+                    bool _fade,
+                    float _faderatio = 0.0f
+    );
     void Update();
     void Draw();
 
     bool IsAlive() const { return isAlive_; }
 
     Matrix4x4 GetWorldMatrix() const { return matWorld_; }
+    Vector3 GetPosition() const { return translate_; }
+    Vector3 GetRotation() const { return rotation_; }
+    Vector3 GetScale() const { return scale_; }
     Vector4 GetColor() const { return color_; }
 
 private:
@@ -44,6 +49,11 @@ private:
     Vector3 direction_;
     Vector3 acceleration_;
     Vector3 velocity_;
+
+    // フェードするか否か
+    bool isFade_;
+    // フェードを始める割合
+    float fadeRatio_;
 
 
 };

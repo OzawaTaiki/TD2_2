@@ -8,7 +8,9 @@ void Particle::Initialize(float _lifeTime,
                           const Vector4& _color,
                           float _speed,
                           const Vector3& _direction,
-                          const Vector3& _acceleration)
+                          const Vector3& _acceleration,
+                          bool _fade,
+                          float _faderatio)
 {
     lifeTime_ = _lifeTime;
     scale_ = _size;
@@ -18,6 +20,9 @@ void Particle::Initialize(float _lifeTime,
     speed_ = _speed;
     direction_ = _direction;
     acceleration_ = _acceleration;
+    if (isFade_ = _fade; isFade_)
+        fadeRatio_ = _faderatio;
+    else fadeRatio_ = 1.0f;
 
     isAlive_ = true;
     currentTime_ = 0;
@@ -35,6 +40,15 @@ void Particle::Update()
     {
         isAlive_ = false;
         return;
+    }
+
+    if (isFade_)
+    {
+        float t = currentTime_ / lifeTime_;
+        if (t >= fadeRatio_)
+        {
+            color_.w = 1.0f - (t - fadeRatio_) / (1.0f - fadeRatio_);
+        }
     }
 
     velocity_ += acceleration_ * kDeltaTime;

@@ -58,13 +58,18 @@ void Player::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
+    dustParticle_ = std::make_unique<PlayerDustParticle>();
+    dustParticle_->Initialize();
+	dustParticle_->SetPlayerMat(&worldTransform_);
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
+	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
+    ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 }
 
 void Player::Update()
 {
-	
+
 	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("player"))
@@ -75,12 +80,19 @@ void Player::Update()
 			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
 			ImGui::DragFloat("speed", &speed, 0.01f);
+			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
+			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
+			if (ImGui::Button("save"))
+			{
+				ConfigManager::GetInstance()->SaveData("Player");
+			}
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
+
 	}
 
-	
+
 	StageMovementRestrictions();
 
 
@@ -124,8 +136,8 @@ void Player::Update()
 		isAlive = false;
 	}
 
+	dustParticle_->Update(isMove_);
 
-	
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
 	worldTransform_.UpdateData();
@@ -134,7 +146,6 @@ void Player::Update()
 
 void Player::Draw(const Camera& camera)
 {
-
 	model_->Draw(worldTransform_, &camera, &color_);
 
 
@@ -150,6 +161,7 @@ void Player::Draw(const Camera& camera)
 		break;
 	}
 
+	dustParticle_->Draw();
 }
 
 void Player::OnCollision()
@@ -182,6 +194,7 @@ void Player::BehaviorRootUpdate()
 {
 #pragma region Move
 
+	isMove_ = false;
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 	//speed = 0.2f;
@@ -207,6 +220,8 @@ void Player::BehaviorRootUpdate()
 	if (pressedD) {
 		inputDirection.x += 1.0f;
 	}
+
+    if (pressedW || pressedA || pressedS || pressedD) isMove_ = true;
 
 	// 入力がある場合、カメラの向きに基づいた移動方向を計算
 	if (inputDirection.x != 0.0f || inputDirection.z != 0.0f) {
@@ -250,6 +265,9 @@ void Player::BehaviorRootUpdate()
 
 	// 移動量に速さを反映
 	worldTransform_.transform_ += velocity_;
+
+	// 移動時の傾き
+	TiltMotion();
 
 	// 旋回制御
 	if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
@@ -429,6 +447,32 @@ void Player::SetAttackCombo(int parameter)
 			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
+}
+
+void Player::TiltMotion()
+{
+	if (!isMove_)
+	{
+		tiltMotionTimer_ -= 1.0f / 15.0f;
+        if (tiltMotionTimer_ <= 0.0f)
+        {
+            tiltMotionTimer_ = 0.0f;
+        }
+		worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, tiltMotionTimer_ / tiltMotionDuration_);
+
+		return;
+	}
+
+    tiltMotionTimer_ += 1.0f / 60.0f;
+    if (tiltMotionTimer_ >= tiltMotionDuration_)
+    {
+        tiltMotionTimer_ = tiltMotionDuration_;
+    }
+
+	float t = tiltMotionTimer_ / tiltMotionDuration_;
+	t = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t) * (1.0f - t);
+	worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, t);
+
 }
 
 
