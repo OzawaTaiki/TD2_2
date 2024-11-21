@@ -42,9 +42,7 @@ void EnemyStageArm::Update()
 {
 	// 時間経過でデス
 	// 時間経過でデス
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
-	}
+	
 
 	attackPreparationTime++;
 	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
@@ -62,9 +60,11 @@ void EnemyStageArm::Update()
 		// 引っ込むまでの時間が過ぎたら、引っ込ませる
 		if (armRetractTime >= attack_->MaxArmRetractTime) {
 			worldTransform_.transform_ = worldTransform_.transform_ - velocity_;
+
+			if (--deathTimer_ <= 0) {
+				isDead_ = true;
+			}
 		}
-
-
 	}
 
 

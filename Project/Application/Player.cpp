@@ -64,7 +64,7 @@ void Player::Initialize()
 
 	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
 	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
-  ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+	ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 
 	ConfigManager::GetInstance()->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
 
