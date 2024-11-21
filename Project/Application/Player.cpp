@@ -419,7 +419,7 @@ void Player::BehaviorAttackUpdate()
 		// パラメータ
 		AttackParameter();
 
-		if (workAttack.attackParameter_ <= 5) {
+		/*if (workAttack.attackParameter_ <= 5) {
 
 			Vector3 move(direction_.x, 0, direction_.y);
 
@@ -430,7 +430,7 @@ void Player::BehaviorAttackUpdate()
 			move = move * 1.1f;
 
 			worldTransform_.transform_ += move;
-		}
+		}*/
 
 		weapon_->SetRotationX(DegreesToRadians(90));
 
