@@ -102,6 +102,9 @@ private:
 	// 移動時の傾き
     void TiltMotion();
 
+    // ヒットカラーの更新
+    void UpdateHitColor();
+
 
 private:
 	// モデル
@@ -109,6 +112,7 @@ private:
 
 	// モデルカラー
 	ObjectColor color_;
+    Vector4 defaultColor_ = { 1,1,1,1 };
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
@@ -124,6 +128,10 @@ private:
 
 	//
 	const Camera* camera_ = nullptr;
+
+	// コライダー
+    std::unique_ptr<Collider> collider_;
+
 private:
 	//左右
 	LRDirection lrDirection_ = LRDirection::kRight;
@@ -190,4 +198,13 @@ private:
     float tiltMotionTimer_ = 0.0f;
     // 傾きの速度:計算
     float tiltMotionSpeed_ = 0.0f;
+
+    // カラー変更フラグ
+    bool isHitColor_ = false;
+    // タイマー
+    float hitColorTimer_ = 0.0f;
+    // カラーを変更する時間
+    float hitColorDuration_ = 0.1f;
+    // ヒットカラー
+    Vector4 hitColor_ = { 1,0,0,1 };
 };

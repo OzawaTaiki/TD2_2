@@ -11,6 +11,7 @@
 #include "Input.h"
 #include "ObjectColor.h"
 #include "ConfigManager.h"
+#include "../Collider/Collider.h"
 
 // application
 #include "EnemyBullet.h"
@@ -202,6 +203,10 @@ private: //状態
 	// エミッターの更新
 	void UpdateParticleEmitter();
 
+
+    // ヒットカラーの更新
+    void UpdateHitColor();
+
 public:
 	/// <summary>
 	/// 初期化
@@ -275,6 +280,7 @@ private:
 
 	// モデルカラー
 	ObjectColor color_;
+	Vector4 defaultColor_ = { 1,1,1,1 };
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;			//ベース
@@ -304,6 +310,8 @@ private:
 	Camera attackCamera_;
 	Camera attackCamera2_;
 	Camera attackCamera3_;
+
+    std::unique_ptr<Collider> collider_;
 
 private:
 	// 速度
@@ -372,4 +380,10 @@ private:
 
 	};
 	SpinAttack attack4_;
+
+	// ヒットカラーの設定
+    bool isHitColor_ = false;
+    float hitColorTimer_ = 0;
+    float hitColorMaxTime_ = 2;
+    Vector4 hitColor_ = { 1,0,0,1 };
 };
