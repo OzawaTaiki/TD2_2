@@ -255,7 +255,7 @@ public:
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
 	 // 衝突処理
-	void OnCollision();
+	void OnCollision(const Collider* _other);
 
 	void StageMovementRestrictions();
 

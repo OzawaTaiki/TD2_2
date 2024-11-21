@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "ObjectColor.h"
 #include "../Collider/Collider.h"
+#include "ParticleEmitters.h"
 
 #include <memory>
 
@@ -21,6 +22,10 @@ public:
 
 	// 接触履歴を抹消
 	void ContactRecordClear();
+
+	void RegisterCollider();
+	void OnCollision(const Collider* _other);
+
 
 
 	// ゲッター、セッター
@@ -41,8 +46,6 @@ public:
 	// ワールドトランスフォーム
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 
-	void RegisterCollider();
-	void OnCollision();
 
 private:
 	// ハンマー武器
@@ -54,5 +57,9 @@ private:
 	ObjectColor color_;
 
     std::unique_ptr<Collider> collider_;
+
+    std::unique_ptr<ParticleEmitter> hitPatricles_ = nullptr;
+    std::unique_ptr<ParticleEmitter> hitPatricles2_ = nullptr;
+
 };
 

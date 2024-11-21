@@ -292,6 +292,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Particle\ParticleEmitters.h" />
     <ClInclude Include="Engine\Particle\ParticleManager.h" />
+    <ClInclude Include="Engine\Particle\ParticleInitParam.h" />
     <ClInclude Include="Engine\Render\PSOManager.h" />
     <ClInclude Include="Engine\Render\SRVManager.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />

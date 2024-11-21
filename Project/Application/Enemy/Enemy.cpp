@@ -88,7 +88,7 @@ void Enemy::Initialize()
 	collider_->SetMask({ "enemy" });
 
 	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
+	collider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
 	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
@@ -422,7 +422,7 @@ void Enemy::Draw(const Camera& camera)
 
 }
 
-void Enemy::OnCollision()
+void Enemy::OnCollision(const Collider* _other)
 {
     color_.SetColor(hitColor_);
 	isHitColor_ = true;
@@ -1055,7 +1055,7 @@ void Enemy::BulletUpdate()
 	// デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
 
-	// 
+	//
 	for (const auto& bullet : normalbullets_) {
 		bullet->Update();
 	}
