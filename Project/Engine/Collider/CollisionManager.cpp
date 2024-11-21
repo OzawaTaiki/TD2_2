@@ -65,8 +65,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
 
                     if (IsCollision(sphereA, sphereB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                 }
                 break;
@@ -77,8 +77,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
 
                     if (IsCollision(sphereA, aabbB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -88,8 +88,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     //obbB.center = Transform(obbB.referencePoint, _colliderB->GetWorldMatrix());
                     if (IsCollision(sphereA, obbB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -111,8 +111,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     Sphere sphereB = _colliderB->GetShape<Sphere>();
                     if (IsCollision(sphereB, aabbA))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -121,8 +121,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     AABB aabbB = _colliderB->GetShape<AABB>();
                     if (IsCollision(aabbA, aabbB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -131,8 +131,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     OBB obbB = _colliderB->GetShape<OBB>();
                     if (IsCollision(aabbA, obbB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -154,8 +154,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     Sphere sphereB = _colliderB->GetShape<Sphere>();
                     if (IsCollision(sphereB, obbA))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -164,8 +164,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     AABB aabbB = _colliderB->GetShape<AABB>();
                     if (IsCollision(aabbB, obbA))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
                 }
@@ -174,8 +174,8 @@ void CollisionManager::CheckCollisionPair(Collider* _colliderA, Collider* _colli
                     OBB obbB = _colliderB->GetShape<OBB>();
                     if (IsCollision(obbA, obbB))
                     {
-                        _colliderA->OnCollision();
-                        _colliderB->OnCollision();
+                        _colliderA->OnCollision(_colliderB);
+                        _colliderB->OnCollision(_colliderA);
                     }
                     break;
 

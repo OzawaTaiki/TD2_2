@@ -87,6 +87,7 @@ void ParticleEmitter::Setting(const std::string& _name)
     default:
         break;
     }
+
 }
 
 void ParticleEmitter::Update()
@@ -126,7 +127,10 @@ void ParticleEmitter::Update()
         ImGui::DragFloat("radius", &radius_, 0.01f);
         ImGui::DragFloat3("offset", &offset_.x, 0.01f);
         ImGui::DragInt("countPerEmit", reinterpret_cast<int*>(&countPerEmit_),1,0);
-        ImGui::DragInt("emitPerSec", reinterpret_cast<int*>(&emitPerSec_),1,0);
+        if (ImGui::DragInt("emitPerSec", reinterpret_cast<int*>(&emitPerSec_), 1, 0))
+        {
+            emitTime_ = 1.0f / static_cast<float>(emitPerSec_);
+        }
         ImGui::DragInt("maxParticles", reinterpret_cast<int*>(&maxParticles_),1,0);
         ImGui::Checkbox("randomColor", &randomColor_);
         ImGui::DragFloat("fadeStartRatio", &fadeStartRatio_, 0.01f, 0, 1);
@@ -214,6 +218,11 @@ void ParticleEmitter::SetShape_Circle(float _radius)
 {
     shape_ = EmitterShape::Circle;
     radius_ = _radius;
+}
+
+void ParticleEmitter::Emit()
+{
+
 }
 
 Particle ParticleEmitter::GenerateParticleData()

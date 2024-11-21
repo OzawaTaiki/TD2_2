@@ -78,7 +78,7 @@ void Player::Initialize()
 	collider_->SetAtrribute("player");
 	collider_->SetMask({ "player","weapon" });
     collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
-    collider_->SetOnCollisionFunc([this]() {OnCollision(); });
+    collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
 
 }
@@ -195,7 +195,7 @@ void Player::Draw(const Camera& camera)
     collider_->Draw();
 }
 
-void Player::OnCollision()
+void Player::OnCollision(const Collider* _other)
 {
 	isHitColor_ = true;
 	color_.SetColor(hitColor_);

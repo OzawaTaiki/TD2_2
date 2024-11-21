@@ -113,6 +113,7 @@ void Collider::SetShape(const Vector3& _min, const Vector3& _max)
 void Collider::SetAtrribute(const std::string& _atrribute)
 {
     atrribute_ = CollisionManager::GetInstance()->GetAtttibute(_atrribute);
+    name_ = _atrribute;
 }
 
 void Collider::SetMask(const std::string& _atrribute)

@@ -76,6 +76,8 @@ public:
     void SetCenter(const Vector3& _center) { position_ = _center; }
     void SetEmit(bool _emit) { emit_ = _emit; }
 
+    void Emit();
+
     std::string GetName() const { return name_; }
 
     EmitParticleSettings    setting_{};
