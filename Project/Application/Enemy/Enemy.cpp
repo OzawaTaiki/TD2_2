@@ -110,6 +110,7 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
 	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
 	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
+	ConfigManager::GetInstance()->SetVariable("attack1", "armRetractTime", &attack1_.MaxArmRetractTime);
 	
 	// 攻撃2
 	ConfigManager::GetInstance()->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
@@ -314,7 +315,7 @@ void Enemy::Update()
 		}
 		if (ImGui::BeginTabItem("attack4"))
 		{
-			ImGui::DragFloat3("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
+			ImGui::DragFloat("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
 			ImGui::DragFloat("cooldown", &attack4_.cooldownTime, 0.01f);
 			ImGui::DragFloat("SpinTime", &attack4_.MaxSpinTime, 0.01f);
 			ImGui::DragFloat("MaxRotateSpeed", &attack4_.MaxRotateSpeed, 0.01f);
