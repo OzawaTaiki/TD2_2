@@ -1,36 +1,36 @@
 {
-    "Player": {
-        "AttackRecastTime": [
-            30
+  "Player": {
+    "AttackRecastTime": [
+      30
+    ],
+    "defaultColor": [
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "hitColor": [
+      [
+        1.0,
+        0.5196078419685364,
+        0.5196078419685364,
+        1.0
+      ]
+    ],
+    "hitColorDuration": [
+      0.10000000149011612
 
-        "defaultColor": [
-            [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ]
-        ],
-        "hitColor": [
-            [
-                1.0,
-                0.5196078419685364,
-                0.5196078419685364,
-                1.0
-            ]
-        ],
-        "hitColorDuration": [
-            0.10000000149011612
-
-        ],
-        "speed": [
-            0.5600000023841858
-        ],
-        "tileMotionDuration": [
-            0.550000011920929
-        ],
-        "tiltMotionRotate": [
-            0.15000000596046448
-        ]
-    }
+    ],
+    "speed": [
+      0.5600000023841858
+    ],
+    "tileMotionDuration": [
+      0.550000011920929
+    ],
+    "tiltMotionRotate": [
+      0.15000000596046448
+    ]
+  }
 }
