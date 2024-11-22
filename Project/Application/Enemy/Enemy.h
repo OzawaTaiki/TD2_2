@@ -2,7 +2,7 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include<cmath>
-
+#include<math.h>
 
 //Engine
 #include "Model.h"
@@ -12,6 +12,8 @@
 #include "ObjectColor.h"
 #include "ConfigManager.h"
 #include "../Collider/Collider.h"
+#include <MatrixFunction.h>
+#include "VectorFunction.h"
 
 // application
 #include "EnemyBullet.h"
@@ -27,6 +29,8 @@
 class Player;
 
 class Stage;
+
+class FollowCamera;
 
 class Enemy
 {
@@ -56,6 +60,7 @@ public: //ふるまい関係
 	// 攻撃選択
 	AttackBehavior attackBehavior_ = AttackBehavior::kNormal;
 	std::optional<AttackBehavior> attackBehaviorRequest_ = std::nullopt;
+	AttackBehavior attackBehaviorOld_;
 
 	// 通常攻撃方法
 	enum class NormalAttack {
@@ -78,6 +83,32 @@ public: //ふるまい関係
 
 	SpecialAttack specialAttackBehavior_ = SpecialAttack::kAttack;
 	std::optional<SpecialAttack> specialAttackBehaviorRequest_ = std::nullopt;
+	SpecialAttack specialAttackBehaviorOld_;
+
+	// 攻撃選択方法
+	struct AttackMethod {
+		uint32_t randMethod; // 確率で攻撃方法を決める
+
+		uint32_t randAttack;
+
+		uint32_t normalProbability; // 通常攻撃の確率
+
+	};
+	AttackMethod atMethod_;
+
+	// 攻撃全般
+	enum class AllAttack {
+		kNormalShort1,
+		kNormalShort2,
+		kNormalLong1,
+		kNormalLong2,
+		kSpecialAttack,	   // 攻撃1中
+		kSpecialAttack2,   // 攻撃2中
+		kSpecialAttack3,   // 攻撃3中
+		kSpecialAttack4,   // 攻撃4中
+		kNone,
+	};
+	AllAttack allAttack_;
 
 #pragma endregion // 攻撃関係
 
@@ -101,12 +132,12 @@ public: //ふるまい関係
 
 		// 
 		int MaxNumMovePhase = 1;
-		int MaxRandMovePhase = 3;
+		uint32_t MaxRandMovePhase = 2;
 		int numMovePhase = 0;
 		// 
 		float coolTime = 0;
 		float MaxCoolTime = 30;
-		int MaxRandCoolTime = 30;
+		float MaxRandCoolTime = 30;
 		
 
 		int MaxMove = 50;
@@ -120,7 +151,44 @@ public: //ふるまい関係
 #pragma endregion // 通常行動関係
 
 
-	
+#pragma region fear
+
+	// 怯み位置
+	struct Fear {
+		
+		// t補間スピード
+		float transitionSpeed = 0.11f;
+		// t補間用
+		float transitionFactor = 0;
+		//
+
+		// 地面につく
+		float MinY = -2;
+		float oldPosY = 0;
+		// ターゲット位置
+		Vector3 targetPos;
+		Vector3 tragetRotate;
+		Vector3 rotate;
+
+		// スタート位置
+		Vector3 startPos;
+		Vector3 startRotate;
+		// 怯み時間
+		uint32_t MaxTimer = 240;
+		uint32_t timer = 0;
+
+		bool isGetUp = false;
+
+		uint32_t MaxGetupTimer = 30;
+		uint32_t getupTimer = 0;
+
+	};
+	Fear fear_;
+
+#pragma endregion // 怯み関係
+
+
+	FollowCamera* follow_;
 
 
 
@@ -234,6 +302,8 @@ public:
 	void Draw(const Camera& camera);
 
 
+	void SetF(FollowCamera* f) { follow_ = f; };
+
 	void Move(float speed, bool flag);
 
 	// 弾の初期化
@@ -269,13 +339,12 @@ public:
 	void SetPlayer(Player* player) { player_ = player; };
 	void SetStage(Stage* stage) { stage_ = stage; }
 	const Behavior& GetBehavior() const { return behavior_; };
-	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
+	const AttackBehavior& GetattackBehavior() const { return attackBehavior_; };
 	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
-
-	const Camera& GetCamera() { return attackCamera_; };
+	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
+	
 	const Camera& GetCamera2() { return attackCamera2_; };
-	const Camera& GetCamera3() { return attackCamera3_; };
-
+	
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -317,10 +386,8 @@ private:
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
 
-	Camera attackCamera_;
 	Camera attackCamera2_;
-	Camera attackCamera3_;
-
+	
     std::unique_ptr<Collider> collider_;
 
 private:
@@ -340,6 +407,7 @@ private:
 
 	// hp
 	int hp = 100;
+	int MaxHp = 100;
 	// 生死フラグ
 	bool isAlive = true;
 	// 行動タイマー
@@ -382,7 +450,7 @@ private:
 		float MaxStoppingTime = 20;
 
 		// 動きが止まってから回復する（浮く）までの時間
-		float cooldownTime = 120;
+		float cooldownTime = 60;
 
 		// 反動時間
 		float recoilTime = 0;
@@ -397,3 +465,13 @@ private:
     float hitColorMaxTime_ = 2;
     Vector4 hitColor_ = { 1,0,0,1 };
 };
+
+
+
+
+
+
+
+
+
+

@@ -4,6 +4,8 @@
 #include "Input.h"
 #include "ConfigManager.h"
 
+class Enemy;
+
 class FollowCamera
 {
 public:
@@ -23,9 +25,22 @@ public:
 
 	const Camera& GetCamera() { return camera_; };
 	
+	
+
+
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+
 	void SetRotateY(const float& y) { camera_.rotate_.y = y; };
+	void SetFlag(const bool& y) { flag_ = y; };
+	void SetT(const float& y) { t_ = y; };
+
 
 private:
+	bool flag_ = false;
+
+	bool ff_ = false;
+
+	Enemy* enemy_;
 
 	// ビュープロジェクション
 	Camera camera_;
@@ -34,6 +49,23 @@ private:
 	const WorldTransform* target_ = nullptr;
 
 	Vector3 offset_ = { 0.0f, 20.0f, -60.0f };
+
+
+	Vector3 attackRotate_{ 1.0399999618530273,0,0};
+	Vector3 attackTranslate_{ 0,370.0,-231.49};
+
+	Vector3 normalRot{};
+
+	Vector3 startPos{};
+	Vector3 startRot{};
+
+	Vector3 targetPos{};
+	Vector3 targetRot{};
+
+	Vector3 oldPos;
+	Vector3 oldRot;
+
+	float t_;
 
 };
 

@@ -7,14 +7,14 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 {
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = position;
-	worldTransform_.scale_ = { 5,5,5 };
+	worldTransform_.scale_ = { 4,4,4 };
 
 	model_ = model;
 
 	attack_ = attack;
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = { 5, 5, 5 };
+	worldTransform2_.scale_ = { 8, 8, 8 };
 
 	model2_ = Model::CreateFromObj("PredictionBox/PredictionBox.obj");
 
@@ -77,7 +77,14 @@ void EnemyStageArm::Update()
 void EnemyStageArm::Draw(const Camera& camera)
 {
 	if (attackPreparationTime < attack_->MaxAttackPreparationTime) {
-		model2_->Draw(worldTransform2_, &camera, &color2_);
+		if (attack_->Maxblinking + attackPreparationTime > attack_->MaxAttackPreparationTime) {
+			if (int(attackPreparationTime) % 5 == 0) {
+				model2_->Draw(worldTransform2_, &camera, &color2_);
+			}
+		}
+		else{
+			model2_->Draw(worldTransform2_, &camera, &color2_);
+		}
 	}
 	else {
 		model_->Draw(worldTransform_, &camera, &color_);
