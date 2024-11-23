@@ -15,9 +15,9 @@ T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
-// easeInOutSine 関数 
-float easeInOutSine(float t) { 
-	return -(cos(M_PI * t) - 1) / 2; 
+// easeInOutSine 関数
+float easeInOutSine(float t) {
+	return -(cos(M_PI * t) - 1) / 2;
 }
 
 float easyInOutElastic(float t) {
@@ -111,7 +111,7 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
 	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
 	ConfigManager::GetInstance()->SetVariable("attack1", "armRetractTime", &attack1_.MaxArmRetractTime);
-	
+
 	// 攻撃2
 	ConfigManager::GetInstance()->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
 	ConfigManager::GetInstance()->SetVariable("attack2", "attackPower", &attack2_.attackPower);
