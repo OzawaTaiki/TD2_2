@@ -921,6 +921,15 @@ void Enemy::SpecialAttackInitialize()
 	attack1_.armNum = 0;
 	attack1_.landingTime = 0;
 
+	if (hp <= MaxHp) {
+		if (hp >= MaxHp / 2) {
+			attack1_.MaxArmNum = 3;
+		}
+		else {
+			attack1_.MaxArmNum = 5;
+		}
+	}
+
 }
 
 void Enemy::SpecialAttackUpdate()
