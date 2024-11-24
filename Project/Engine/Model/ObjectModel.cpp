@@ -20,6 +20,9 @@ void ObjectModel::Update()
 #ifdef _DEBUG
     ImGui();
 #endif // _DEBUG
+    worldTransform_.transform_ = translate_;
+    worldTransform_.scale_ = scale_;
+    worldTransform_.rotate_ = rotate_;
     worldTransform_.UpdateData();
 }
 

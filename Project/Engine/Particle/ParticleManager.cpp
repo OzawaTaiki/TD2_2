@@ -55,7 +55,7 @@ void ParticleManager::Update(const Camera* _camera)
             {
                 Matrix4x4 mat = MakeScaleMatrix(it->GetScale());
                 mat = mat * billboradMat;
-                //mat = mat * MakeRotateMatrix(it->GetRotation());
+                mat = mat * MakeRotateMatrix(it->GetRotation());
                 mat = mat * MakeTranslateMatrix(it->GetPosition());
                 group.constMap[group.instanceNum].matWorld = mat;
                 group.constMap[group.instanceNum].color = it->GetColor();

@@ -14,7 +14,7 @@ void Stage::Initialize()
     worldWallFlont.Initialize();
     worldWallFlont.transform_ = Vector3{ 0,0,-100 };
     worldWallFlont.rotate_ = Vector3{ 0,0,0};
-    
+
     worldWallBack.Initialize();
     worldWallBack.transform_ = Vector3{ 0,0,100 };
     worldWallBack.rotate_ = Vector3{ 0,-3.14,0 };
@@ -52,8 +52,8 @@ void Stage::Update()
     {
         if (ImGui::BeginTabItem("stage"))
         {
-            
-            
+
+
             ImGui::DragFloat3("flontTranslate", &worldWallFlont.transform_.x, 0.1f);
             ImGui::DragFloat3("flontRotate", &worldWallFlont.rotate_.x, 0.1f);
             ImGui::DragFloat3("backTranslate", &worldWallBack.transform_.x, 0.1f);

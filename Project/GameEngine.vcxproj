@@ -126,6 +126,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\PlayerDustParticle.cpp" />
     <ClCompile Include="Application\Stage\Stage.cpp" />
+    <ClCompile Include="Application\ThrustEffect.cpp" />
     <ClCompile Include="Application\Weapon.cpp" />
     <ClCompile Include="Engine\AnimationModel\AnimationModel.cpp" />
     <ClCompile Include="Engine\Audio\Audio.cpp" />
@@ -255,6 +256,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\PlayerDustParticle.h" />
     <ClInclude Include="Application\Stage\Stage.h" />
+    <ClInclude Include="Application\ThrustEffect.h" />
     <ClInclude Include="Application\Weapon.h" />
     <ClInclude Include="Engine\AnimationModel\AnimationModel.h" />
     <ClInclude Include="Engine\Audio\Audio.h" />

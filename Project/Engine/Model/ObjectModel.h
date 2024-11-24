@@ -18,8 +18,9 @@ public:
 
     Vector3 translate_ = { 0,0,0 };
     Vector3 scale_ = { 1,1,1 };
-    Quaternion rotate_ = { 0,0,0,1 };
+    Vector3 rotate_ = { 0,0,0 };
 
+    void SetParent(const WorldTransform* _parent) { worldTransform_.parent_ = _parent; }
 
 private:
 

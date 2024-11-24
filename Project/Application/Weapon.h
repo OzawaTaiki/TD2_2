@@ -5,6 +5,8 @@
 #include "ObjectColor.h"
 #include "../Collider/Collider.h"
 #include "HitEffect.h"
+#include "ObjectModel.h"
+#include "ThrustEffect.h"
 
 #include <memory>
 
@@ -25,6 +27,12 @@ public:
 
 	void RegisterCollider();
 	void OnCollision(const Collider* _other);
+
+    // 斬撃のエフェクトを開始
+    void StartSlashEffect();
+
+    // 突きのエフェクトを開始
+	void StartThrustEffect();
 
 
 
@@ -51,6 +59,7 @@ private:
 	// ハンマー武器
 	Model* model_;
 
+
 	WorldTransform worldTransform_;
 
 	// モデルカラー
@@ -60,5 +69,14 @@ private:
 
     std::unique_ptr<HitEffect> hitPatricles_ = nullptr;
 
-};
+    // 斬撃エフェクト
+	std::unique_ptr< ObjectModel> slashModel_;
+    bool isSlashEffect_ = false;
+    float slashEffectTime_ = 0.0f;
+    float slashEffectTimeMax_ = 0.5f;
+	bool SlashUpdate_ = false;
 
+	// 突きのエフェクト
+    std::unique_ptr<ThrustEffect> thrustEffect_;
+
+};

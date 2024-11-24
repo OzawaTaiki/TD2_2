@@ -2,6 +2,7 @@
 #include "VectorFunction.h"
 #include "../Collider/CollisionManager.h"
 #include <imgui.h>
+#include "Debug.h"
 
 #include "../../../Application/Stage/Stage.h"
 
@@ -170,7 +171,6 @@ void Player::Update()
 
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
-	worldTransform_.UpdateData();
 	worldTransform_.UpdateData();
 
 	if(isAlive)
@@ -355,6 +355,7 @@ void Player::BehaviorRootUpdate()
 	if (pressedSPACE) {
 		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
+			weapon_->StartSlashEffect();
 		}
 	}
 }
@@ -366,6 +367,7 @@ void Player::BehaviorAttackInitialize()
 	workAttack.attackParameter_ = 0;
 	attackParameter = 0;
 	workAttack.comboIndex = 0;
+    isComboChanged_ = false;
 }
 
 void Player::BehaviorAttackUpdate()
@@ -393,6 +395,11 @@ void Player::BehaviorAttackUpdate()
 
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(15));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 1:
@@ -403,6 +410,11 @@ void Player::BehaviorAttackUpdate()
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(45));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 2:
@@ -413,6 +425,11 @@ void Player::BehaviorAttackUpdate()
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(-45));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 3:
@@ -431,14 +448,20 @@ void Player::BehaviorAttackUpdate()
 
 			worldTransform_.transform_ += move;
 		}*/
-
+		
 		weapon_->SetRotationX(DegreesToRadians(90));
 
+		if (isComboChanged_)
+		{
+ 			weapon_->StartThrustEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(25);
 		break;
 	default:
 		behavior_ = Behavior::kRoot;
 	}
+
 
 }
 
@@ -481,6 +504,7 @@ void Player::SetAttackCombo(int parameter)
 
 			// コンボ加算
 			workAttack.comboIndex++;
+            isComboChanged_ = true;
 		}
 		else {
 			// 何もしなかったら通常行動に

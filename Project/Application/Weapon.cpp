@@ -21,21 +21,40 @@ void Weapon::Initialize()
     hitPatricles_ = std::make_unique<HitEffect>();
     hitPatricles_->Initilize("weapon", &worldTransform_.matWorld_);
 
+    slashModel_ = std::make_unique<ObjectModel>();
+    slashModel_->Initialize("Slash/Slash_test.obj");
+    slashModel_->SetParent(&worldTransform_);
+
+    thrustEffect_ = std::make_unique<ThrustEffect>();
+    thrustEffect_->Initialize(&worldTransform_.matWorld_);
+
+
 }
 
 void Weapon::UpdateWorldTransform()
 {
 	worldTransform_.UpdateData();
-
 	hitPatricles_->Update();
+
+    if (SlashUpdate_)
+    {
+        slashModel_->Update();
+        SlashUpdate_ = false;
+    }
+
+    thrustEffect_->Update();
 
 }
 
 void Weapon::Draw(const Camera& camera)
 {
 	model_->Draw(worldTransform_, &camera, &color_);
+    slashModel_->Draw(&camera, Vector4{ 1,1,1,1 });
+
+    thrustEffect_->Update();
 
 	hitPatricles_->Draw();
+    thrustEffect_->Draw();
     collider_->Draw();
 }
 
@@ -57,4 +76,14 @@ void Weapon::OnCollision(const Collider* _other)
             hitPatricles_->SetEmit(true);
         }
     }
+}
+
+void Weapon::StartSlashEffect()
+{
+    SlashUpdate_ = true;
+}
+
+void Weapon::StartThrustEffect()
+{
+    thrustEffect_->Start();
 }

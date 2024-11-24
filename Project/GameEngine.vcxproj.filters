@@ -327,6 +327,9 @@
     <ClCompile Include="Application\HitEffect.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Application\ThrustEffect.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -571,6 +574,9 @@
       <Filter>Engine\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Application\HitEffect.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ThrustEffect.h">
       <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>

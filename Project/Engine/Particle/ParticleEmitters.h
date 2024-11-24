@@ -122,5 +122,4 @@ private:
     bool                    emit_ = false;
 
     Particle GenerateParticleData();
-    void EmitParticles();
 };
