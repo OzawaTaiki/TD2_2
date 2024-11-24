@@ -1,6 +1,6 @@
 # Blender 4.1.1
 # www.blender.org
-mtllib floor.mtl
+mtllib Tile.mtl
 o 平面
 v 25.212999 -0.000002 -25.212999
 v -25.212999 -0.000002 -25.212999
