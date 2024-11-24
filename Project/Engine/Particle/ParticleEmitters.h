@@ -85,6 +85,8 @@ public:
     void SetCenter(const Vector3& _center) { position_ = _center; }
     void SetEmit(bool _emit) { emit_ = _emit; }
 
+    bool IsBillboardEnabled() const { return useBillboard_; }
+
     void Emit();
 
     std::string GetName() const { return name_; }
@@ -119,6 +121,7 @@ private:
     uint32_t                emitPerSec_;        // 秒あたりの発生回数
     uint32_t                emitRepeatCount_;   // 繰り返し回数
     uint32_t                emitCount_;         // 発生回数
+
 
     bool                    emit_ = false;
 

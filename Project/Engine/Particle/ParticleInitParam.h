@@ -34,5 +34,4 @@ struct ParticleInitParam
     bool isFade = false;
     float fadeRatio = 0.0f;
 
-
 };

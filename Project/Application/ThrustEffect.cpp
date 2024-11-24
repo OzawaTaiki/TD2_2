@@ -1,5 +1,6 @@
 #include "ThrustEffect.h"
 #include "ParticleManager.h"
+#include "TextureManager.h"
 
 void ThrustEffect::Initialize(const Matrix4x4* _worldMatrix)
 {
@@ -11,17 +12,18 @@ void ThrustEffect::Initialize(const Matrix4x4* _worldMatrix)
     thrust2_->Setting("thrust2");
     thrust2_->SetWorldMatrix(_worldMatrix);
 
-
-    ParticleManager::GetInstance()->CreateParticleGroup(thrust_->GetName(), "plane/plane.obj", thrust_.get(),0);
-    ParticleManager::GetInstance()->CreateParticleGroup(thrust2_->GetName(), "plane/plane.obj", thrust2_.get(), 0);
+    uint32_t texture = TextureManager::GetInstance()->Load("white.png");
+    ParticleManager::GetInstance()->CreateParticleGroup(thrust_->GetName(), "circle/circle.gltf", thrust_.get(),   texture);
+    ParticleManager::GetInstance()->CreateParticleGroup(thrust2_->GetName(), "circle/circle.gltf", thrust2_.get(), texture);
 
 }
 
 void ThrustEffect::Update()
 {
 
-    thrust_->Update();
-    thrust2_->Update();
+    //thrust_->Update();
+    //thrust2_->Update();
+
     if (!isEmit_)
         return;
 

@@ -15,10 +15,10 @@
             ]
         ],
         "changeColor": [
-            0
+            65536
         ],
         "changeSize": [
-            1
+            16777217
         ],
         "color_max": [
             [
@@ -133,6 +133,9 @@
         ],
         "spped_min": [
             0.0
+        ],
+        "useBillboard": [
+            2919235585
         ]
     }
 }

@@ -36,17 +36,20 @@ void ParticleManager::Initialize()
 
 void ParticleManager::Update(const Camera* _camera)
 {
-    // billBordはshaderで計算したい
 
     Matrix4x4 billboradMat = Inverse(_camera->matView_);
     billboradMat.m[3][0] = 0;
     billboradMat.m[3][1] = 0;
     billboradMat.m[3][2] = 0;
 
+    bool useBillboard = false;
+
     for (auto& [name, group] : groups_)
     {
+        useBillboard = group.emitterPtr->IsBillboardEnabled();
+
         group.instanceNum = 0;
-        for (auto it=group.particles.begin();it!=group.particles.end();)
+        for (auto it = group.particles.begin(); it != group.particles.end();)
         {
             it->Update();
             if (!it->IsAlive())
@@ -54,9 +57,14 @@ void ParticleManager::Update(const Camera* _camera)
             else
             {
                 Matrix4x4 mat = MakeScaleMatrix(it->GetScale());
-                mat = mat * billboradMat;
-                mat = mat * MakeRotateMatrix(it->GetRotation());
+
+                if(useBillboard)
+                    mat = mat * billboradMat;
+                else
+                    mat = mat * MakeRotateMatrix(it->GetRotation());
+
                 mat = mat * MakeTranslateMatrix(it->GetPosition());
+
                 group.constMap[group.instanceNum].matWorld = mat;
                 group.constMap[group.instanceNum].color = it->GetColor();
                 group.instanceNum++;

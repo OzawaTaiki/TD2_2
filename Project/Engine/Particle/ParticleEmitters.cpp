@@ -100,14 +100,19 @@ void ParticleEmitter::Setting(const std::string& _name)
 void ParticleEmitter::Update()
 {
     if (parentMatWorld_)
+    {
         position_ = Transform(offset_, *parentMatWorld_);
+    }
     else
         position_ = position_+offset_;
+
+
 
     currentTime_ += deltaTime_;
     if (!emit_) {
         currentTime_ = 0;
     }
+
     ImGui::Begin("emit");
     static const char* shapeCombo[1024] = { "Box","Sphere","Circle","None" };
     static const char* directionCombo[1024] = { "inward","outward","random" };
