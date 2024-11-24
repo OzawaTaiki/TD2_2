@@ -1,23 +1,27 @@
-#include <MatrixFunction.h>
-#include "VectorFunction.h"
+
 
 #include "Enemy.h"
 #include "../Player.h"
 #include "../../../Application/Stage/Stage.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
+#include "../FollowCamera.h"
 
 #include "imgui.h"
 #include "../Collider/CollisionManager.h"
+
+
 
 template<typename T>
 T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
-// easeInOutSine 関数
+
+easeInOutSine 関数 
 float easeInOutSine(float t) {
-	return -(cos(M_PI * t) - 1) / 2;
+	return -(cosf(float(M_PI) * t) - 1) / 2;
+
 }
 
 float easyInOutElastic(float t) {
@@ -35,6 +39,18 @@ float easyInOutElastic(float t) {
 		return (powf(2, -20 * t + 10) * sinf((20 * t - 11.125f) * c5)) / 2.0f + 1.0f;
 	}
 }
+
+
+// 最短角度での線形補間 
+float ShortestAngleLerp(float start, float end, float factor) {
+	float difference = fmod(end - start, 360.0f); if (difference > 180.0f) {
+		difference -= 360.0f;
+	}
+	else if (difference < -180.0f) {
+		difference += 360.0f;
+	} return start + factor * difference;
+}
+
 
 void Enemy::Initialize()
 {
@@ -66,17 +82,13 @@ void Enemy::Initialize()
 	modelThunder_ = Model::CreateFromObj("PredictionBox/PredictionSphere.obj");;
 
 
-	attackCamera_.Initialize();
-	attackCamera_.translate_ = { 0,35,-120 };
-	attackCamera_.rotate_ = { 0.25f,0,0 };
+
 
 	attackCamera2_.Initialize();
 	attackCamera2_.translate_ = { 0,35,-120 };
 	attackCamera2_.rotate_ = { 0.25f,0,0 };
 
-	attackCamera3_.Initialize();
-	attackCamera3_.translate_ = { 0,250,-200 };
-	attackCamera3_.rotate_ = { 0.55f,0,0 };
+
 
 	InitializeParticleEmitter();
 
@@ -91,12 +103,15 @@ void Enemy::Initialize()
 	collider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
-	ConfigManager::GetInstance()->SetVariable("attackCamera1", "translate", &attackCamera_.translate_);
-	ConfigManager::GetInstance()->SetVariable("attackCamera1", "rotate", &attackCamera_.rotate_);
+	// カメラ
 	ConfigManager::GetInstance()->SetVariable("attackCamera2", "translate", &attackCamera2_.translate_);
 	ConfigManager::GetInstance()->SetVariable("attackCamera2", "rotate", &attackCamera2_.rotate_);
-	ConfigManager::GetInstance()->SetVariable("attackCamera3", "translate", &attackCamera3_.translate_);
-	ConfigManager::GetInstance()->SetVariable("attackCamera3", "rotate", &attackCamera3_.rotate_);
+
+	ConfigManager::GetInstance()->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
+	ConfigManager::GetInstance()->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
+	ConfigManager::GetInstance()->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
+	//ConfigManager::GetInstance()->SetVariable("root", "MaxMove", &rootMove_.MaxMove);
+	// 通常行動
 
 
 	// 攻撃1
@@ -144,9 +159,9 @@ void Enemy::Initialize()
 
 
 	// hitcolorの設定
-    ConfigManager::GetInstance()->SetVariable("enemy", "defaultColor", &defaultColor_);
-    ConfigManager::GetInstance()->SetVariable("enemy", "hitColor", &hitColor_);
-    ConfigManager::GetInstance()->SetVariable("enemy", "hitColorMaxTime", &hitColorMaxTime_);
+	ConfigManager::GetInstance()->SetVariable("enemy", "defaultColor", &defaultColor_);
+	ConfigManager::GetInstance()->SetVariable("enemy", "hitColor", &hitColor_);
+	ConfigManager::GetInstance()->SetVariable("enemy", "hitColorMaxTime", &hitColorMaxTime_);
 
 
 
@@ -162,6 +177,13 @@ void Enemy::Update()
 		switch (behavior_) {
 		case Behavior::kRoot:
 			BehaviorRootInitialize();
+
+
+			if (attackBehaviorOld_ == AttackBehavior::kSpecial) {
+				if (specialAttackBehaviorOld_ == SpecialAttack::kAttack2) {
+					follow_->SetT(0);
+				}
+			};
 			break;
 		case Behavior::kFear:
 			BehaviorFearInitialize();
@@ -177,9 +199,12 @@ void Enemy::Update()
 	switch (behavior_) {
 	case Behavior::kRoot: // 通常行動更新
 		BehaviorRootUpdate();
+
+		follow_->SetFlag(false);
 		break;
 	case Behavior::kFear: // 怯み行動更新
 		BehaviorFearUpdate();
+		follow_->SetFlag(false);
 		break;
 	case Behavior::kAttack: // 攻撃行動更新
 		BehaviorAttackUpdate();
@@ -201,13 +226,13 @@ void Enemy::Update()
 		if (ImGui::BeginTabItem("enemy"))
 		{
 
-			ImGui::DragFloat3("AttackCamera translate", &attackCamera_.translate_.x, 0.01f);
-			ImGui::DragFloat3("AttackCamera rotate", &attackCamera_.rotate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera2 translate", &attackCamera2_.translate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera2 rotate", &attackCamera2_.rotate_.x, 0.01f);
-			ImGui::DragFloat3("AttackCamera3 translate", &attackCamera3_.translate_.x, 0.01f);
-			ImGui::DragFloat3("AttackCamera3 rotate", &attackCamera3_.rotate_.x, 0.01f);
 			ImGui::Checkbox("debugAttack", &isDebugAttack);
+			if (ImGui::Button("Fear")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kFear;
+			}
 			if (ImGui::Button("SpecialAttack")) {
 				behaviorTimer_ = 0;
 				behaviorRequest_ = Behavior::kAttack;
@@ -245,19 +270,20 @@ void Enemy::Update()
 				attackBehaviorRequest_ = AttackBehavior::kNormal;
 				normalAttackBehaviorRequest_ = NormalAttack::kAttackLong2;
 			}
-      if (ImGui::TreeNode("HitColor"))
-      {
-          ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
-          ImGui::ColorEdit4("hitColor", &hitColor_.x);
-          ImGui::DragFloat("hitColorMaxTime", &hitColorMaxTime_, 0.01f);
-          if (ImGui::Button("save hitColor"))
-          {
-              ConfigManager::GetInstance()->SaveData("enemy");
-          }
-          ImGui::TreePop();
-      }
+			if (ImGui::TreeNode("HitColor"))
+			{
+				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
+				ImGui::ColorEdit4("hitColor", &hitColor_.x);
+				ImGui::DragFloat("hitColorMaxTime", &hitColorMaxTime_, 0.01f);
+				if (ImGui::Button("save hitColor"))
+				{
+					ConfigManager::GetInstance()->SaveData("enemy");
+				}
+				ImGui::TreePop();
+			}
 			ImGui::EndTabItem();
 		}
+
 		ImGui::EndTabBar();
 	}
 
@@ -269,6 +295,20 @@ void Enemy::Update()
 			ImGui::DragFloat3("worldTransformBody_.transform_", &worldTransformBody_.transform_.x, 0.01f);
 			ImGui::DragFloat3("worldTransformLeft_.transform_", &worldTransformLeft_.transform_.x, 0.01f);
 			ImGui::DragFloat3("worldTransformRight_.transform_", &worldTransformRight_.transform_.x, 0.01f);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("root"))
+		{
+			ImGui::DragFloat("MaxCoolTime", &rootMove_.MaxCoolTime, 1.0f);
+			int move = rootMove_.MaxMove;
+			ImGui::DragInt("MaxMove.", &move, 1.0f);
+			rootMove_.MaxMove = move;
+			ImGui::DragFloat("MaxRandCoolTime", &rootMove_.MaxRandCoolTime, 0.01f);
+			ImGui::DragFloat3("worldTransformRight_.transform_", &worldTransformRight_.transform_.x, 0.01f);
+			int phase = rootMove_.MaxRandMovePhase;
+			ImGui::DragInt3("MaxRandMovePhase", &phase, 0.01f);
+			rootMove_.MaxRandMovePhase = phase;
 			ImGui::EndTabItem();
 		}
 
@@ -300,6 +340,7 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxDeathTimer_", &attack2_.MaxDeathTimer_, 0.01f);
 			ImGui::EndTabItem();
 		}
+
 		if (ImGui::BeginTabItem("attack3"))
 		{
 			//ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
@@ -313,6 +354,7 @@ void Enemy::Update()
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
+
 		if (ImGui::BeginTabItem("attack4"))
 		{
 			ImGui::DragFloat("ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay, 0.01f);
@@ -330,7 +372,7 @@ void Enemy::Update()
 	StageMovementRestrictions();
 
 	// エミッターの更新
-    UpdateParticleEmitter();
+	UpdateParticleEmitter();
 
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
@@ -338,11 +380,9 @@ void Enemy::Update()
 	worldTransformRight_.UpdateData();
 	worldTransformBody_.UpdateData();
 
-	attackCamera_.UpdateMatrix();
 	attackCamera2_.UpdateMatrix();
-	attackCamera3_.UpdateMatrix();
 
-	if(isAlive)
+	if (isAlive)
 	{
 		UpdateHitColor();
 		CollisionManager::GetInstance()->RegisterCollider(collider_.get());
@@ -414,17 +454,17 @@ void Enemy::Draw(const Camera& camera)
 		break;
 	}
 
-    // エミッターの描画
+	// エミッターの描画
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
-        particleEmitter_[index].Draw();
+		particleEmitter_[index].Draw();
 
-    collider_->Draw();
+	collider_->Draw();
 
 }
 
 void Enemy::OnCollision(const Collider* _other)
 {
-    color_.SetColor(hitColor_);
+	color_.SetColor(hitColor_);
 	isHitColor_ = true;
 }
 
@@ -495,7 +535,7 @@ void Enemy::BehaviorRootUpdate()
 					rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
 					rootMove_.targetPos.z = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
 					rootMove_.targetPos.y = worldTransform_.transform_.y;
-					rootMove_.MaxCoolTime = float(rand() % rootMove_.MaxRandCoolTime + 10);
+					rootMove_.MaxCoolTime = float(rand() % int(rootMove_.MaxRandCoolTime) + 10);
 
 					rootMove_.transitionSpeed = float(float(float(rand() % 100 + 100) / 10000.0f));
 
@@ -595,20 +635,95 @@ void Enemy::Move(float speed, bool flag)
 void Enemy::BehaviorAttackInitialize()
 {
 
+
 	if (!isDebugAttack) {
-		if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
-			attackBehaviorRequest_ = AttackBehavior::kSpecial;
-
-			specialAttackBehaviorRequest_ = SpecialAttack::kAttack4;
-
+		//atMethod_.randMethod = rand() % sizeof(allAttack_);
+		if (MaxHp / 2 < hp) {
+			atMethod_.normalProbability = 50;
 		}
 		else {
-			attackBehaviorRequest_ = AttackBehavior::kSpecial;
+			atMethod_.normalProbability = 80;
+		}
 
-			specialAttackBehaviorRequest_ = SpecialAttack::kAttack3;
+		// 確率を出す
+		atMethod_.randMethod = rand() % 100;
+		// 通常攻撃より高い値が出たら
+		if (atMethod_.randMethod >= atMethod_.normalProbability) {
 
+			// 必殺攻撃を確率で選ぶ
+			atMethod_.randAttack = rand() % 4 + 1;
+
+			if (atMethod_.randAttack == 1) {
+				allAttack_ = AllAttack::kSpecialAttack;
+			}
+			else if (atMethod_.randAttack == 2) {
+				allAttack_ = AllAttack::kSpecialAttack2;
+			}
+			else if (atMethod_.randAttack == 3) {
+				allAttack_ = AllAttack::kSpecialAttack3;
+			}
+			else if (atMethod_.randAttack == 4) {
+				allAttack_ = AllAttack::kSpecialAttack4;
+			}
+		}
+		else {// 通常攻撃より低い値が出たら
+			atMethod_.randAttack = rand() % 2 + 1;
+
+			if (atMethod_.randAttack == 1) {
+				allAttack_ = AllAttack::kNormalLong1;
+			}
+			else if (atMethod_.randAttack == 2) {
+				allAttack_ = AllAttack::kNormalLong2;
+			}
 		}
 	}
+	else {
+		allAttack_ = AllAttack::kNone;
+	}
+
+
+
+
+	switch (allAttack_)
+	{
+	case Enemy::AllAttack::kNormalShort1:
+		attackBehaviorRequest_ = AttackBehavior::kNormal;
+		normalAttackBehaviorRequest_ = NormalAttack::kAttackShort1;
+		break;
+	case Enemy::AllAttack::kNormalShort2:
+		attackBehaviorRequest_ = AttackBehavior::kNormal;
+		normalAttackBehaviorRequest_ = NormalAttack::kAttackShort2;
+		break;
+	case Enemy::AllAttack::kNormalLong1:
+		attackBehaviorRequest_ = AttackBehavior::kNormal;
+		normalAttackBehaviorRequest_ = NormalAttack::kAttackLong1;
+		break;
+	case Enemy::AllAttack::kNormalLong2:
+		attackBehaviorRequest_ = AttackBehavior::kNormal;
+		normalAttackBehaviorRequest_ = NormalAttack::kAttackLong2;
+		break;
+	case Enemy::AllAttack::kSpecialAttack:
+		attackBehaviorRequest_ = AttackBehavior::kSpecial;
+		specialAttackBehaviorRequest_ = SpecialAttack::kAttack;
+		break;
+	case Enemy::AllAttack::kSpecialAttack2:
+		attackBehaviorRequest_ = AttackBehavior::kSpecial;
+		specialAttackBehaviorRequest_ = SpecialAttack::kAttack2;
+		break;
+	case Enemy::AllAttack::kSpecialAttack3:
+		attackBehaviorRequest_ = AttackBehavior::kSpecial;
+		specialAttackBehaviorRequest_ = SpecialAttack::kAttack3;
+		break;
+	case Enemy::AllAttack::kSpecialAttack4:
+		attackBehaviorRequest_ = AttackBehavior::kSpecial;
+		specialAttackBehaviorRequest_ = SpecialAttack::kAttack4;
+		break;
+	default:
+		break;
+	}
+
+
+
 
 
 	if (attackBehaviorRequest_) {
@@ -617,6 +732,8 @@ void Enemy::BehaviorAttackInitialize()
 		// 各ふるまいごとの初期化を実行
 		switch (attackBehavior_) {
 		case AttackBehavior::kNormal: // 通常攻撃の場合
+
+			attackBehaviorOld_ = AttackBehavior::kNormal;
 
 			if (normalAttackBehaviorRequest_) {
 				// ふるまい
@@ -643,6 +760,8 @@ void Enemy::BehaviorAttackInitialize()
 			break;
 		case AttackBehavior::kSpecial: // 必殺技攻撃の場合
 
+			attackBehaviorOld_ = AttackBehavior::kSpecial;
+
 			if (specialAttackBehaviorRequest_) {
 				specialAttackBehavior_ = specialAttackBehaviorRequest_.value();
 
@@ -650,20 +769,24 @@ void Enemy::BehaviorAttackInitialize()
 				{
 				case Enemy::SpecialAttack::kAttack:		// 攻撃1
 					SpecialAttackInitialize();
+					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack;
 					break;
 				case Enemy::SpecialAttack::kAttack2:	// 攻撃2
 					SpecialAttack2Initialize();
+					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack2;
+					follow_->SetT(0);
 					break;
 				case Enemy::SpecialAttack::kAttack3:	// 攻撃3
+					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack3;
 					SpecialAttack3Initialize();
 					break;
 				case Enemy::SpecialAttack::kAttack4:	// 攻撃4
+					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack4;
 					SpecialAttack4Initialize();
 					break;
 				default:
 					break;
 				}
-
 				specialAttackBehaviorRequest_ = std::nullopt;
 			}
 			break;
@@ -725,15 +848,60 @@ void Enemy::BehaviorAttackUpdate()
 
 void Enemy::BehaviorFearInitialize()
 {
+	fear_.startPos = worldTransform_.transform_;
+	fear_.targetPos = worldTransform_.transform_;
+	fear_.targetPos.y = fear_.MinY;
+	fear_.transitionFactor = 0;
+	fear_.isGetUp = false;
+	fear_.timer = 0;
+	fear_.getupTimer = 0;
 
+	fear_.rotate = Vector3{ DegreesToRadians(30),worldTransform_.rotate_.y,DegreesToRadians(60) };
+
+	fear_.startRotate = worldTransform_.rotate_;
+	fear_.tragetRotate = fear_.rotate;
 }
 
 void Enemy::BehaviorFearUpdate()
 {
-	behaviorTimer_++;
-	if (behaviorTimer_ >= 180) {
-		behaviorRequest_ = Behavior::kRoot;
-		behaviorTimer_ = 0;
+
+
+	fear_.transitionFactor += fear_.transitionSpeed;
+
+	if (!fear_.isGetUp) {
+		if (fear_.transitionFactor >= 1.0f) {
+			fear_.transitionFactor = 1.0f;
+			if (++fear_.timer >= fear_.MaxTimer) {
+				fear_.transitionFactor = 0.0f;
+				fear_.isGetUp = true;
+
+				fear_.startPos = worldTransform_.transform_;
+				fear_.targetPos = worldTransform_.transform_;
+				fear_.targetPos.y = fear_.oldPosY;
+
+				fear_.startRotate = fear_.rotate;
+				fear_.tragetRotate = Vector3{ 0,worldTransform_.rotate_.y,0 };
+
+			}
+		}
+		worldTransform_.transform_ = Lerp(fear_.startPos, fear_.targetPos, fear_.transitionFactor);
+		worldTransform_.rotate_.x = ShortestAngleLerp(fear_.startRotate.x, fear_.tragetRotate.z, fear_.transitionFactor);
+		//worldTransform_.rotate_.y = ShortestAngleLerp(fear_.startRotate.y, fear_.tragetRotate.y, fear_.transitionFactor);
+		worldTransform_.rotate_.z = ShortestAngleLerp(fear_.startRotate.z, fear_.tragetRotate.z, fear_.transitionFactor);
+	}
+	if (fear_.isGetUp) {
+		if (fear_.transitionFactor >= 1.0f) {
+			fear_.transitionFactor = 1.0f;
+			if (++fear_.getupTimer >= fear_.MaxGetupTimer) {
+				behaviorRequest_ = Behavior::kRoot;
+			}
+		}
+
+		worldTransform_.transform_ = Lerp(fear_.startPos, fear_.targetPos, fear_.transitionFactor);
+		worldTransform_.rotate_.x = ShortestAngleLerp(fear_.startRotate.x, fear_.tragetRotate.z, fear_.transitionFactor);
+		//worldTransform_.rotate_.y = ShortestAngleLerp(fear_.startRotate.y, fear_.tragetRotate.y, fear_.transitionFactor);
+		worldTransform_.rotate_.z = ShortestAngleLerp(fear_.startRotate.z, fear_.tragetRotate.z, fear_.transitionFactor);
+
 	}
 }
 
@@ -754,6 +922,15 @@ void Enemy::SpecialAttackInitialize()
 
 	attack1_.armNum = 0;
 	attack1_.landingTime = 0;
+
+	if (hp <= MaxHp) {
+		if (hp >= MaxHp / 2) {
+			attack1_.MaxArmNum = 3;
+		}
+		else {
+			attack1_.MaxArmNum = 5;
+		}
+	}
 
 }
 
@@ -792,9 +969,14 @@ void Enemy::SpecialAttackUpdate()
 
 				int newLocation;
 				do {
-					newLocation = rand() % 4 + 1;
+					newLocation = rand() % 5;
 
+					
 				} while (newLocation == attack1_.oldAttackSpawnLocation);
+
+			
+
+
 
 				StageArmInitialize(attack1_.attackSpawnLocation);
 
@@ -853,6 +1035,11 @@ void Enemy::StageArmInitialize(int num)
 		stagePos.y = stage_->GetWallFloor().y - 20;
 		stagePos.z = player_->GetWorldTransform().GetWorldPosition().z;
 	}
+	else if (num == Stage::StageNum::kFlont) {
+		stagePos.x = player_->GetWorldTransform().GetWorldPosition().x;
+		stagePos.y = player_->GetWorldTransform().GetWorldPosition().y;
+		stagePos.z = stage_->GetWallFlont().z - 20;
+	}
 	else if (num == Stage::StageNum::kBack) {
 		stagePos.x = player_->GetWorldTransform().GetWorldPosition().x;
 		stagePos.y = player_->GetWorldTransform().GetWorldPosition().y;
@@ -892,6 +1079,9 @@ void Enemy::StageArmInitialize(int num)
 
 void Enemy::ThunderInitialize(Vector3 pos)
 {
+	follow_->SetFlag(true);
+
+
 	const float kBulletSpeed = 0.4f;
 	Vector3 velocityB{};
 	//Vector3 direction{ };
@@ -1253,7 +1443,7 @@ void Enemy::InitializeParticleEmitter()
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
 	{
 		ParticleManager::GetInstance()->CreateParticleGroup(particleEmitter_[index].GetName(), "plane/plane.obj", &particleEmitter_[index], th);
-        particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
+		particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
 		particleEmitter_[index].SetEmit(1);
 	}
 }

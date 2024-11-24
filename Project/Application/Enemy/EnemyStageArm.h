@@ -38,6 +38,9 @@ public:
 		int MaxArmNum = 5;
 		// 予測が出てから攻撃するまでの時間(最大)
 		float MaxAttackPreparationTime = 120.0f;
+		// 点滅
+		float Maxblinking = 30.0f;
+
 		// 伸びる時間(最大)
 		//float MaxAttaskMoveTime = 60.0f;
 		// 伸びる長さ最大
