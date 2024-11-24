@@ -14,6 +14,10 @@
 /// <summary>
 /// ステージ
 /// </summary>
+
+
+class Enemy;
+
 class Stage
 {
 public:
@@ -41,6 +45,7 @@ public:
 	/// </summary>
 	void Draw(const Camera& camera);
 
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
 	Vector3 GetWallFloor() { return worldFloor_.GetWorldPosition();}
 	Vector3 GetWallFlont() { return worldWallFlont.GetWorldPosition();}
@@ -69,5 +74,5 @@ private:
 	WorldTransform worldWallLeft;
 	WorldTransform worldWallBack;
 
-
+	Enemy* enemy_;
 };

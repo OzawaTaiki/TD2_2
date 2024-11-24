@@ -134,7 +134,7 @@ void FollowCamera::Update()
 			
 		}
 
-        camera_.translate_ = Add(target_->transform_, offset) + camera_.GetShakeOffset();
+        //camera_.translate_ = Add(target_->transform_, offset) + camera_.GetShakeOffset();
 
 	}
 	else {
