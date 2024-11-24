@@ -49,9 +49,9 @@ void Weapon::UpdateWorldTransform()
 void Weapon::Draw(const Camera& camera)
 {
 	model_->Draw(worldTransform_, &camera, &color_);
-    slashModel_->Draw(&camera, Vector4{ 1,1,1,1 });
 
-    thrustEffect_->Update();
+    if(isSlashEffect_)
+        slashModel_->Draw(&camera, Vector4{ 1,1,1,1 });
 
 	hitPatricles_->Draw();
     thrustEffect_->Draw();
@@ -81,6 +81,7 @@ void Weapon::OnCollision(const Collider* _other)
 void Weapon::StartSlashEffect()
 {
     SlashUpdate_ = true;
+    isSlashEffect_ = true;
 }
 
 void Weapon::StartThrustEffect()

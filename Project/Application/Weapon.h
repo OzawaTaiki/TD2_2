@@ -51,8 +51,11 @@ public:
 	void SetRotationY(const float& rotation) { worldTransform_.rotate_.y = rotation; }
 	void SetRotationZ(const float& rotation) { worldTransform_.rotate_.z = rotation; }
 
+    void EndSlashEffect() { isSlashEffect_ = false; }
+	
 	// ワールドトランスフォーム
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
+
 
 
 private:

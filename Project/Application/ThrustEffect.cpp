@@ -20,9 +20,8 @@ void ThrustEffect::Initialize(const Matrix4x4* _worldMatrix)
 
 void ThrustEffect::Update()
 {
-
-    //thrust_->Update();
-    //thrust2_->Update();
+    thrust_->Update();
+    thrust2_->Update();
 
     if (!isEmit_)
         return;

@@ -453,7 +453,8 @@ void Player::BehaviorAttackUpdate()
 
 		if (isComboChanged_)
 		{
- 			weapon_->StartThrustEffect();
+			weapon_->EndSlashEffect();
+			weapon_->StartThrustEffect();
 			isComboChanged_ = false;
 		}
 		SetAttackCombo(25);
