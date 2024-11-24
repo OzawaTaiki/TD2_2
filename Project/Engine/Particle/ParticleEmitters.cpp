@@ -68,6 +68,7 @@ void ParticleEmitter::Setting(const std::string& _name)
     instance->SetVariable(name_, "loop", reinterpret_cast<uint32_t*>(&loop_));
     instance->SetVariable(name_, "changeColor", reinterpret_cast<uint32_t*>(&changeColor_));
     instance->SetVariable(name_, "changeSize", reinterpret_cast<uint32_t*>(&changeSize_));
+    instance->SetVariable(name_, "useBillboard", reinterpret_cast<uint32_t*>(&useBillboard_));
 
     instance->SetVariable(name_, "shape", reinterpret_cast<uint32_t*>(&shape_));
     instance->SetVariable(name_, "direction", reinterpret_cast<uint32_t*>(&particleDirection_));
@@ -158,6 +159,7 @@ void ParticleEmitter::Update()
         ImGui::Checkbox("loop", &loop_);
         ImGui::Checkbox("changeColor", &changeColor_);
         ImGui::Checkbox("changeSize", &changeSize_);
+        ImGui::Checkbox("useBillboard", &useBillboard_);
 
 
         ImGui::Spacing();

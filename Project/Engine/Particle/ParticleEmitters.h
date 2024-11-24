@@ -112,6 +112,7 @@ private:
     bool                    changeSize_;        // 生成後にサイズを変更するか
     bool                    changeColor_;       // 生成後に色を変更するか
     bool                    randomColor_;       // 色をランダムで生成するか
+    bool                    useBillboard_;      // ビルボードを使用するか
     float                   fadeStartRatio_;    // アルファを変え始める割合
     uint32_t                maxParticles_;      // 最大数
     uint32_t                countPerEmit_;      // 回当たりの発生数
