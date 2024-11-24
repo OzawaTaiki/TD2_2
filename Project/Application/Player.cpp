@@ -237,122 +237,172 @@ void Player::BehaviorRootUpdate()
 	isMove_ = false;
 	LRDirection newDirection = lrDirection_;
 	velocity_ = { 0.0f, 0.0f, 0.0f };
-	//speed = 0.2f;
-
-	// 入力判定
+	//// 入力判定
 	bool pressedW = Input::GetInstance()->IsKeyPressed(DIK_W);
 	bool pressedA = Input::GetInstance()->IsKeyPressed(DIK_A);
 	bool pressedS = Input::GetInstance()->IsKeyPressed(DIK_S);
 	bool pressedD = Input::GetInstance()->IsKeyPressed(DIK_D);
 	bool pressedSPACE = Input::GetInstance()->IsKeyPressed(DIK_SPACE);
+#pragma region Key
 
-	// 入力方向ベクトルの初期化
-	Vector3 inputDirection = { 0.0f, 0.0f, 0.0f };
-	if (pressedW) {
-		inputDirection.z += 1.0f;
-	}
-	if (pressedS) {
-		inputDirection.z -= 1.0f;
-	}
-	if (pressedA) {
-		inputDirection.x -= 1.0f;
-	}
-	if (pressedD) {
-		inputDirection.x += 1.0f;
-	}
 
-    if (pressedW || pressedA || pressedS || pressedD) isMove_ = true;
+	if (Input::GetInstance()->IsControllerConnected()) {
 
-	// 入力がある場合、カメラの向きに基づいた移動方向を計算
-	if (inputDirection.x != 0.0f || inputDirection.z != 0.0f) {
-		// 入力方向を正規化
-		inputDirection = Normalize(inputDirection);
 
-		// カメラのビュー行列の逆行列（カメラのワールド変換行列）を取得
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
+		velocity_.x = Input::GetInstance()->GetPadLeftStick().x;
+		velocity_.z = Input::GetInstance()->GetPadLeftStick().y;
 
-		// カメラの向きに基づいて移動方向をワールド座標系に変換
-		Vector3 worldDirection = {
-			inputDirection.x * cameraWorldMatrix.m[0][0] + inputDirection.z * cameraWorldMatrix.m[2][0],
-			0.0f,
-			inputDirection.x * cameraWorldMatrix.m[0][2] + inputDirection.z * cameraWorldMatrix.m[2][2]
-		};
+		// 移動量に速さを反映
+		velocity_ = Multiply(Normalize(velocity_), speed);
 
-		velocity_ = Normalize(worldDirection) * speed;
+		if (velocity_ != 0) { isMove_ = true; }
 
-		// 方向設定
-		direction_.x = velocity_.x;
-		direction_.y = velocity_.z;
-
-		// プレイヤーの向きを設定
-		if (inputDirection.z > 0) {
-			newDirection = (inputDirection.x < 0) ? LRDirection::kLeftFront : (inputDirection.x > 0) ? LRDirection::kRightFront : LRDirection::kFront;
+		if ((velocity_.x != 0.0f || velocity_.z != 0.0f)) {
+			// 移動ベクトルをカメラの角度だけ回転する
+			Matrix4x4 rotateMatrixY = MakeRotateYMatrix(camera_->rotate_.y);
+			velocity_ = TransformNormal(velocity_, rotateMatrixY);
+			if (velocity_ != 0) {
+				worldTransform_.rotate_.y = std::atan2(velocity_.x, velocity_.z);
+			}
 		}
-		else if (inputDirection.z < 0) {
-			newDirection = (inputDirection.x < 0) ? LRDirection::kLeftBack : (inputDirection.x > 0) ? LRDirection::kRightBack : LRDirection::kBack;
+		// 移動
+		worldTransform_.transform_ = Add(worldTransform_.transform_, velocity_);
+	}
+	else {
+
+		
+
+		// 入力方向ベクトルの初期化
+		Vector3 inputDirection = { 0.0f, 0.0f, 0.0f };
+		if (pressedW) {
+			inputDirection.z += 1.0f;
 		}
-		else {
-			newDirection = (inputDirection.x < 0) ? LRDirection::kLeft : LRDirection::kRight;
+		if (pressedS) {
+			inputDirection.z -= 1.0f;
 		}
+		if (pressedA) {
+			inputDirection.x -= 1.0f;
+		}
+		if (pressedD) {
+			inputDirection.x += 1.0f;
+		}
+
+		if (pressedW || pressedA || pressedS || pressedD) isMove_ = true;
+
+		// 入力がある場合、カメラの向きに基づいた移動方向を計算
+		if (inputDirection.x != 0.0f || inputDirection.z != 0.0f) {
+			// 入力方向を正規化
+			inputDirection = Normalize(inputDirection);
+
+			// カメラのビュー行列の逆行列（カメラのワールド変換行列）を取得
+			Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
+
+			// カメラの向きに基づいて移動方向をワールド座標系に変換
+			Vector3 worldDirection = {
+				inputDirection.x * cameraWorldMatrix.m[0][0] + inputDirection.z * cameraWorldMatrix.m[2][0],
+				0.0f,
+				inputDirection.x * cameraWorldMatrix.m[0][2] + inputDirection.z * cameraWorldMatrix.m[2][2]
+			};
+
+			velocity_ = Normalize(worldDirection) * speed;
+
+			// 方向設定
+			direction_.x = velocity_.x;
+			direction_.y = velocity_.z;
+
+			// プレイヤーの向きを設定
+			if (inputDirection.z > 0) {
+				newDirection = (inputDirection.x < 0) ? LRDirection::kLeftFront : (inputDirection.x > 0) ? LRDirection::kRightFront : LRDirection::kFront;
+			}
+			else if (inputDirection.z < 0) {
+				newDirection = (inputDirection.x < 0) ? LRDirection::kLeftBack : (inputDirection.x > 0) ? LRDirection::kRightBack : LRDirection::kBack;
+			}
+			else {
+				newDirection = (inputDirection.x < 0) ? LRDirection::kLeft : LRDirection::kRight;
+			}
+		}
+
+		// 方向が変わったときに回転開始
+		if (newDirection != lrDirection_) {
+			lrDirection_ = newDirection;
+			turnFirstRotationY_ = worldTransform_.rotate_.y;
+			tureTimer_ = kTimeTurn;
+		}
+
+		// 移動量に速さを反映
+		worldTransform_.transform_ += velocity_;
+
+		// 移動時の傾き
+		TiltMotion();
+
+
+		//旋回制御
+		if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
+			// 移動中なら常に旋回処理を行う
+			tureTimer_ = kTimeTurn;
+
+			// 状態に応じた目的の角度を取得する
+			float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+
+			// カメラの向きを考慮して目的の回転角度を補正
+			Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
+
+			// カメラのY軸回転角度（ワールド座標系）を取得
+			float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
+
+			// 目的の角度にカメラの向きを加算して補正
+			float adjustedRotationY = destinationRotationY + cameraYaw;
+
+			// 角度差を最短経路で補間
+			float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
+			float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
+
+			// プレイヤーの回転を更新
+			worldTransform_.rotate_.y = targetRotationY;
+		}
+		else if (tureTimer_ > 0.0f) {
+			// 停止中でも旋回が残っていれば処理を継続
+			tureTimer_ -= 1.0f / 60.0f;
+
+			float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+			Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
+			float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
+			float adjustedRotationY = destinationRotationY + cameraYaw;
+
+			float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
+			float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
+
+			worldTransform_.rotate_.y = targetRotationY;
+		}
+
 	}
 
-	// 方向が変わったときに回転開始
-	if (newDirection != lrDirection_) {
-		lrDirection_ = newDirection;
-		turnFirstRotationY_ = worldTransform_.rotate_.y;
-		tureTimer_ = kTimeTurn;
-	}
+#pragma endregion // キーボード
 
-	// 移動量に速さを反映
-	worldTransform_.transform_ += velocity_;
 
-	// 移動時の傾き
-	TiltMotion();
+	
+	
 
-	// 旋回制御
-	if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
-		// 移動中なら常に旋回処理を行う
-		tureTimer_ = kTimeTurn;
 
-		// 状態に応じた目的の角度を取得する
-		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 
-		// カメラの向きを考慮して目的の回転角度を補正
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
+	
+	ImGui::Begin("Play");
+	ImGui::InputFloat3("velo", &velocity_.x);
+	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
+	ImGui::Checkbox("isMove", &isMove_);
+	ImGui::End();
 
-		// カメラのY軸回転角度（ワールド座標系）を取得
-		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
-
-		// 目的の角度にカメラの向きを加算して補正
-		float adjustedRotationY = destinationRotationY + cameraYaw;
-
-		// 角度差を最短経路で補間
-		float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
-		float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
-
-		// プレイヤーの回転を更新
-		worldTransform_.rotate_.y = targetRotationY;
-	}
-	else if (tureTimer_ > 0.0f) {
-		// 停止中でも旋回が残っていれば処理を継続
-		tureTimer_ -= 1.0f / 60.0f;
-
-		float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
-		Matrix4x4 cameraWorldMatrix = Inverse(camera_->matView_);
-		float cameraYaw = atan2f(cameraWorldMatrix.m[2][0], cameraWorldMatrix.m[2][2]);
-		float adjustedRotationY = destinationRotationY + cameraYaw;
-
-		float angleDifference = NormalizeAngleDifference(adjustedRotationY - worldTransform_.rotate_.y);
-		float targetRotationY = worldTransform_.rotate_.y + EaseOut(tureTimer_, 0.0f, angleDifference);
-
-		worldTransform_.rotate_.y = targetRotationY;
-	}
 
 
 #pragma endregion
 
 	recastTime++;
 	if (pressedSPACE) {
+		if (recastTime >= MaxRecastTime) {
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
+	if (Input::GetInstance()->IsPadPressed(PadButton::iPad_A)) {
 		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
 		}
@@ -371,6 +421,8 @@ void Player::BehaviorAttackInitialize()
 void Player::BehaviorAttackUpdate()
 {
 	bool pressedSPACET = Input::GetInstance()->IsKeyTriggered(DIK_SPACE);
+
+	pressedSPACET = Input::GetInstance()->IsPadTriggered(PadButton::iPad_A);
 	// コンボ上限に達していない
 	if (workAttack.comboIndex < ComboNum - 1) {
 		if (pressedSPACET) {

@@ -48,7 +48,18 @@ T easeInExpo(const T& a, const T& b, float t){
 	return c * std::pow(2, 10 * (t - 1)) + a;
 }
 
-
+// easeOutExpo関数
+template<typename T> 
+T easeOutExpo(const T& start, const T& end, float factor) { 
+	if (factor == 1.0f) { 
+		return end; 
+	} 
+	Vector3 result; 
+	result.x = (end.x - start.x) * (-std::pow(2, -10 * factor) + 1) + start.x; 
+	result.y = (end.y - start.y) * (-std::pow(2, -10 * factor) + 1) + start.y; 
+	result.z = (end.z - start.z) * (-std::pow(2, -10 * factor) + 1) + start.z; 
+	return result; 
+}
 void FollowCamera::Initialize()
 {
 	camera_.Initialize();
@@ -124,13 +135,20 @@ void FollowCamera::Update()
 		if (t_ > 1.0f) {
 
 			const float kRotateSpeed = 0.000003f * 10000;
-			if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) {
-				camera_.rotate_.y += 1.0f * kRotateSpeed;
-			}
-			else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
-				camera_.rotate_.y -= 1.0f * kRotateSpeed;
-			}
 
+			if (Input::GetInstance()->IsControllerConnected()) {
+				camera_.rotate_.y += Input::GetInstance()->GetPadRightStick().x * kRotateSpeed;
+			}
+			else {
+
+				if (Input::GetInstance()->IsKeyPressed(DIK_RIGHT)) {
+					camera_.rotate_.y += 1.0f * kRotateSpeed;
+				}
+				else if (Input::GetInstance()->IsKeyPressed(DIK_LEFT)) {
+					camera_.rotate_.y -= 1.0f * kRotateSpeed;
+				}
+			}
+			
 			//camera_.rotate_.y = fmod(camera_.rotate_.y, DegreesToRadians(360.0f));
 			if (camera_.rotate_.y < -1) { 
 				camera_.rotate_.y += DegreesToRadians(360.0f);
@@ -170,7 +188,7 @@ void FollowCamera::Update()
 		else {
 			
 
-			camera_.translate_ = TLerp(attackTranslate_, targetPos, t_);
+			camera_.translate_ = easeOutExpo(attackTranslate_, targetPos, t_);
 
 			camera_.rotate_.x = TShortestAngleLerp((attackRotate_.x), (targetRot.x), t_);
 			camera_.rotate_.y = TShortestAngleLerp((attackRotate_.y), (targetRot.y), t_);
