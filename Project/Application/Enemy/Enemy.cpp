@@ -18,7 +18,7 @@ T Lerp(const T& a, const T& b, float t) {
 }
 
 
-easeInOutSine 関数 
+//easeInOutSine 関数 
 float easeInOutSine(float t) {
 	return -(cosf(float(M_PI) * t) - 1) / 2;
 
