@@ -61,7 +61,7 @@ public :
     /// <summary>
     /// 衝突処理
     /// </summary>
-	void OnCollision();
+	void OnCollision(const Collider* _other);
 
 	// カメラのビュープロジェクション
 	void SetCamera(const Camera* camera) { camera_ = camera; };

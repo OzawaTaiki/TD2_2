@@ -122,6 +122,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\EnemyStageArm.cpp" />
     <ClCompile Include="Application\Enemy\EnemyThunder.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
+    <ClCompile Include="Application\HitEffect.cpp" />
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\PlayerDustParticle.cpp" />
     <ClCompile Include="Application\Stage\Stage.cpp" />
@@ -250,6 +251,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\EnemyStageArm.h" />
     <ClInclude Include="Application\Enemy\EnemyThunder.h" />
     <ClInclude Include="Application\FollowCamera.h" />
+    <ClInclude Include="Application\HitEffect.h" />
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\PlayerDustParticle.h" />
     <ClInclude Include="Application\Stage\Stage.h" />
@@ -292,6 +294,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Particle\Particle.h" />
     <ClInclude Include="Engine\Particle\ParticleEmitters.h" />
     <ClInclude Include="Engine\Particle\ParticleManager.h" />
+    <ClInclude Include="Engine\Particle\ParticleInitParam.h" />
     <ClInclude Include="Engine\Render\PSOManager.h" />
     <ClInclude Include="Engine\Render\SRVManager.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />

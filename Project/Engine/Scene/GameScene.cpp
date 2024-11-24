@@ -88,7 +88,7 @@ void GameScene::Update()
     }
 
     //<-----------------------
-    camera_->Update();
+    camera_->Update(0);
     // プレイヤー
     if(!activeDebugCamera_)
         player_->Update();

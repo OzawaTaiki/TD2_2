@@ -17,9 +17,11 @@ T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
-// easeInOutSine 関数 
+
+easeInOutSine 関数 
 float easeInOutSine(float t) {
 	return -(cosf(float(M_PI) * t) - 1) / 2;
+
 }
 
 float easyInOutElastic(float t) {
@@ -92,13 +94,13 @@ void Enemy::Initialize()
 
 	// コライダーの初期化
 	collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
 	collider_->SetAtrribute("enemy");
 	collider_->SetMask({ "enemy" });
 
 	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-	collider_->SetOnCollisionFunc([this]() { OnCollision(); });
+	collider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
 	// カメラ
@@ -460,7 +462,7 @@ void Enemy::Draw(const Camera& camera)
 
 }
 
-void Enemy::OnCollision()
+void Enemy::OnCollision(const Collider* _other)
 {
 	color_.SetColor(hitColor_);
 	isHitColor_ = true;
@@ -1243,7 +1245,7 @@ void Enemy::BulletUpdate()
 	// デスフラグが立った弾を削除
 	bullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
 
-	// 
+	//
 	for (const auto& bullet : normalbullets_) {
 		bullet->Update();
 	}

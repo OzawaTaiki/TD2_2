@@ -84,12 +84,16 @@ void FollowCamera::Initialize()
 
 void FollowCamera::Update()
 {
-	if (ImGui::BeginTabBar("engin"))
+
+	camera_.Update(0);
+	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("followCamera"))
 		{
 			ImGui::DragFloat3("offset", &offset_.x, 0.01f);
 			ImGui::DragFloat3("rotate", &camera_.rotate_.x, 0.01f);
+
+			camera_.ShakeParametaerSettingFromImGui();
 
 			ImGui::EndTabItem();
 		}
@@ -110,6 +114,7 @@ void FollowCamera::Update()
 		offset = Transform(offset, matrix);
 
 		// 座標をコピーしてオフセット分ずらす
+
 		oldPos = Add(target_->transform_, offset);
 
 		if (t_ >= 1.0f) {
@@ -128,6 +133,9 @@ void FollowCamera::Update()
 			camera_.rotate_.y = TEaseOut(DegreesToRadians(startRot.y), DegreesToRadians(attackRotate_.y), t_);
 			
 		}
+
+        camera_.translate_ = Add(target_->transform_, offset) + camera_.GetShakeOffset();
+
 	}
 	else {
 		t_ += t;

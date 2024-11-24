@@ -17,16 +17,16 @@ struct Range
 // パーティクル生成時の初期設定
 struct EmitParticleSettings
 {
-    Range<float>            lifeTime = {1,1};           // 有効時間
+    Range<float>            lifeTime = {1,1};                   // 有効時間
 
-    Range<Vector3>          size = { {1,1,1},{1,1,1} };               // サイズ
-    Range<Vector3>          rotate = { {},{} };             // 回転
+    Range<Vector3>          size = { {1,1,1},{1,1,1} };         // サイズ
+    Range<Vector3>          rotate = { {},{} };                 // 回転
 
-    Range<float>            spped = {0,1};              // スピード
-    Range<Vector3>          direction = { {},{} };          // 方向
-    Range<Vector3>          acceleration = { {},{} };       // 加速度，重力
+    Range<float>            spped = {0,1};                      // スピード
+    Range<Vector3>          direction = { {},{} };              // 方向
+    Range<Vector3>          acceleration = { {},{} };           // 加速度，重力
 
-    Range<Vector4>          color = { {1,1,1,1},{1,1,1,1} };              // 色
+    Range<Vector4>          color = { {1,1,1,1},{1,1,1,1} };    // 色
 
 };
 enum class EmitterShape
@@ -37,6 +37,15 @@ enum class EmitterShape
 
     None
 };
+
+enum class ParticleDirection
+{
+    Inward,
+    Outward,
+    Random
+};
+
+
 class Particle;
 class ParticleEmitter
 {
@@ -76,6 +85,8 @@ public:
     void SetCenter(const Vector3& _center) { position_ = _center; }
     void SetEmit(bool _emit) { emit_ = _emit; }
 
+    void Emit();
+
     std::string GetName() const { return name_; }
 
     EmitParticleSettings    setting_{};
@@ -88,6 +99,7 @@ private:
     float                   emitTime_               = 0;
 
     EmitterShape            shape_ = EmitterShape::None;
+    ParticleDirection       particleDirection_ = ParticleDirection::Random;
     const Matrix4x4*        parentMatWorld_ = nullptr;
     Vector3                 position_;
     Vector3                 offset_;
@@ -95,16 +107,20 @@ private:
     Vector3                 size_;
     float                   radius_;
 
-    bool                    loop_;
-    bool                    changeColor_;       // 生成後に色を変更するか
+    bool                    loop_;              // ループするか
     bool                    fadeAlpha_;         // 生成後にアルファを変更するか
-    bool                    randomColor_;        // 色をランダムで生成するか
+    bool                    changeSize_;        // 生成後にサイズを変更するか
+    bool                    changeColor_;       // 生成後に色を変更するか
+    bool                    randomColor_;       // 色をランダムで生成するか
     float                   fadeStartRatio_;    // アルファを変え始める割合
     uint32_t                maxParticles_;      // 最大数
     uint32_t                countPerEmit_;      // 回当たりの発生数
     uint32_t                emitPerSec_;        // 秒あたりの発生回数
+    uint32_t                emitRepeatCount_;   // 繰り返し回数
+    uint32_t                emitCount_;         // 発生回数
 
     bool                    emit_ = false;
 
     Particle GenerateParticleData();
+    void EmitParticles();
 };
