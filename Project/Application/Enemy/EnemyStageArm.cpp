@@ -35,6 +35,15 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 
 	worldTransform2_.rotate_ = worldTransform_.rotate_;
 
+    collider_ = std::make_unique<Collider>();
+    collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	collider_->SetShape(model_->GetMin(), model_->GetMax());
+    collider_->SetAtrribute("enemyStageArm");
+	collider_->SetMask({ "enemy" ,"enemyBullet"});
+    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this](const Collider* collider) {OnCollision(collider); });
+
+
 
 }
 
@@ -42,11 +51,13 @@ void EnemyStageArm::Update()
 {
 	// 時間経過でデス
 	// 時間経過でデス
-	
+
 
 	attackPreparationTime++;
 	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
-		
+
+        collider_->RegsterCollider();
+
 		if (length <= attack_->MaxLength) {
 			worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
 			length += std::abs(velocity_.x);
@@ -89,6 +100,11 @@ void EnemyStageArm::Draw(const Camera& camera)
 	else {
 		model_->Draw(worldTransform_, &camera, &color_);
 	}
+
+#ifdef _DEBUG
+    collider_->Draw();
+#endif // _DEBUG
+
 }
 
 void EnemyStageArm::SetParent(const WorldTransform* parent)
@@ -96,4 +112,8 @@ void EnemyStageArm::SetParent(const WorldTransform* parent)
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
 	worldTransform2_.parent_ = parent;
+}
+
+void EnemyStageArm::OnCollision(const Collider* collider)
+{
 }

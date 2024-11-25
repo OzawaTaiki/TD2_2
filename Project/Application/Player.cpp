@@ -76,7 +76,7 @@ void Player::Initialize()
 
 
 	collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("player");
 	collider_->SetMask({ "player","weapon" });

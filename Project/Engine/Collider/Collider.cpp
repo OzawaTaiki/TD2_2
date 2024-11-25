@@ -178,3 +178,8 @@ void Collider::SetReferencePoint(const Vector3& _referencePoint)
         assert(false && "Not supported");
     }
 }
+
+void Collider::RegsterCollider()
+{
+    CollisionManager::GetInstance()->RegisterCollider(this);
+}
