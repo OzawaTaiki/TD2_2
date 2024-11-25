@@ -40,7 +40,6 @@ float EaseOut(float t, float str, float end) {
 
 void Player::Initialize()
 {
-
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = Vector3{ 0,0,0 };
 
@@ -62,17 +61,19 @@ void Player::Initialize()
 	dustParticle_->Initialize();
 	dustParticle_->SetPlayerMat(&worldTransform_);
 
-	ConfigManager::GetInstance()->SetVariable("Player", "speed", &speed);
-	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
-	ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+    ConfigManager* configManager = ConfigManager::GetInstance();
 
-	ConfigManager::GetInstance()->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
+	configManager->SetVariable("Player", "speed", &speed);
+	configManager->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
+	configManager->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
+
+	configManager->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
 
 
 	// hitColor関連
-	ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
-	ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
-	ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
+	configManager->SetVariable("Player", "defaultColor", &defaultColor_);
+	configManager->SetVariable("Player", "hitColor", &hitColor_);
+	configManager->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
 
 
 	collider_ = std::make_unique<Collider>();
@@ -205,8 +206,12 @@ void Player::Draw(const Camera& camera)
 
 void Player::OnCollision(const Collider* _other)
 {
+	if (isHitColor_)
+		return;
+
 	isHitColor_ = true;
 	color_.SetColor(hitColor_);
+	hp--;
 }
 
 void Player::StageMovementRestrictions()

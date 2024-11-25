@@ -95,7 +95,7 @@ public: //ふるまい関係
 
 		uint32_t probabilityPhase1 = 80;
 		uint32_t probabilityPhase2 = 50;
-		uint32_t probabilityPhase3 = 10; 
+		uint32_t probabilityPhase3 = 10;
 	};
 	AttackMethod atMethod_;
 
@@ -138,20 +138,20 @@ public: //ふるまい関係
 		float MaxStartDelay = 40;
 
 
-		// 
+		//
 		int MaxNumMovePhase = 1;
 		uint32_t MaxRandMovePhase = 2;
 		int numMovePhase = 0;
-		// 
+		//
 		float coolTime = 0;
 		float MaxCoolTime = 30;
 		float MaxRandCoolTime = 30;
-		
+
 
 		int MaxMove = 40;
 
 
-		// 
+		//
 		bool isBehavior_ = false;
 	};
 	RootMove rootMove_;
@@ -163,7 +163,7 @@ public: //ふるまい関係
 
 	// 怯み位置
 	struct Fear {
-		
+
 		// t補間スピード
 		float transitionSpeed = 0.11f;
 		// t補間用
@@ -247,12 +247,12 @@ public: //ふるまい関係
 		// ぐるぐるし続ける時間
 		float assaultTime = 0;
 		float MaxAssaultTime = 120.0f;
-		
+
 		// 移動方向
 		Vector3 moveDirection{};
 
 		// 移動スピード
-		
+
 		// 動きが止まってから回復する（浮く）までの時間
 		float cooldownTime = 60;
 
@@ -285,7 +285,7 @@ private: //状態
 
 	//怯み行動更新
 	void BehaviorFearUpdate();
-	
+
 #pragma region Attack
 
 	/// <summary>
@@ -377,12 +377,12 @@ public:
 
 	// 弾の初期化
 	void BulletInitialize(Vector3 pos);
-	
+
 	void NormalBulletInitialize(Vector3 pos);
-	
+
 	void Normal2BulletInitialize(Vector3 pos);
-	
-	
+
+
 
 
 	// 弾更新
@@ -397,7 +397,7 @@ public:
 	void OnCollision(const Collider* _other);
 
 	void StageMovementRestrictions();
-	
+
 	bool IsStageMovementRestrictions();
 
 	// 浮遊ギミック初期化
@@ -413,9 +413,9 @@ public:
 	const AttackBehavior& GetattackBehavior() const { return attackBehavior_; };
 	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
 	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
-	
+
 	const Camera& GetCamera2() { return attackCamera2_; };
-	
+
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -463,7 +463,7 @@ private:
 
 
 	Camera attackCamera2_;
-	
+
     std::unique_ptr<Collider> bodyCollider_;
     std::unique_ptr<Collider> leftArmCollider_;
     std::unique_ptr<Collider> rightArmCollider_;
@@ -504,14 +504,18 @@ private:
 	SpinAttack normalAttackShot1_;
 	AssaultAttack normalAttackShot2_;
 
-	
+
 	SpinAttack attack4_;
-	
+
 	// ヒットカラーの設定
     bool isHitColor_ = false;
-    float hitColorTimer_ = 0;
-    float hitColorMaxTime_ = 2;
     Vector4 hitColor_ = { 1,0,0,1 };
+
+    // ダメージクールタイム
+    bool isCoolTime_ = false;
+    float damageCoolTimer_ = 0;
+    float damageCoolMaxTime_ = 2;
+
 };
 
 
