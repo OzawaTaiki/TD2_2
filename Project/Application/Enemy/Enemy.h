@@ -464,7 +464,9 @@ private:
 
 	Camera attackCamera2_;
 	
-    std::unique_ptr<Collider> collider_;
+    std::unique_ptr<Collider> bodyCollider_;
+    std::unique_ptr<Collider> leftArmCollider_;
+    std::unique_ptr<Collider> rightArmCollider_;
 
 private:
 	// 速度

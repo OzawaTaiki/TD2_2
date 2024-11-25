@@ -55,9 +55,9 @@ T easeOutExpo(const T& start, const T& end, float factor) {
 		return end;
 	}
 	Vector3 result;
-	result.x = (end.x - start.x) * (-std::pow(2, -10 * factor) + 1) + start.x;
-	result.y = (end.y - start.y) * (-std::pow(2, -10 * factor) + 1) + start.y;
-	result.z = (end.z - start.z) * (-std::pow(2, -10 * factor) + 1) + start.z;
+	result.x = (end.x - start.x) * (-std::powf(2, -10 * factor) + 1) + start.x;
+	result.y = (end.y - start.y) * (-std::powf(2, -10 * factor) + 1) + start.y;
+	result.z = (end.z - start.z) * (-std::powf(2, -10 * factor) + 1) + start.z;
 	return result;
 }
 void FollowCamera::Initialize()
