@@ -125,12 +125,17 @@ public: //ふるまい関係
 		// t補間用
 		float transitionFactor = 0;
 		// t補間スピード
-		float transitionSpeed = 0.01f;
+		float transitionSpeed = 0.005f;
 		// 追ってくる速度
 		float speed = 0.3f;
 		// 移動時間
 		float moveTime;
 		float MaxMoveTime = 60;
+
+
+		//移動
+		float startDelay = 0;
+		float MaxStartDelay = 40;
 
 
 		// 
@@ -143,7 +148,7 @@ public: //ふるまい関係
 		float MaxRandCoolTime = 30;
 		
 
-		int MaxMove = 20;
+		int MaxMove = 40;
 
 
 		// 
@@ -194,7 +199,68 @@ public: //ふるまい関係
 	FollowCamera* follow_;
 
 
+	// 攻撃4
+	struct SpinAttack {
+		// t補間用
+		float transitionFactor = 0;
+		//腕が生えてから回転開始までの時間）
+		float armGrowthToSpinDelay = 0;
+		float MaxArmGrowthToSpinDelay = 30.0f;
+		// 追ってくる速度
+		float speed = 0.3f;
 
+		float rotateT = 0;
+		// 回転速度
+		float rotateSpeed = 0.1f;
+		// Max回転速度
+		float MaxRotateSpeed = 1.0f;
+		// Mim回転速度
+		float MinxRotateSpeed = 0.01f;
+		// ぐるぐるし続ける時間
+		float spinTime = 0;
+		float MaxSpinTime = 120.0f;
+		// 動きが止まるまでの時間
+		float stoppingTime = 0;
+		float MaxStoppingTime = 20;
+
+		// 動きが止まってから回復する（浮く）までの時間
+		float cooldownTime = 60;
+
+		// 反動時間
+		float recoilTime = 0;
+		float MaxRecoilTime = 10;
+
+	};
+	struct AssaultAttack {
+		// t補間用
+		float transitionFactor = 0;
+		//腕が生えてから回転開始までの時間）
+		float armGrowthToSpinDelay = 0;
+		float MaxArmGrowthToSpinDelay = 30.0f;
+		// 追ってくる速度
+		float speed = 0.3f;
+
+		// 動きが止まるまでの時間
+		float stoppingTime = 0;
+		float MaxStoppingTime = 20;
+
+		// ぐるぐるし続ける時間
+		float assaultTime = 0;
+		float MaxAssaultTime = 120.0f;
+		
+		// 移動方向
+		Vector3 moveDirection{};
+
+		// 移動スピード
+		
+		// 動きが止まってから回復する（浮く）までの時間
+		float cooldownTime = 60;
+
+		// 反動時間
+		float recoilTime = 0;
+		float MaxRecoilTime = 10;
+
+	};
 
 private: //状態
 
@@ -331,6 +397,8 @@ public:
 	void OnCollision(const Collider* _other);
 
 	void StageMovementRestrictions();
+	
+	bool IsStageMovementRestrictions();
 
 	// 浮遊ギミック初期化
 	void InitializeFloatingGimmick();
@@ -358,7 +426,12 @@ private:
 	Model* modelStageArm_ = nullptr;
 	Model* modelThunder_ = nullptr;
 
+	// 予測線
+	Model* modelPrediction_ = nullptr;
 
+	// 予測線位置
+	WorldTransform worldPrediction_;
+	ObjectColor colorPrediction_;
 
 	// モデルカラー
 	ObjectColor color_;
@@ -426,42 +499,12 @@ private:
 	EnemyBullet::Bullet  attack3_;
 	EnemyBullet::Bullet  normalAttackBullet_;
 	EnemyBullet::Bullet  normal2AttackBullet_;
+	SpinAttack normalAttackShot1_;
+	AssaultAttack normalAttackShot2_;
 
-
-	// 攻撃4
-	struct SpinAttack {
-		// t補間用
-		float transitionFactor = 0;
-		//腕が生えてから回転開始までの時間）
-		float armGrowthToSpinDelay = 0;
-		float MaxArmGrowthToSpinDelay = 30.0f;
-		// 追ってくる速度
-		float speed = 0.3f;
-
-		float rotateT = 0;
-		// 回転速度
-		float rotateSpeed = 0.1f;
-		// Max回転速度
-		float MaxRotateSpeed = 1.0f;
-		// Mim回転速度
-		float MinxRotateSpeed = 0.01f;
-		// ぐるぐるし続ける時間
-		float spinTime = 0;
-		float MaxSpinTime = 120.0f;
-		// 動きが止まるまでの時間
-		float stoppingTime = 0;
-		float MaxStoppingTime = 20;
-
-		// 動きが止まってから回復する（浮く）までの時間
-		float cooldownTime = 60;
-
-		// 反動時間
-		float recoilTime = 0;
-		float MaxRecoilTime = 10;
-
-	};
+	
 	SpinAttack attack4_;
-
+	
 	// ヒットカラーの設定
     bool isHitColor_ = false;
     float hitColorTimer_ = 0;

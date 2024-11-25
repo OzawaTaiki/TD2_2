@@ -1,0 +1,13 @@
+{
+    "root": {
+        "MaxCoolTime": [
+            29.0
+        ],
+        "MaxRandCoolTime": [
+            30.0
+        ],
+        "MaxRandMovePhase": [
+            2
+        ]
+    }
+}

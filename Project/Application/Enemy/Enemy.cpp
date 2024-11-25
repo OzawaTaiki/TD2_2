@@ -82,7 +82,13 @@ void Enemy::Initialize()
 
 
 
+	// 移動予測線
+	worldPrediction_.Initialize();
 
+	modelPrediction_ = Model::CreateFromObj("PredictionBox/PredictionPlane.obj");;
+
+	colorPrediction_.Initialize();
+	colorPrediction_.SetColor({ 1, 0.271f, 0,1 });
 
 	attackCamera2_.Initialize();
 	attackCamera2_.translate_ = { 0,35,-120 };
@@ -156,6 +162,16 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
 	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
+
+	// 通常近距離攻撃1
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "SpinTime", &normalAttackShot1_.MaxSpinTime);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "speed", &normalAttackShot1_.speed);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
+	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
+
 
 	// 通常攻撃確率
 	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
@@ -279,6 +295,18 @@ void Enemy::Update()
 				attackBehaviorRequest_ = AttackBehavior::kNormal;
 				normalAttackBehaviorRequest_ = NormalAttack::kAttackLong2;
 			}
+			if (ImGui::Button("NormalShotAttack1")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kNormal;
+				normalAttackBehaviorRequest_ = NormalAttack::kAttackShort1;
+			}
+			if (ImGui::Button("NormalShotAttack2")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kAttack;
+				attackBehaviorRequest_ = AttackBehavior::kNormal;
+				normalAttackBehaviorRequest_ = NormalAttack::kAttackShort2;
+			}
 			if (ImGui::TreeNode("HitColor"))
 			{
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
@@ -387,6 +415,18 @@ void Enemy::Update()
 			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
+
+		if (ImGui::BeginTabItem("normalAttackShot1_"))
+		{
+			ImGui::DragFloat("ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay, 0.01f);
+			ImGui::DragFloat("cooldown", &normalAttackShot1_.cooldownTime, 0.01f);
+			ImGui::DragFloat("SpinTime", &normalAttackShot1_.MaxSpinTime, 0.01f);
+			ImGui::DragFloat("MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed, 0.01f);
+			ImGui::DragFloat("MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed, 0.01f);
+			ImGui::DragFloat("StoppingTime", &normalAttackShot1_.MaxStoppingTime, 0.01f);
+			ImGui::DragFloat("speed", &normalAttackShot1_.speed, 0.01f);
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 #endif // _DEBUG
@@ -401,6 +441,8 @@ void Enemy::Update()
 	worldTransformLeft_.UpdateData();
 	worldTransformRight_.UpdateData();
 	worldTransformBody_.UpdateData();
+
+	worldPrediction_.UpdateData();
 
 	attackCamera2_.UpdateMatrix();
 
@@ -434,6 +476,9 @@ void Enemy::Draw(const Camera& camera)
 
 	switch (behavior_) {
 	case Behavior::kRoot:
+		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
+			modelPrediction_->Draw(worldPrediction_, &camera, &colorPrediction_);
+		}
 	default:
 		break;
 	case Behavior::kAttack:
@@ -444,8 +489,12 @@ void Enemy::Draw(const Camera& camera)
 			switch (normalAttackBehavior_)
 			{
 			case Enemy::NormalAttack::kAttackShort1: // 近距離1
+				modelLeftArm_->Draw(worldTransformLeft_, &camera, &color_);
+				modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
 				break;
 			case Enemy::NormalAttack::kAttackShort2: // 近距離2
+				modelLeftArm_->Draw(worldTransformLeft_, &camera, &color_);
+				modelRightArm_->Draw(worldTransformRight_, &camera, &color_);
 				break;
 			case Enemy::NormalAttack::kAttackLong1:  // 遠距離1
 				break;
@@ -507,6 +556,23 @@ void Enemy::StageMovementRestrictions()
 
 }
 
+bool Enemy::IsStageMovementRestrictions()
+{
+	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z) {
+		return true;
+	}
+	else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z) {
+		return true;
+	}
+	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x) {
+		return true;
+	}
+	else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x) {
+		return true;
+	}
+	return false;
+}
+
 
 #pragma region 状態遷移
 
@@ -517,7 +583,7 @@ void Enemy::BehaviorRootInitialize()
 	// 浮遊ギミック
 	InitializeFloatingGimmick();
 
-	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
+	//srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 	// 不規則な移動数
 	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
 	rootMove_.isBehavior_ = false;
@@ -528,6 +594,18 @@ void Enemy::BehaviorRootInitialize()
 	rootMove_.transitionFactor = 0;
 	rootMove_.numMovePhase = 0;
 	rootMove_.coolTime = 0;
+
+
+	// 対象から対象へのベクトル
+	Vector3 sub = Subtract(rootMove_.targetPos, rootMove_.startPos);
+
+	float length = Length(sub);
+
+	// Y軸周り角度
+	worldPrediction_.transform_ = rootMove_.startPos;
+	worldPrediction_.transform_.y = -2.5f;
+	worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
+	worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
 }
 
 void Enemy::BehaviorRootUpdate()
@@ -537,21 +615,25 @@ void Enemy::BehaviorRootUpdate()
 	// 行動遷移しない
 	if (rootMove_.isBehavior_ == false) {
 		// フェーズを繰り返す
-		if (rootMove_.numMovePhase <= rootMove_.MaxNumMovePhase) {
+		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
 			// 移動
+			if (++rootMove_.startDelay > rootMove_.MaxStartDelay) {
 
-			rootMove_.transitionFactor += rootMove_.transitionSpeed;
 
+
+				rootMove_.transitionFactor += rootMove_.transitionSpeed;
+			}
 
 			if (rootMove_.transitionFactor >= 1.0f) {
 
-				if (++rootMove_.coolTime >= rootMove_.MaxCoolTime) {
+				if (++rootMove_.coolTime > rootMove_.MaxCoolTime) {
 					// 0に
 
 					// クールタイムを0に
 					rootMove_.coolTime = 0;
 					// 始点を現在の位置に
 					rootMove_.startPos = worldTransform_.transform_;
+					worldPrediction_.transform_ = worldTransform_.transform_;
 
 					// 終点をランダムに(一旦)
 					rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
@@ -561,9 +643,24 @@ void Enemy::BehaviorRootUpdate()
 
 					rootMove_.transitionSpeed = float(float(float(rand() % 100 + 100) / 10000.0f));
 
+
+
+
+					// 対象から対象へのベクトル
+					Vector3 sub = Subtract(rootMove_.targetPos, rootMove_.startPos);
+
+					float length = Length(sub);
+
+					// Y軸周り角度
+					worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
+					worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
+					worldPrediction_.transform_.y = -2.5f;
+
 					//フェーズを加算
 					rootMove_.numMovePhase++;
 					rootMove_.transitionFactor = 0.0f;
+
+					rootMove_.startDelay = 0.0f;
 				}
 				else {
 					rootMove_.transitionFactor = 1.0f;
@@ -646,6 +743,8 @@ void Enemy::Move(float _speed, bool flag)
 		}
 		oldPos_ = worldTransform_.transform_;
 
+		normalAttackShot2_.moveDirection = moveDirection;
+
 		worldTransform_.transform_ += moveDirection;
 	}
 }
@@ -675,30 +774,67 @@ void Enemy::BehaviorAttackInitialize()
 		// 通常攻撃より高い値が出たら
 		if (atMethod_.randMethod >= atMethod_.normalProbability) {
 
-			// 必殺攻撃を確率で選ぶ
-			atMethod_.randAttack = rand() % 4 + 1;
-
-			if (atMethod_.randAttack == 1) {
-				allAttack_ = AllAttack::kSpecialAttack;
+			if (hp > MaxHp / 2) { // HPが最大HPの1/2より大きい場合
+				// 必殺攻撃を確率で選ぶ
+				atMethod_.randAttack = rand() % 1 + 1;
+				if (atMethod_.randAttack == 1) {
+					allAttack_ = AllAttack::kSpecialAttack;
+				}
+				else if (atMethod_.randAttack == 2) {
+					allAttack_ = AllAttack::kSpecialAttack3;
+				}
 			}
-			else if (atMethod_.randAttack == 2) {
-				allAttack_ = AllAttack::kSpecialAttack2;
+			else if (hp > MaxHp / 3) { // HPが最大HPの1/3より大きい場合
+				// 必殺攻撃を確率で選ぶ
+				atMethod_.randAttack = rand() % 2 + 1;
+				if (atMethod_.randAttack == 1) {
+					allAttack_ = AllAttack::kSpecialAttack;
+				}
+				else if (atMethod_.randAttack == 2) {
+					allAttack_ = AllAttack::kSpecialAttack3;
+				}
+				else if (atMethod_.randAttack == 3) {
+					allAttack_ = AllAttack::kSpecialAttack4;
+				}
 			}
-			else if (atMethod_.randAttack == 3) {
-				allAttack_ = AllAttack::kSpecialAttack3;
+			else { // HPが最大HPの1/3より大きい場合
+				atMethod_.randAttack = rand() % 3 + 1;
+				// 必殺攻撃を確率で選ぶ
+				if (atMethod_.randAttack == 1) {
+					allAttack_ = AllAttack::kSpecialAttack;
+				}
+				else if (atMethod_.randAttack == 2) {
+					allAttack_ = AllAttack::kSpecialAttack2;
+				}
+				else if (atMethod_.randAttack == 3) {
+					allAttack_ = AllAttack::kSpecialAttack3;
+				}
+				else if (atMethod_.randAttack == 4) {
+					allAttack_ = AllAttack::kSpecialAttack4;
+				}
 			}
-			else if (atMethod_.randAttack == 4) {
-				allAttack_ = AllAttack::kSpecialAttack4;
-			}
+		
 		}
 		else {// 通常攻撃より低い値が出たら
-			atMethod_.randAttack = rand() % 2 + 1;
 
-			if (atMethod_.randAttack == 1) {
-				allAttack_ = AllAttack::kNormalLong1;
+
+			if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
+				atMethod_.randAttack = rand() % 2 + 1;
+				if (atMethod_.randAttack == 1) {
+					allAttack_ = AllAttack::kNormalShort1;
+				}
+				else if (atMethod_.randAttack == 2) {
+					allAttack_ = AllAttack::kNormalShort2;
+				}
 			}
-			else if (atMethod_.randAttack == 2) {
-				allAttack_ = AllAttack::kNormalLong2;
+			else {
+				atMethod_.randAttack = rand() % 2 + 1;
+				if (atMethod_.randAttack == 1) {
+					allAttack_ = AllAttack::kNormalLong1;
+				}
+				else if (atMethod_.randAttack == 2) {
+					allAttack_ = AllAttack::kNormalLong2;
+				}
 			}
 		}
 	}
@@ -1458,42 +1594,7 @@ void Enemy::SpecialAttack4Update()
 	}
 }
 
-void Enemy::InitializeParticleEmitter()
-{
-	particleEmitter_[0].Setting("enemyFloating0");
-	particleEmitter_[1].Setting("enemyFloating1");
-	particleEmitter_[2].Setting("enemyFloating2");
 
-	uint32_t th = TextureManager::GetInstance()->Load("circle.png");
-	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
-	{
-		ParticleManager::GetInstance()->CreateParticleGroup(particleEmitter_[index].GetName(), "plane/plane.obj", &particleEmitter_[index], th);
-		particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
-		particleEmitter_[index].SetEmit(1);
-	}
-}
-
-void Enemy::UpdateParticleEmitter()
-{
-	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
-	{
-		particleEmitter_[index].Update();
-	}
-}
-
-void Enemy::UpdateHitColor()
-{
-	if (isHitColor_)
-	{
-		hitColorTimer_ += 1.0f / 60.0f;
-		if (hitColorTimer_ >= hitColorMaxTime_)
-		{
-			hitColorTimer_ = 0;
-			isHitColor_ = false;
-			color_.SetColor(defaultColor_);
-		}
-	}
-}
 
 #pragma endregion // 攻撃4
 
@@ -1502,21 +1603,153 @@ void Enemy::UpdateHitColor()
 
 #pragma region Noraml
 
+#pragma region NormalAttackShot1
+
 void Enemy::NormalShotAttack1Initialize()
 {
+	normalAttackShot1_.transitionFactor = 0;
+	worldTransformLeft_.transform_ = { 0,0,0 };
+	worldTransformRight_.transform_ = { 0,0,0 };
+	normalAttackShot1_.spinTime = 0;
+	normalAttackShot1_.armGrowthToSpinDelay = 0;
+	normalAttackShot1_.stoppingTime = 0;
+	normalAttackShot1_.recoilTime = 0;
 }
 
 void Enemy::NormalShotAttack1Update()
 {
+	static float transitionFactor = 0.01f;
+
+	normalAttackShot1_.transitionFactor += transitionFactor;
+
+	float str = 0;
+	float end = 4;
+	float endm = -4;
+	if (++normalAttackShot1_.armGrowthToSpinDelay <= normalAttackShot1_.MaxArmGrowthToSpinDelay) {
+		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot1_.transitionFactor);
+		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot1_.transitionFactor);
+		if (worldTransformLeft_.transform_.x >= endm) {
+			worldTransformBody_.rotate_.y -= 0.01f;
+		}
+	}
+	else {
+
+		if (++normalAttackShot1_.spinTime <= normalAttackShot1_.MaxSpinTime) {
+			Move(normalAttackShot1_.speed, true);
+
+			normalAttackShot1_.rotateT += transitionFactor;
+			if (normalAttackShot1_.rotateT >= 1.0f) {
+				normalAttackShot1_.rotateT = 1;
+			}
+			normalAttackShot1_.rotateSpeed = Lerp(normalAttackShot1_.MinxRotateSpeed, normalAttackShot1_.MaxRotateSpeed, normalAttackShot1_.rotateT);
+
+
+			worldTransformBody_.rotate_.y += normalAttackShot1_.rotateSpeed;
+
+
+		}
+		else {
+			normalAttackShot1_.rotateT -= transitionFactor;
+			if (normalAttackShot1_.rotateT <= 0.0f) {
+				normalAttackShot1_.rotateT = 0.0f;
+			}
+
+			normalAttackShot1_.rotateSpeed = Lerp(normalAttackShot1_.MinxRotateSpeed, normalAttackShot1_.MaxRotateSpeed, normalAttackShot1_.rotateT);
+			if (normalAttackShot1_.rotateSpeed <= 0.011f) {
+				normalAttackShot1_.rotateSpeed = 0;
+
+			}
+
+			worldTransformBody_.rotate_.y += normalAttackShot1_.rotateSpeed;
+
+
+
+
+			if (normalAttackShot1_.rotateT <= 0) {
+				behaviorTimer_++;
+				if (behaviorTimer_ >= normalAttackShot1_.cooldownTime) {
+					behaviorRequest_ = Behavior::kRoot;
+					behaviorTimer_ = 0;
+				}
+			}
+		}
+
+	}
 }
+
+#pragma endregion // 通常近距離攻撃1
+
+#pragma region NormalAttackShot2
 
 void Enemy::NormalShotAttack2Initialize()
 {
+	normalAttackShot2_.transitionFactor = 0;
+	worldTransformLeft_.transform_ = { 0,0,0 };
+	worldTransformRight_.transform_ = { 0,0,0 };
+	normalAttackShot2_.assaultTime = 0;
+	normalAttackShot2_.armGrowthToSpinDelay = 0;
+	normalAttackShot2_.stoppingTime = 0;
+	normalAttackShot2_.recoilTime = 0;
+
+	Move(0.1f, false);
 }
 
 void Enemy::NormalShotAttack2Update()
 {
+	static float transitionFactor = 0.01f;
+
+	normalAttackShot2_.transitionFactor += transitionFactor;
+
+	float str = 0;
+	float end = 4;
+	float endm = -4;
+
+	float rotS = DegreesToRadians(0);
+	float rotE = DegreesToRadians(280);
+	float rotEm = DegreesToRadians(-280);
+	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay) {
+		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot2_.transitionFactor);
+		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot2_.transitionFactor);
+
+		worldTransformLeft_.rotate_.y = StartEnd(rotS, rotE, normalAttackShot2_.transitionFactor);
+		worldTransformRight_.rotate_.y = StartEnd(rotS, rotEm, normalAttackShot2_.transitionFactor);
+
+		if (worldTransformLeft_.transform_.x >= endm) {
+			//worldTransformBody_.rotate_.y -= 0.01f;
+		}
+	}
+	else {
+
+		if (++normalAttackShot2_.assaultTime <= normalAttackShot2_.MaxAssaultTime) {
+
+			if (IsStageMovementRestrictions()) {
+				normalAttackShot2_.assaultTime = normalAttackShot2_.MaxAssaultTime;
+				normalAttackShot2_.cooldownTime = 120;
+			}
+			else {
+				worldTransform_.transform_ += normalAttackShot2_.moveDirection * 5.0f;
+			}
+
+		}
+		else {
+
+
+
+
+			behaviorTimer_++;
+			if (behaviorTimer_ >= normalAttackShot2_.cooldownTime) {
+				behaviorRequest_ = Behavior::kRoot;
+				worldTransformLeft_.rotate_.y = 0;
+				worldTransformRight_.rotate_.y = 0;
+				behaviorTimer_ = 0;
+			}
+
+		}
+
+	}
 }
+
+#pragma endregion // 通常近距離攻撃２
 
 #pragma region NormalLongAttack
 
@@ -1660,6 +1893,41 @@ void Enemy::NormalLongAttack2Update()
 
 #pragma endregion 通常攻撃
 
+void Enemy::InitializeParticleEmitter()
+{
+	particleEmitter_[0].Setting("enemyFloating0");
+	particleEmitter_[1].Setting("enemyFloating1");
+	particleEmitter_[2].Setting("enemyFloating2");
 
+	uint32_t th = TextureManager::GetInstance()->Load("circle.png");
+	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
+	{
+		ParticleManager::GetInstance()->CreateParticleGroup(particleEmitter_[index].GetName(), "plane/plane.obj", &particleEmitter_[index], th);
+		particleEmitter_[index].SetWorldMatrix(&worldTransform_.matWorld_);
+		particleEmitter_[index].SetEmit(1);
+	}
+}
+
+void Enemy::UpdateParticleEmitter()
+{
+	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
+	{
+		particleEmitter_[index].Update();
+	}
+}
+
+void Enemy::UpdateHitColor()
+{
+	if (isHitColor_)
+	{
+		hitColorTimer_ += 1.0f / 60.0f;
+		if (hitColorTimer_ >= hitColorMaxTime_)
+		{
+			hitColorTimer_ = 0;
+			isHitColor_ = false;
+			color_.SetColor(defaultColor_);
+		}
+	}
+}
 
 
