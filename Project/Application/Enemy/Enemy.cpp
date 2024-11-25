@@ -1,5 +1,4 @@
 
-
 #include "Enemy.h"
 #include "../Player.h"
 #include "../../../Application/Stage/Stage.h"
@@ -93,15 +92,32 @@ void Enemy::Initialize()
 	InitializeParticleEmitter();
 
 	// コライダーの初期化
-	collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-	collider_->SetShape(model_->GetMin(), model_->GetMax());
-	collider_->SetAtrribute("enemy");
-	collider_->SetMask({ "enemy","enemyBullet"});
+	bodyCollider_ = std::make_unique<Collider>();
+	bodyCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	bodyCollider_->SetShape(model_->GetMin(), model_->GetMax());
+	bodyCollider_->SetAtrribute("enemy");
+	bodyCollider_->SetMask({ "enemy","enemyBullet"});
 
-	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
-	collider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
+	bodyCollider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
+	bodyCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
+    // 左手コライダーの初期化
+    leftArmCollider_ = std::make_unique<Collider>();
+    leftArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+    leftArmCollider_->SetShape(modelLeftArm_->GetMin(), modelLeftArm_->GetMax());
+    leftArmCollider_->SetAtrribute("enemy");
+    leftArmCollider_->SetMask({ "enemy","enemyBullet" });
+    leftArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformLeft_.matWorld_; });
+    leftArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
+
+    // 右手コライダーの初期化
+    rightArmCollider_ = std::make_unique<Collider>();
+    rightArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+    rightArmCollider_->SetShape(modelRightArm_->GetMin(), modelRightArm_->GetMax());
+    rightArmCollider_->SetAtrribute("enemy");
+    rightArmCollider_->SetMask({ "enemy","enemyBullet" });
+    rightArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformRight_.matWorld_; });
+    rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 	// カメラ
 	ConfigManager::GetInstance()->SetVariable("attackCamera2", "translate", &attackCamera2_.translate_);
@@ -407,7 +423,7 @@ void Enemy::Update()
 	if (isAlive)
 	{
 		UpdateHitColor();
-		CollisionManager::GetInstance()->RegisterCollider(collider_.get());
+        bodyCollider_->RegsterCollider();
 	}
 
 }
@@ -480,7 +496,10 @@ void Enemy::Draw(const Camera& camera)
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
 		particleEmitter_[index].Draw();
 
-	collider_->Draw();
+#ifdef _DEBUG
+	bodyCollider_->Draw();
+#endif // _DEBUG
+
 
 }
 
@@ -1456,6 +1475,16 @@ void Enemy::SpecialAttack4Update()
 		}
 
 	}
+
+
+	leftArmCollider_->RegsterCollider();
+	rightArmCollider_->RegsterCollider();
+
+#ifdef _DEBUG
+	leftArmCollider_->Draw();
+	rightArmCollider_->Draw();
+#endif // _DEBUG
+
 }
 
 void Enemy::InitializeParticleEmitter()
