@@ -1,7 +1,7 @@
 #include "FollowCamera.h"
 #include "MatrixFunction.h"
 #include "VectorFunction.h"
-#include"imgui.h"
+#include "ImGuiManager.h"
 #include "Player.h"
 #include "Enemy/Enemy.h"
 
@@ -49,16 +49,16 @@ T easeInExpo(const T& a, const T& b, float t){
 }
 
 // easeOutExpo関数
-template<typename T> 
-T easeOutExpo(const T& start, const T& end, float factor) { 
-	if (factor == 1.0f) { 
-		return end; 
-	} 
-	Vector3 result; 
-	result.x = (end.x - start.x) * (-std::pow(2, -10 * factor) + 1) + start.x; 
-	result.y = (end.y - start.y) * (-std::pow(2, -10 * factor) + 1) + start.y; 
-	result.z = (end.z - start.z) * (-std::pow(2, -10 * factor) + 1) + start.z; 
-	return result; 
+template<typename T>
+T easeOutExpo(const T& start, const T& end, float factor) {
+	if (factor == 1.0f) {
+		return end;
+	}
+	Vector3 result;
+	result.x = (end.x - start.x) * (-std::pow(2, -10 * factor) + 1) + start.x;
+	result.y = (end.y - start.y) * (-std::pow(2, -10 * factor) + 1) + start.y;
+	result.z = (end.z - start.z) * (-std::pow(2, -10 * factor) + 1) + start.z;
+	return result;
 }
 void FollowCamera::Initialize()
 {
@@ -86,6 +86,9 @@ void FollowCamera::Update()
 {
 
 	camera_.Update(0);
+#ifdef _DEBUG
+
+
 	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("followCamera"))
@@ -99,6 +102,7 @@ void FollowCamera::Update()
 		}
 		ImGui::EndTabBar();
 	}
+#endif // _DEBUG
 
 	static float t = 0.01f;
 
@@ -131,7 +135,7 @@ void FollowCamera::Update()
 			camera_.rotate_.x = TShortestAngleLerp(startRot.x, attackRotate_.x, t_);
 			camera_.rotate_.z = TShortestAngleLerp(startRot.z, attackRotate_.z, t_);
 			camera_.rotate_.y = TEaseOut(DegreesToRadians(startRot.y), DegreesToRadians(attackRotate_.y), t_);
-			
+
 		}
 
         //camera_.translate_ = Add(target_->transform_, offset) + camera_.GetShakeOffset();
@@ -156,9 +160,9 @@ void FollowCamera::Update()
 					camera_.rotate_.y -= 1.0f * kRotateSpeed;
 				}
 			}
-			
+
 			//camera_.rotate_.y = fmod(camera_.rotate_.y, DegreesToRadians(360.0f));
-			if (camera_.rotate_.y < -1) { 
+			if (camera_.rotate_.y < -1) {
 				camera_.rotate_.y += DegreesToRadians(360.0f);
 			}
 			if (camera_.rotate_.y > 1) {
@@ -175,7 +179,7 @@ void FollowCamera::Update()
 				// オフセットをカメラの回転に合わせて回転させる
 				offset = Transform(offset, matrix);
 
-				
+
 				// 座標をコピーしてオフセット分ずらす
 				camera_.translate_ = Add(target_->transform_, offset);
 
@@ -186,15 +190,15 @@ void FollowCamera::Update()
 				oldRot = camera_.rotate_;
 				oldPos = camera_.translate_;
 
-				
+
 				startRot = camera_.rotate_;
 			}
 
-			
+
 
 		}
 		else {
-			
+
 
 			camera_.translate_ = easeOutExpo(attackTranslate_, targetPos, t_);
 
@@ -203,7 +207,7 @@ void FollowCamera::Update()
 			camera_.rotate_.z = TShortestAngleLerp((attackRotate_.z), (targetRot.z), t_);
 
 		}
-		
+
 	}
 	camera_.UpdateMatrix();
 }

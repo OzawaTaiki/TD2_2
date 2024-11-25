@@ -5,7 +5,10 @@
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
 #include "RandomGenerator.h"
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
+
 
 void Camera::Initialize()
 {
@@ -15,6 +18,7 @@ void Camera::Initialize()
 
 void Camera::Update(bool _showImGui)
 {
+#ifdef _DEBUG
     if(_showImGui)
     {
         if (ImGui::BeginTabBar("camera"))
@@ -28,6 +32,7 @@ void Camera::Update(bool _showImGui)
             ImGui::EndTabBar();
         }
     }
+#endif // _DEBUG
 
     if (shaking_)
     {
@@ -119,7 +124,7 @@ void Camera::UpdateShake()
     }
     else
     {
-        shakeOffset_ = RandomGenerator::GetInstance()->GetUniformVec2(shakeRangeMin_, shakeRangeMax_);    
+        shakeOffset_ = RandomGenerator::GetInstance()->GetUniformVec2(shakeRangeMin_, shakeRangeMax_);
     }
 }
 
