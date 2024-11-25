@@ -6,8 +6,7 @@
 #include "ParticleManager.h"
 #include "TextureManager.h"
 #include "../FollowCamera.h"
-
-#include "imgui.h"
+#include "ImGuiManager.h"
 #include "../Collider/CollisionManager.h"
 
 
@@ -18,7 +17,7 @@ T Lerp(const T& a, const T& b, float t) {
 }
 
 
-//easeInOutSine 関数 
+//easeInOutSine 関数
 float easeInOutSine(float t) {
 	return -(cosf(float(M_PI) * t) - 1) / 2;
 
@@ -41,7 +40,7 @@ float easyInOutElastic(float t) {
 }
 
 
-// 最短角度での線形補間 
+// 最短角度での線形補間
 float ShortestAngleLerp(float start, float end, float factor) {
 	float difference = fmod(end - start, 360.0f); if (difference > 180.0f) {
 		difference -= 360.0f;
@@ -220,6 +219,8 @@ void Enemy::Update()
 	if (hp <= 0) {
 		isAlive = false;
 	}
+#ifdef _DEBUG
+
 
 	if (ImGui::BeginTabBar("GameScene"))
 	{
@@ -368,6 +369,7 @@ void Enemy::Update()
 		}
 		ImGui::EndTabBar();
 	}
+#endif // _DEBUG
 
 	StageMovementRestrictions();
 
@@ -971,10 +973,10 @@ void Enemy::SpecialAttackUpdate()
 				do {
 					newLocation = rand() % 5;
 
-					
+
 				} while (newLocation == attack1_.oldAttackSpawnLocation);
 
-			
+
 
 
 

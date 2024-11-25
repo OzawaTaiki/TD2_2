@@ -49,6 +49,8 @@ void Stage::Initialize()
 
 void Stage::Update()
 {
+#ifdef _DEBUG
+
 	if (ImGui::BeginTabBar("GameScene"))
 	{
 		if (ImGui::BeginTabItem("stage"))
@@ -69,6 +71,7 @@ void Stage::Update()
 		}
 		ImGui::EndTabBar();
 	}
+#endif // _DEBUG
 
 
 	worldWallFlont.UpdateData();

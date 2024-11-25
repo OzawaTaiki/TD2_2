@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "VectorFunction.h"
 #include "../Collider/CollisionManager.h"
-#include <imgui.h>
+#include "ImGuiManager.h"
 
 #include "../../../Application/Stage/Stage.h"
 
@@ -89,6 +89,8 @@ void Player::Initialize()
 
 void Player::Update()
 {
+#ifdef _DEBUG
+
 
 	if (ImGui::BeginTabBar("GameScene"))
 	{
@@ -121,6 +123,7 @@ void Player::Update()
 		ImGui::EndTabBar();
 
 	}
+#endif // _DEBUG
 
 
 	StageMovementRestrictions();
@@ -270,7 +273,7 @@ void Player::BehaviorRootUpdate()
 	}
 	else {
 
-		
+
 
 		// 入力方向ベクトルの初期化
 		Vector3 inputDirection = { 0.0f, 0.0f, 0.0f };
@@ -380,18 +383,18 @@ void Player::BehaviorRootUpdate()
 #pragma endregion // キーボード
 
 
-	
-	
 
 
 
-	
+
+
+#ifdef _DEBUG
 	ImGui::Begin("Play");
 	ImGui::InputFloat3("velo", &velocity_.x);
 	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
 	ImGui::Checkbox("isMove", &isMove_);
 	ImGui::End();
-
+#endif // _DEBUG
 
 
 #pragma endregion

@@ -8,7 +8,7 @@
 #include "../Collider/CollisionManager.h"
 
 #include <chrono>
-#include <imgui.h>
+#include "ImGuiManager.h"
 
 std::unique_ptr<BaseScene> GameScene::Create()
 {
@@ -34,6 +34,8 @@ void GameScene::Initialize()
     // ステージ
     stage_ = std::make_unique<Stage>();
     stage_->Initialize();
+
+
 
 
     debugCamera_ = std::make_unique<DebugCamera>();
@@ -73,12 +75,12 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-    ImGui::Begin("Engine");
-
+#ifdef _DEBUG
     if (ImGui::Button("save")) {
         ConfigManager::GetInstance()->SaveData();
         //JsonLoader::SaveJson()
     }
+#endif // _DEBUG
 
     input_->Update();
     CollisionManager::GetInstance()->ResetColliderList();
@@ -131,7 +133,6 @@ void GameScene::Update()
     ParticleManager::GetInstance()->Update(camera_.get());
     CollisionManager::GetInstance()->CheckAllCollision();
     //<-----------------------
-    ImGui::End();
 }
 
 void GameScene::Draw()
