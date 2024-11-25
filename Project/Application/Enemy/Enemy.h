@@ -93,6 +93,9 @@ public: //ふるまい関係
 
 		uint32_t normalProbability; // 通常攻撃の確率
 
+		uint32_t probabilityPhase1 = 80;
+		uint32_t probabilityPhase2 = 50;
+		uint32_t probabilityPhase3 = 10; 
 	};
 	AttackMethod atMethod_;
 
@@ -140,7 +143,7 @@ public: //ふるまい関係
 		float MaxRandCoolTime = 30;
 		
 
-		int MaxMove = 50;
+		int MaxMove = 20;
 
 
 		// 

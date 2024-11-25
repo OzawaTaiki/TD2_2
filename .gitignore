@@ -58,8 +58,8 @@ ScaffoldingReadMe.txt
 StyleCopReport.xml
 
 *.tlog
-!Resources/models/*.obj
-!Resources/models/**/*.obj
+![Rr]esources/models/*.obj
+![Rr]esources/models/**/*.obj
 !externals/assimp/[Ll]ib/
 
 # Chutzpah Test files

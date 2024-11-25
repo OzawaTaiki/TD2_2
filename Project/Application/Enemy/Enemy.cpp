@@ -157,6 +157,11 @@ void Enemy::Initialize()
 	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
+	// 通常攻撃確率
+	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
+	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
+	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+
 
 	// hitcolorの設定
 	ConfigManager::GetInstance()->SetVariable("enemy", "defaultColor", &defaultColor_);
@@ -230,6 +235,8 @@ void Enemy::Update()
 
 			ImGui::DragFloat3("AttackCamera2 translate", &attackCamera2_.translate_.x, 0.01f);
 			ImGui::DragFloat3("AttackCamera2 rotate", &attackCamera2_.rotate_.x, 0.01f);
+			ImGui::DragInt("hp", &hp, 1.0f);
+			ImGui::DragInt("MaxHp", &MaxHp, 1.0f);
 			ImGui::Checkbox("debugAttack", &isDebugAttack);
 			if (ImGui::Button("Fear")) {
 				behaviorTimer_ = 0;
@@ -311,6 +318,18 @@ void Enemy::Update()
 			int phase = rootMove_.MaxRandMovePhase;
 			ImGui::DragInt3("MaxRandMovePhase", &phase, 0.01f);
 			rootMove_.MaxRandMovePhase = phase;
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("attack"))
+		{
+			int phase1 = atMethod_.probabilityPhase1;
+			ImGui::DragInt("probabilityPhase1", &phase1, 1.0f);
+			int phase2 = atMethod_.probabilityPhase2;
+			ImGui::DragInt("probabilityPhase2", &phase2, 1.0f);
+			int phase3 = atMethod_.probabilityPhase3;
+			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
+			
 			ImGui::EndTabItem();
 		}
 
@@ -641,11 +660,14 @@ void Enemy::BehaviorAttackInitialize()
 
 	if (!isDebugAttack) {
 		//atMethod_.randMethod = rand() % sizeof(allAttack_);
-		if (MaxHp / 2 < hp) {
-			atMethod_.normalProbability = 50;
+		if (hp > MaxHp / 2) { // HPが最大HPの1/2より大きい場合
+			atMethod_.normalProbability = atMethod_.probabilityPhase1;
 		}
-		else {
-			atMethod_.normalProbability = 80;
+		else if (hp > MaxHp / 3) { // HPが最大HPの1/3より大きい場合
+			atMethod_.normalProbability = atMethod_.probabilityPhase2;
+		}
+		else { // HPが最大HPの1/3以下の場合
+			atMethod_.normalProbability = atMethod_.probabilityPhase3;
 		}
 
 		// 確率を出す
