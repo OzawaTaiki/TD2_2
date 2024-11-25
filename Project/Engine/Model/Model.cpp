@@ -144,6 +144,37 @@ void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList, uint32_
     }
 }
 
+Vector3 Model::GetMin(size_t _index) const
+{
+    if (_index == -1)
+    {
+        Vector3 min = { 16536,16536,16536 };
+        for (auto& mesh : mesh_)
+        {
+            min = Vector3::Min(min, mesh->GetMin());
+        }
+        return min;
+    }
+
+    else
+        return mesh_[_index]->GetMin();
+}
+Vector3 Model::GetMax(size_t _index) const
+{
+    if (_index == -1)
+    {
+        Vector3 max = { -16536,-16536,-16536 };
+        for (auto& mesh : mesh_)
+        {
+            max = Vector3::Max(max, mesh->GetMax());
+        }
+        return max;
+    }
+    else
+        return mesh_[_index]->GetMax();
+
+}
+
 Matrix4x4 Model::GetAnimationMatrix() const
 {
     if (animation_.empty())

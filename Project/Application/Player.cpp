@@ -83,8 +83,6 @@ void Player::Initialize()
     collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
     collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
-
-
 }
 
 void Player::Update()
@@ -381,12 +379,6 @@ void Player::BehaviorRootUpdate()
 	}
 
 #pragma endregion // キーボード
-
-
-
-
-
-
 
 #ifdef _DEBUG
 	ImGui::Begin("Play");
