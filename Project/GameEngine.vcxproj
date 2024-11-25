@@ -56,7 +56,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -65,6 +65,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)externals/assimp/include;$(ProjectDir)externals/DirectXTex;$(ProjectDir)externals/nlohmann;$(ProjectDir)Engine/animationModel/;$(ProjectDir)Engine/Audio/;$(ProjectDir)Engine/Camera/;$(ProjectDir)Engine/Collider/;$(ProjectDir)Engine/DXWin/;$(ProjectDir)Engine/Input/;$(ProjectDir)Engine/Joint/;$(ProjectDir)Engine/Lib/;$(ProjectDir)Engine/Lights/;$(ProjectDir)Engine/Model/;$(ProjectDir)Engine/Node/;$(ProjectDir)Engine/ObjectColor/;$(ProjectDir)Engine/Other/;$(ProjectDir)Engine/Particle/;$(ProjectDir)Engine/Render/;$(ProjectDir)Engine/Scene/;$(ProjectDir)Engine/Skeleton/;$(ProjectDir)Engine/SkinCluster/;$(ProjectDir)Engine/Sprite/;$(ProjectDir)Engine/TextureManager/;$(ProjectDir)Engine/Utility/;$(ProjectDir)externals/imgui</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,7 +82,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -92,6 +93,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)externals/assimp/include;$(ProjectDir)externals/DirectXTex;$(ProjectDir)externals/nlohmann;$(ProjectDir)Engine/animationModel/;$(ProjectDir)Engine/Audio/;$(ProjectDir)Engine/Camera/;$(ProjectDir)Engine/Collider/;$(ProjectDir)Engine/DXWin/;$(ProjectDir)Engine/Input/;$(ProjectDir)Engine/Joint/;$(ProjectDir)Engine/Lib/;$(ProjectDir)Engine/Lights/;$(ProjectDir)Engine/Model/;$(ProjectDir)Engine/Node/;$(ProjectDir)Engine/ObjectColor/;$(ProjectDir)Engine/Other/;$(ProjectDir)Engine/Particle/;$(ProjectDir)Engine/Render/;$(ProjectDir)Engine/Scene/;$(ProjectDir)Engine/Skeleton/;$(ProjectDir)Engine/SkinCluster/;$(ProjectDir)Engine/Sprite/;$(ProjectDir)Engine/TextureManager/;$(ProjectDir)Engine/Utility/</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,11 +102,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-<<<<<<< HEAD
-      <AdditionalLibraryDirectories>$(projectdir)..\OutPuts\$(Configuration);$(projectdir)externals\assimp\lib\$(Configuration)</AdditionalLibraryDirectories>
-=======
       <AdditionalLibraryDirectories>$(projectdir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
->>>>>>> Develop
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"

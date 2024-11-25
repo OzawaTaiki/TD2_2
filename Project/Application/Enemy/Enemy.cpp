@@ -329,7 +329,7 @@ void Enemy::Update()
 			ImGui::DragInt("probabilityPhase2", &phase2, 1.0f);
 			int phase3 = atMethod_.probabilityPhase3;
 			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
-			
+
 			ImGui::EndTabItem();
 		}
 
@@ -484,7 +484,7 @@ void Enemy::Draw(const Camera& camera)
 
 }
 
-void Enemy::OnCollision(const Collider* _other)
+void Enemy::OnCollision([[maybe_unused]]const Collider* _other)
 {
 	color_.SetColor(hitColor_);
 	isHitColor_ = true;
@@ -618,11 +618,11 @@ void Enemy::UpdateFloatingGimmick()
 	worldTransform_.transform_.y = std::sin(floatingParameter_) * floatingAmplitude;
 }
 
-void Enemy::Move(float speed, bool flag)
+void Enemy::Move(float _speed, bool flag)
 {
 	if (DistanceXZ(player_->GetWorldTransform().GetWorldPosition(), worldTransform_.GetWorldPosition()) >= 1) {
 		// 回転と移動量の設定
-		const float kMoveSpeed = speed; // 移動速度
+		const float kMoveSpeed = _speed; // 移動速度
 		// worldTransformBase_.rotation_.y += 0.00f; // 一定量のY軸回転
 
 		// 向いている方向への移動ベクトルの計算
@@ -1102,7 +1102,7 @@ void Enemy::StageArmInitialize(int num)
 
 #pragma region Attack2
 
-void Enemy::ThunderInitialize(Vector3 pos)
+void Enemy::ThunderInitialize([[maybe_unused]] Vector3 pos)
 {
 	follow_->SetFlag(true);
 
@@ -1236,7 +1236,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = float(attack3_.numShotsPerPhase / 3000);
+		//float rotate = float(attack3_.numShotsPerPhase / 3000);
 
 		Vector3 direction{ cosf(radian + attack3_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + attack3_.numShotsPerPhase) + pos.z };
 
@@ -1599,7 +1599,7 @@ void Enemy::Normal2BulletInitialize(Vector3 pos)
 		float angle = i * angleStep;
 		float radian = angle * (3.14f / 180.0f);  // Convert to radians
 
-		float rotate = float(normal2AttackBullet_.numShotsPerPhase / 3000);
+		//float rotate = float(normal2AttackBullet_.numShotsPerPhase / 3000);
 
 		Vector3 direction{ cosf(radian + normal2AttackBullet_.numShotsPerPhase) + pos.x, pos.y, sinf(radian + normal2AttackBullet_.numShotsPerPhase) + pos.z };
 

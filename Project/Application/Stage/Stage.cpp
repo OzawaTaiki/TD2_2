@@ -18,7 +18,7 @@ void Stage::Initialize()
 
 	worldWallBack.Initialize();
 	worldWallBack.transform_ = Vector3{ 0,0,100 };
-	worldWallBack.rotate_ = Vector3{ 0,-3.14,0 };
+	worldWallBack.rotate_ = Vector3{ 0,-3.14f,0 };
 
 	worldWallRight.Initialize();
 	worldWallRight.transform_ = Vector3{ 100,0,0 };

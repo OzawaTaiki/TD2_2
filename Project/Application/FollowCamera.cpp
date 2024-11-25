@@ -45,7 +45,7 @@ T easeInExpo(const T& a, const T& b, float t){
 		return a;
 	}
 	Vector3 c = b - a;
-	return c * std::pow(2, 10 * (t - 1)) + a;
+	return c * std::powf(2, 10 * (t - 1)) + a;
 }
 
 // easeOutExpo関数

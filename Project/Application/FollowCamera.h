@@ -24,8 +24,8 @@ public:
 	void SetTarget(const WorldTransform* target) { target_ = target; };
 
 	const Camera& GetCamera() { return camera_; };
-	
-	
+
+
 
 
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -51,8 +51,8 @@ private:
 	Vector3 offset_ = { 0.0f, 20.0f, -60.0f };
 
 
-	Vector3 attackRotate_{ 1.0399999618530273,0,0};
-	Vector3 attackTranslate_{ 0,370.0,-231.49};
+	Vector3 attackRotate_{ 1.0399999618530273f,0,0};
+	Vector3 attackTranslate_{ 0,370.0f,-231.49f};
 
 	Vector3 normalRot{};
 
