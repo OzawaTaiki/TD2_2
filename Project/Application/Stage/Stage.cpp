@@ -33,16 +33,18 @@ void Stage::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-	ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_translate", &worldFloor_.transform_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_rotate", &worldFloor_.rotate_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_translate", &worldWallFlont.transform_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_rotate", &worldWallFlont.rotate_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_translate", &worldWallBack.transform_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_rotate", &worldWallBack.rotate_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_translate", &worldWallLeft.transform_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_rotate", &worldWallLeft.rotate_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_translate", &worldWallRight.transform_);
-	ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_rotate", &worldWallRight.rotate_);
+    ConfigManager* configManager = ConfigManager::GetInstance();
+
+	configManager->SetVariable("stage", "worldFloor_translate", &worldFloor_.transform_);
+	configManager->SetVariable("stage", "worldFloor_rotate", &worldFloor_.rotate_);
+	configManager->SetVariable("stage", "worldWallFlont_translate", &worldWallFlont.transform_);
+	configManager->SetVariable("stage", "worldWallFlont_rotate", &worldWallFlont.rotate_);
+	configManager->SetVariable("stage", "worldWallBack_translate", &worldWallBack.transform_);
+	configManager->SetVariable("stage", "worldWallBack_rotate", &worldWallBack.rotate_);
+	configManager->SetVariable("stage", "worldWallLeft_translate", &worldWallLeft.transform_);
+	configManager->SetVariable("stage", "worldWallLeft_rotate", &worldWallLeft.rotate_);
+	configManager->SetVariable("stage", "worldWallRight_translate", &worldWallRight.transform_);
+	configManager->SetVariable("stage", "worldWallRight_rotate", &worldWallRight.rotate_);
 
 
 }

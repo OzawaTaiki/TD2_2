@@ -125,80 +125,86 @@ void Enemy::Initialize()
     rightArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformRight_.matWorld_; });
     rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
-	// カメラ
-	ConfigManager::GetInstance()->SetVariable("attackCamera2", "translate", &attackCamera2_.translate_);
-	ConfigManager::GetInstance()->SetVariable("attackCamera2", "rotate", &attackCamera2_.rotate_);
 
-	ConfigManager::GetInstance()->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
-	ConfigManager::GetInstance()->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
-	ConfigManager::GetInstance()->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
-	//ConfigManager::GetInstance()->SetVariable("root", "MaxMove", &rootMove_.MaxMove);
+    ConfigManager* configManager = ConfigManager::GetInstance();
+
+	// カメラ
+	configManager->SetVariable("attackCamera2", "translate", &attackCamera2_.translate_);
+	configManager->SetVariable("attackCamera2", "rotate", &attackCamera2_.rotate_);
+
+	configManager->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
+	configManager->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
+	configManager->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
+	//configManager->SetVariable("root", "MaxMove", &rootMove_.MaxMove);
 	// 通常行動
 
 
 	// 攻撃1
-	ConfigManager::GetInstance()->SetVariable("attack1", "attackPos", &attack1_.attackPos);
-	ConfigManager::GetInstance()->SetVariable("attack1", "attackPower", &attack1_.attackPower);
-	ConfigManager::GetInstance()->SetVariable("attack1", "andingTime", &attack1_.MaxLandingTime);
+	configManager->SetVariable("attack1", "attackPos", &attack1_.attackPos);
+	configManager->SetVariable("attack1", "attackPower", &attack1_.attackPower);
+	configManager->SetVariable("attack1", "andingTime", &attack1_.MaxLandingTime);
 	float armmax = float(attack1_.MaxArmNum);
-	ConfigManager::GetInstance()->SetVariable("attack1", "armNum", &armmax);
-	ConfigManager::GetInstance()->SetVariable("attack1", "MaxLength", &attack1_.MaxLength);
-	ConfigManager::GetInstance()->SetVariable("attack1", "preparationTime", &attack1_.MaxAttackPreparationTime);
-	ConfigManager::GetInstance()->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
-	ConfigManager::GetInstance()->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
-	ConfigManager::GetInstance()->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
-	ConfigManager::GetInstance()->SetVariable("attack1", "armRetractTime", &attack1_.MaxArmRetractTime);
+	configManager->SetVariable("attack1", "armNum", &armmax);
+	configManager->SetVariable("attack1", "MaxLength", &attack1_.MaxLength);
+	configManager->SetVariable("attack1", "preparationTime", &attack1_.MaxAttackPreparationTime);
+	configManager->SetVariable("attack1", "armSpeed", &attack1_.armSpeed);
+	configManager->SetVariable("attack1", "ToNextPredictionDelay", &attack1_.MaxAttackToNextPredictionDelay);
+	configManager->SetVariable("attack1", "weakArm", &attack1_.weakArmSpawnProbability);
+	configManager->SetVariable("attack1", "armRetractTime", &attack1_.MaxArmRetractTime);
 
 	// 攻撃2
-	ConfigManager::GetInstance()->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
-	ConfigManager::GetInstance()->SetVariable("attack2", "attackPower", &attack2_.attackPower);
-	ConfigManager::GetInstance()->SetVariable("attack2", "landingTime", &attack2_.MaxLandingTime);
-	ConfigManager::GetInstance()->SetVariable("attack2", "expandTime", &attack2_.MaxExpandTime);
-	ConfigManager::GetInstance()->SetVariable("attack2", "thicknessStartTime", &attack2_.MaxThicknessStartTime);
-	ConfigManager::GetInstance()->SetVariable("attack2", "thunderStrikeTime", &attack2_.MaxThunderStrikeTime);
-	ConfigManager::GetInstance()->SetVariable("attack2", "maxSize", &attack2_.maxSize);
-	ConfigManager::GetInstance()->SetVariable("attack2", "minSize", &attack2_.minSize);
+	configManager->SetVariable("attack2", "attackPreparationTime", &attack2_.MaxAttackPreparationTime);
+	configManager->SetVariable("attack2", "attackPower", &attack2_.attackPower);
+	configManager->SetVariable("attack2", "landingTime", &attack2_.MaxLandingTime);
+	configManager->SetVariable("attack2", "expandTime", &attack2_.MaxExpandTime);
+	configManager->SetVariable("attack2", "thicknessStartTime", &attack2_.MaxThicknessStartTime);
+	configManager->SetVariable("attack2", "thunderStrikeTime", &attack2_.MaxThunderStrikeTime);
+	configManager->SetVariable("attack2", "maxSize", &attack2_.maxSize);
+	configManager->SetVariable("attack2", "minSize", &attack2_.minSize);
 
 	// 攻撃3
-	ConfigManager::GetInstance()->SetVariable("attack3", "cooldown", &attack3_.MaxAttackCooldown);
-	ConfigManager::GetInstance()->SetVariable("attack3", "attackPower", &attack3_.attackPower);
+	configManager->SetVariable("attack3", "cooldown", &attack3_.MaxAttackCooldown);
+	configManager->SetVariable("attack3", "attackPower", &attack3_.attackPower);
 	float ShotsPerPhase = float(attack3_.MaxNumShotsPerPhase);
-	ConfigManager::GetInstance()->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
-	ConfigManager::GetInstance()->SetVariable("attack3", "speed", &attack3_.speed);
-	ConfigManager::GetInstance()->SetVariable("attack3", "MaxYTime", &attack3_.MaxYTime);
-	ConfigManager::GetInstance()->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
-	ConfigManager::GetInstance()->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
-	ConfigManager::GetInstance()->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
+	configManager->SetVariable("attack3", "numShotsPerPhase", &ShotsPerPhase);
+	configManager->SetVariable("attack3", "speed", &attack3_.speed);
+	configManager->SetVariable("attack3", "MaxYTime", &attack3_.MaxYTime);
+	configManager->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
+	configManager->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
+	configManager->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
 
 	// 攻撃4
-	ConfigManager::GetInstance()->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
-	ConfigManager::GetInstance()->SetVariable("attack4", "MinRotateSpeed", &attack4_.MinxRotateSpeed);
-	ConfigManager::GetInstance()->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
-	ConfigManager::GetInstance()->SetVariable("attack4", "speed", &attack4_.speed);
-	ConfigManager::GetInstance()->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
-	ConfigManager::GetInstance()->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
-	ConfigManager::GetInstance()->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
+	configManager->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
+	configManager->SetVariable("attack4", "MinRotateSpeed", &attack4_.MinxRotateSpeed);
+	configManager->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
+	configManager->SetVariable("attack4", "speed", &attack4_.speed);
+	configManager->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
+	configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
+	configManager->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
 	// 通常近距離攻撃1
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "SpinTime", &normalAttackShot1_.MaxSpinTime);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "speed", &normalAttackShot1_.speed);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
-	ConfigManager::GetInstance()->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
+	configManager->SetVariable("normalAttackShot1_", "MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed);
+	configManager->SetVariable("normalAttackShot1_", "MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed);
+	configManager->SetVariable("normalAttackShot1_", "SpinTime", &normalAttackShot1_.MaxSpinTime);
+	configManager->SetVariable("normalAttackShot1_", "speed", &normalAttackShot1_.speed);
+	configManager->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
+	configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
+	configManager->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
 
 
 	// 通常攻撃確率
-	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
-	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
-	ConfigManager::GetInstance()->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
 
 
 	// hitcolorの設定
-	ConfigManager::GetInstance()->SetVariable("enemy", "defaultColor", &defaultColor_);
-	ConfigManager::GetInstance()->SetVariable("enemy", "hitColor", &hitColor_);
-	ConfigManager::GetInstance()->SetVariable("enemy", "hitColorMaxTime", &hitColorMaxTime_);
+	configManager->SetVariable("enemy", "defaultColor", &defaultColor_);
+	configManager->SetVariable("enemy", "hitColor", &hitColor_);
+	configManager->SetVariable("enemy", "hitColorMaxTime", &damageCoolMaxTime_);
+
+	// クールタイム
+    configManager->SetVariable("enemy", "damageCoolTimeMax", &damageCoolMaxTime_);
 
 
 
@@ -323,12 +329,13 @@ void Enemy::Update()
 				attackBehaviorRequest_ = AttackBehavior::kNormal;
 				normalAttackBehaviorRequest_ = NormalAttack::kAttackShort2;
 			}
-			if (ImGui::TreeNode("HitColor"))
+			if (ImGui::TreeNode("other"))
 			{
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
 				ImGui::ColorEdit4("hitColor", &hitColor_.x);
-				ImGui::DragFloat("hitColorMaxTime", &hitColorMaxTime_, 0.01f);
-				if (ImGui::Button("save hitColor"))
+				ImGui::DragFloat("hitColorMaxTime", &damageCoolMaxTime_, 0.01f);
+                ImGui::DragFloat("damageCoolTimeMax", &damageCoolMaxTime_, 0.01f);
+				if (ImGui::Button("save other"))
 				{
 					ConfigManager::GetInstance()->SaveData("enemy");
 				}
@@ -554,8 +561,21 @@ void Enemy::Draw(const Camera& camera)
 
 void Enemy::OnCollision([[maybe_unused]]const Collider* _other)
 {
-	color_.SetColor(hitColor_);
-	isHitColor_ = true;
+	if (_other->GetName() == "weapon")
+	{
+		if(!isCoolTime_)
+		{
+			color_.SetColor(hitColor_);
+			isHitColor_ = true;
+			isCoolTime_ = true;
+
+			hp--;
+            if (hp <= 0)
+            {
+                isAlive = false;
+            }
+		}
+	}
 }
 
 void Enemy::StageMovementRestrictions()
@@ -832,7 +852,7 @@ void Enemy::BehaviorAttackInitialize()
 					allAttack_ = AllAttack::kSpecialAttack4;
 				}
 			}
-		
+
 		}
 		else {// 通常攻撃より低い値が出たら
 
@@ -1949,11 +1969,12 @@ void Enemy::UpdateHitColor()
 {
 	if (isHitColor_)
 	{
-		hitColorTimer_ += 1.0f / 60.0f;
-		if (hitColorTimer_ >= hitColorMaxTime_)
+		damageCoolTimer_ += 1.0f / 60.0f;
+		if (damageCoolTimer_ >= damageCoolMaxTime_)
 		{
-			hitColorTimer_ = 0;
+			damageCoolTimer_ = 0;
 			isHitColor_ = false;
+            isCoolTime_ = false;
 			color_.SetColor(defaultColor_);
 		}
 	}

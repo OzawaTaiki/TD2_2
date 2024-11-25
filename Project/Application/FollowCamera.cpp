@@ -69,7 +69,7 @@ void FollowCamera::Initialize()
 	targetRot = oldRot;
 
 
-	ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
+    ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
 	ConfigManager::GetInstance()->SetVariable("followCamera", "rotate", &camera_.rotate_);
 
 	startPos = camera_.translate_;
