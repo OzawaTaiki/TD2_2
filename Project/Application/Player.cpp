@@ -14,13 +14,13 @@
 // 8方向の角度テーブル（関数外で定義）
 constexpr float destinationRotationYTable[] = {
 	std::numbers::pi_v<float> / 2.0f,                      // 右
-	std::numbers::pi_v<float> * 3.0f / 2.0f,               // 左
+	std::numbers::pi_v<float> *3.0f / 2.0f,               // 左
 	0.0f,                                                  // 後ろ
 	std::numbers::pi_v<float>,	 // 前
-	std::numbers::pi_v<float> * 1.0f / 4.0f,               // 右前
-	std::numbers::pi_v<float> * 7.0f / 4.0f,               // 右後ろ
-	std::numbers::pi_v<float> * 3.0f / 4.0f,               // 左前
-	std::numbers::pi_v<float> * 5.0f / 4.0f,                // 左後ろ
+	std::numbers::pi_v<float> *1.0f / 4.0f,               // 右前
+	std::numbers::pi_v<float> *7.0f / 4.0f,               // 右後ろ
+	std::numbers::pi_v<float> *3.0f / 4.0f,               // 左前
+	std::numbers::pi_v<float> *5.0f / 4.0f,                // 左後ろ
 };
 
 // 角度差を -π ～ +π の範囲に正規化する関数
@@ -58,11 +58,11 @@ void Player::Initialize()
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
-    dustParticle_ = std::make_unique<PlayerDustParticle>();
-    dustParticle_->Initialize();
+	dustParticle_ = std::make_unique<PlayerDustParticle>();
+	dustParticle_->Initialize();
 	dustParticle_->SetPlayerMat(&worldTransform_);
 
-	ConfigManager::GetInstance()->SetVariable("Player","speed",&speed);
+	ConfigManager::GetInstance()->SetVariable("Player", "speed", &speed);
 	ConfigManager::GetInstance()->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
 	ConfigManager::GetInstance()->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 
@@ -70,18 +70,18 @@ void Player::Initialize()
 
 
 	// hitColor関連
-    ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
-    ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
-    ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
+	ConfigManager::GetInstance()->SetVariable("Player", "defaultColor", &defaultColor_);
+	ConfigManager::GetInstance()->SetVariable("Player", "hitColor", &hitColor_);
+	ConfigManager::GetInstance()->SetVariable("Player", "hitColorDuration", &hitColorDuration_);
 
 
-    collider_ = std::make_unique<Collider>();
+	collider_ = std::make_unique<Collider>();
 	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
-    collider_->SetShape(model_->GetMin(), model_->GetMax());
+	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("player");
 	collider_->SetMask({ "player","weapon" });
-    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
-    collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
+	collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
+	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
 
 
@@ -107,7 +107,7 @@ void Player::Update()
 			ImGui::DragFloat("speed", &speed, 0.01f);
 			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
 			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
-            if (ImGui::TreeNode("hitColor"))
+			if (ImGui::TreeNode("hitColor"))
 			{
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
 				ImGui::ColorEdit4("hitColor", &hitColor_.x);
@@ -176,7 +176,7 @@ void Player::Update()
 	worldTransform_.UpdateData();
 	worldTransform_.UpdateData();
 
-	if(isAlive)
+	if (isAlive)
 	{
 		CollisionManager::GetInstance()->RegisterCollider(collider_.get());
 		UpdateHitColor();
@@ -202,7 +202,7 @@ void Player::Draw(const Camera& camera)
 
 	dustParticle_->Draw();
 
-    collider_->Draw();
+	collider_->Draw();
 }
 
 void Player::OnCollision(const Collider* _other)
@@ -214,16 +214,16 @@ void Player::OnCollision(const Collider* _other)
 void Player::StageMovementRestrictions()
 {
 	if (stage_->GetWallBack().z < worldTransform_.GetWorldPosition().z) {
-		worldTransform_.transform_.z = stage_->GetWallBack().z ;
+		worldTransform_.transform_.z = stage_->GetWallBack().z;
 	}
 	else if (stage_->GetWallFlont().z > worldTransform_.GetWorldPosition().z) {
-		worldTransform_.transform_.z = stage_->GetWallFlont().z ;
+		worldTransform_.transform_.z = stage_->GetWallFlont().z;
 	}
 	if (stage_->GetWallLeft().x > worldTransform_.GetWorldPosition().x) {
 		worldTransform_.transform_.x = stage_->GetWallLeft().x;
 	}
 	else if (stage_->GetWallRight().x < worldTransform_.GetWorldPosition().x) {
-		worldTransform_.transform_.x = stage_->GetWallRight().x ;
+		worldTransform_.transform_.x = stage_->GetWallRight().x;
 	}
 }
 
@@ -423,9 +423,14 @@ void Player::BehaviorAttackInitialize()
 
 void Player::BehaviorAttackUpdate()
 {
-	bool pressedSPACET = Input::GetInstance()->IsKeyTriggered(DIK_SPACE);
+	bool pressedSPACET;
+	if (Input::GetInstance()->IsControllerConnected()) {
+		pressedSPACET = Input::GetInstance()->IsPadTriggered(PadButton::iPad_A);
+	}
+	else {
+		pressedSPACET = Input::GetInstance()->IsKeyTriggered(DIK_SPACE);
+	}
 
-	pressedSPACET = Input::GetInstance()->IsPadTriggered(PadButton::iPad_A);
 	// コンボ上限に達していない
 	if (workAttack.comboIndex < ComboNum - 1) {
 		if (pressedSPACET) {
@@ -528,7 +533,7 @@ void Player::SetAttackCombo(int parameter)
 			// 各パーツの角度などを次のコンボ用に初期化
 
 			// 武器位置設定
-			weapon_->SetRotation(Vector3{0,0,0});
+			weapon_->SetRotation(Vector3{ 0,0,0 });
 			weapon_->SetRotationX(0);
 			weapon_->SetRotationY(0);
 			weapon_->SetRotationZ(0);
@@ -549,20 +554,20 @@ void Player::TiltMotion()
 	if (!isMove_)
 	{
 		tiltMotionTimer_ -= 1.0f / 15.0f;
-        if (tiltMotionTimer_ <= 0.0f)
-        {
-            tiltMotionTimer_ = 0.0f;
-        }
+		if (tiltMotionTimer_ <= 0.0f)
+		{
+			tiltMotionTimer_ = 0.0f;
+		}
 		worldTransform_.rotate_.x = Lerp(0.0f, tiltMotionMaxRotate_, tiltMotionTimer_ / tiltMotionDuration_);
 
 		return;
 	}
 
-    tiltMotionTimer_ += 1.0f / 60.0f;
-    if (tiltMotionTimer_ >= tiltMotionDuration_)
-    {
-        tiltMotionTimer_ = tiltMotionDuration_;
-    }
+	tiltMotionTimer_ += 1.0f / 60.0f;
+	if (tiltMotionTimer_ >= tiltMotionDuration_)
+	{
+		tiltMotionTimer_ = tiltMotionDuration_;
+	}
 
 	float t = tiltMotionTimer_ / tiltMotionDuration_;
 	t = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t) * (1.0f - t);
@@ -572,16 +577,16 @@ void Player::TiltMotion()
 
 void Player::UpdateHitColor()
 {
-    if (isHitColor_)
-    {
-        hitColorTimer_ += 1.0f / 60.0f;
-        if (hitColorTimer_ >= hitColorDuration_)
-        {
-            hitColorTimer_ = 0.0f;
-            isHitColor_ = false;
-            color_.SetColor(defaultColor_);
-        }
-    }
+	if (isHitColor_)
+	{
+		hitColorTimer_ += 1.0f / 60.0f;
+		if (hitColorTimer_ >= hitColorDuration_)
+		{
+			hitColorTimer_ = 0.0f;
+			isHitColor_ = false;
+			color_.SetColor(defaultColor_);
+		}
+	}
 }
 
 
