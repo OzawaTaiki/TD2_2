@@ -30,9 +30,9 @@ public:
 
 		/// アーム関係
 		// 攻撃出現場所
-		int attackSpawnLocation = 1;
+		//int attackSpawnLocation = 1;
 		// 前回腕の出た場所
-		int oldAttackSpawnLocation = attackSpawnLocation;
+		//int oldAttackSpawnLocation = attackSpawnLocation;
 		// 出る腕の本数
 		int armNum = 0;
 		// 出る腕の本数(最大値)
@@ -59,6 +59,15 @@ public:
 		float weakArmSpawnProbability = 10.0f;
 		// 攻撃力
 		float attackPower = 1;
+
+		// 位置
+		std::vector<int>availableLocations;
+
+		// 攻撃方法変更
+		int randAttack;
+		// 
+		int rrr;
+
 	};
 
 

@@ -14,7 +14,7 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 	attack_ = attack;
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = { 8, 8, 8 };
+	worldTransform2_.scale_ = { 8, 8, 5 };
 
 	model2_ = Model::CreateFromObj("PredictionBox/PredictionBox.obj");
 

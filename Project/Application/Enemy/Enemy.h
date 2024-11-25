@@ -93,7 +93,7 @@ public: //ふるまい関係
 
 		uint32_t normalProbability; // 通常攻撃の確率
 
-		uint32_t probabilityPhase1 = 80;
+		uint32_t probabilityPhase1 = 0;
 		uint32_t probabilityPhase2 = 50;
 		uint32_t probabilityPhase3 = 10;
 	};
@@ -231,6 +231,8 @@ public: //ふるまい関係
 		float MaxRecoilTime = 10;
 
 	};
+
+	// 通常近距離攻撃
 	struct AssaultAttack {
 		// t補間用
 		float transitionFactor = 0;
@@ -390,7 +392,9 @@ public:
 
 	// 弾の初期化
 	void StageArmInitialize(int num);
-
+	
+	void StageArmInitialize(int num,int i);
+	
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
 	 // 衝突処理

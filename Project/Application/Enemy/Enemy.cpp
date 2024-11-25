@@ -8,6 +8,7 @@
 #include "ImGuiManager.h"
 #include "CollisionManager.h"
 
+#include "random"
 
 
 template<typename T>
@@ -376,11 +377,13 @@ void Enemy::Update()
 		{
 			int phase1 = atMethod_.probabilityPhase1;
 			ImGui::DragInt("probabilityPhase1", &phase1, 1.0f);
+			atMethod_.probabilityPhase1 = phase1;
 			int phase2 = atMethod_.probabilityPhase2;
 			ImGui::DragInt("probabilityPhase2", &phase2, 1.0f);
+			atMethod_.probabilityPhase2 = phase2;
 			int phase3 = atMethod_.probabilityPhase3;
 			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
-
+			atMethod_.probabilityPhase3 = phase3;
 			ImGui::EndTabItem();
 		}
 
@@ -559,7 +562,7 @@ void Enemy::Draw(const Camera& camera)
 
 }
 
-void Enemy::OnCollision([[maybe_unused]]const Collider* _other)
+void Enemy::OnCollision([[maybe_unused]] const Collider* _other)
 {
 	if (_other->GetName() == "weapon")
 	{
@@ -815,7 +818,7 @@ void Enemy::BehaviorAttackInitialize()
 
 			if (hp > MaxHp / 2) { // HPが最大HPの1/2より大きい場合
 				// 必殺攻撃を確率で選ぶ
-				atMethod_.randAttack = rand() % 1 + 1;
+				atMethod_.randAttack = rand() % 2 + 1;
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kSpecialAttack;
 				}
@@ -825,7 +828,7 @@ void Enemy::BehaviorAttackInitialize()
 			}
 			else if (hp > MaxHp / 3) { // HPが最大HPの1/3より大きい場合
 				// 必殺攻撃を確率で選ぶ
-				atMethod_.randAttack = rand() % 2 + 1;
+				atMethod_.randAttack = rand() % 3 + 1;
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kSpecialAttack;
 				}
@@ -837,7 +840,7 @@ void Enemy::BehaviorAttackInitialize()
 				}
 			}
 			else { // HPが最大HPの1/3より大きい場合
-				atMethod_.randAttack = rand() % 3 + 1;
+				atMethod_.randAttack = rand() % 4 + 1;
 				// 必殺攻撃を確率で選ぶ
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kSpecialAttack;
@@ -1123,15 +1126,40 @@ void Enemy::SpecialAttackInitialize()
 	attack1_.armNum = 0;
 	attack1_.landingTime = 0;
 
-	if (hp <= MaxHp) {
-		if (hp >= MaxHp / 2) {
-			attack1_.MaxArmNum = 3;
-		}
-		else {
-			attack1_.MaxArmNum = 5;
+
+
+	std::random_device rd; // ランダムデバイス
+	std::mt19937 gen(rd()); // メルセンヌ・ツイスタ
+	std::uniform_int_distribution<> dist(0, 1); // 0または1の範囲
+
+	attack1_.randAttack = dist(gen); // ランダム値を生成
+
+	if (attack1_.randAttack == 0) {
+		attack1_.availableLocations = { 0, 1, 2, 3, 4 };
+
+		// 乱数生成器
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+		std::shuffle(attack1_.availableLocations.begin(), attack1_.availableLocations.end(), gen);
+
+		if (hp <= MaxHp) {
+			if (hp >= MaxHp / 2) {
+				attack1_.MaxArmNum = 3;
+			}
+			else {
+				attack1_.MaxArmNum = 5;
+			}
 		}
 	}
+	else {
+		std::random_device rd; // ランダムデバイス
+		std::mt19937 gen(rd()); // メルセンヌ・ツイスタ
+		std::uniform_int_distribution<> dist(0, 1); // 0または1の範囲
 
+		attack1_.rrr = dist(gen); // ランダム値を生成
+
+		attack1_.MaxArmNum = 4;
+	}
 }
 
 void Enemy::SpecialAttackUpdate()
@@ -1164,24 +1192,31 @@ void Enemy::SpecialAttackUpdate()
 	// 上がった時の処理
 	if (attack1_.isBulletShot == true) {
 		if (++attack1_.AttackToNextPredictionDelay >= attack1_.MaxAttackToNextPredictionDelay)
+			// 初期化処理
 			if (attack1_.armNum < attack1_.MaxArmNum) {
+				if (attack1_.randAttack == 0) {
+					// 次の場所をリストから取得
+					int newLocation = attack1_.availableLocations[attack1_.armNum];
 
+					// 初期化処理
+					StageArmInitialize(newLocation);
+				}
+				else {
+					
 
-				int newLocation;
-				do {
-					newLocation = rand() % 5;
+					if (attack1_.rrr == 0) {
+						StageArmInitialize(Stage::StageNum::kLeft, (attack1_.armNum - 2));
+						StageArmInitialize(Stage::StageNum::kRight, (attack1_.armNum - 2));
+					}
+					else {
+						StageArmInitialize(Stage::StageNum::kFlont, (attack1_.armNum - 2));
+						StageArmInitialize(Stage::StageNum::kBack, (attack1_.armNum - 2));
+					}
 
+					
 
-				} while (newLocation == attack1_.oldAttackSpawnLocation);
-
-
-
-
-
-				StageArmInitialize(attack1_.attackSpawnLocation);
-
-				attack1_.attackSpawnLocation = newLocation;
-				attack1_.oldAttackSpawnLocation = newLocation;
+				}
+				// 状態の更新
 				attack1_.AttackToNextPredictionDelay = 0;
 				attack1_.armNum++;
 			}
@@ -1254,6 +1289,62 @@ void Enemy::StageArmInitialize(int num)
 		stagePos.x = stage_->GetWallRight().x + 20;
 		stagePos.y = player_->GetWorldTransform().GetWorldPosition().y;
 		stagePos.z = player_->GetWorldTransform().GetWorldPosition().z;
+	}
+
+
+
+
+	velocityB = Subtract(direction, stagePos);
+	velocityB = Multiply(Normalize(velocityB), kBulletSpeed);
+
+	// 弾を生成し、初期化
+	auto newBullet = std::make_unique<EnemyStageArm>();
+	newBullet->Initialize(stagePos, velocityB, modelStageArm_, &attack1_);
+
+	// 弾の親設定
+	newBullet->SetParent(worldTransform_.parent_);
+
+	// 弾を登録する
+	stageArm.push_back(std::move(newBullet));
+}
+
+void Enemy::StageArmInitialize(int num, int i)
+{
+	const float kBulletSpeed = attack1_.armSpeed;
+	Vector3 velocityB{};
+
+	//
+	Vector3 direction{};
+	Vector3 stagePos{};
+	//direction = player_->GetWorldTransform().GetWorldPosition();
+	direction.x =  ((i + 1) * 25) - 15;
+	direction.z =  ((i + 1) * 25) - 15;
+
+	// 床から
+	if (num == Stage::StageNum::kFloor) {
+		stagePos.x = direction.x;
+		stagePos.y = stage_->GetWallFloor().y - 20;
+		stagePos.z = direction.z;
+	}
+	else if (num == Stage::StageNum::kFlont) {
+		stagePos.x = direction.x;
+		stagePos.y = direction.y;
+		stagePos.z = stage_->GetWallFlont().z - 20;
+	}
+	else if (num == Stage::StageNum::kBack) {
+		stagePos.x = direction.x;
+		stagePos.y = direction.y;
+		stagePos.z = stage_->GetWallBack().z + 20;
+	}
+	else if (num == Stage::StageNum::kLeft) {
+		stagePos.x = stage_->GetWallLeft().x - 20;
+		stagePos.y = direction.y;
+		stagePos.z = direction.z;
+	}
+	else if (num == Stage::StageNum::kRight) {
+		stagePos.x = stage_->GetWallRight().x + 20;
+		stagePos.y = direction.y;
+		stagePos.z = direction.z;
 	}
 
 
