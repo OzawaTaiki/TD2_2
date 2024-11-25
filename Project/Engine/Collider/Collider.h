@@ -97,6 +97,8 @@ public:
     // 衝突から離れた瞬間
     bool IsCollisionExit()const { return !isHit_ && preIsHit_; }
 
+    void RegsterCollider();
+
 private:
 
     // 衝突判定の形状とそのデータ

@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "Collider.h"
 
 
 class EnemyBullet
@@ -75,6 +76,7 @@ public:
 
 	void SetParent(const WorldTransform* parent);
 
+    void Oncollision(const Collider* _other);
 	
 private:
 	// モデル
@@ -101,6 +103,8 @@ private:
 	// デスフラグ
 	bool isDead_ = false;
 
+	// コライダー
+    std::unique_ptr<Collider> collider_ = nullptr;
 
 
 };

@@ -76,14 +76,12 @@ void Player::Initialize()
 
 
 	collider_ = std::make_unique<Collider>();
-	collider_->SetBoundingBox(Collider::BoundingBox::AABB_3D);
+	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("player");
 	collider_->SetMask({ "player","weapon" });
 	collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
-
-
 
 }
 
@@ -381,12 +379,6 @@ void Player::BehaviorRootUpdate()
 	}
 
 #pragma endregion // キーボード
-
-
-
-
-
-
 
 #ifdef _DEBUG
 	ImGui::Begin("Play");

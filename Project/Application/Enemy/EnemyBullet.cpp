@@ -22,6 +22,15 @@ void EnemyBullet::Initialize(const Vector3& position, const Vector3& Velocity, M
 
 	// X軸周り角度(θx)
 	worldTransform_.rotate_.x = std::atan2(velocity_.y, -length);
+
+    collider_ = std::make_unique<Collider>();
+    collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+    collider_->SetShape(model_->GetMin(), model_->GetMax());
+    collider_->SetAtrribute("enemyBullet");
+	collider_->SetMask({ "enemyBullet","enemy","weapon" });
+    collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this](const Collider* _other) {Oncollision(_other); });
+
 }
 
 void EnemyBullet::Update()
@@ -35,17 +44,28 @@ void EnemyBullet::Update()
 	worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
 
 	worldTransform_.UpdateData();
+
+	if (!isDead_)
+        collider_->RegsterCollider();
 }
 
 void EnemyBullet::Draw(const Camera& camera)
 {
 	model_->Draw(worldTransform_, &camera, &color_);
+#ifdef _DEBUG
+    collider_->Draw();
+#endif // _DEBUG
 }
 
 void EnemyBullet::SetParent(const WorldTransform* parent)
 {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+}
+
+void EnemyBullet::Oncollision(const Collider* _other)
+{
+	isDead_ = true;
 }
 
 Vector3 StartEnd(Vector3& start, Vector3& end, float& t)

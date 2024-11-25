@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "ObjectColor.h"
 
+#include "Collider.h"
 
 
 class EnemyStageArm
@@ -80,6 +81,8 @@ public:
 	bool IsDead() const { return isDead_; };
 
 	void SetParent(const WorldTransform* parent);
+
+    void OnCollision(const Collider* collider);
 private:
 	
 	AttackArm* attack_;
@@ -90,6 +93,8 @@ private:
 	
 	Model* model2_ = nullptr;
 
+    std::unique_ptr<Collider> collider_ ;
+	
 	// モデルカラー
 	ObjectColor color_;
 	ObjectColor color2_;

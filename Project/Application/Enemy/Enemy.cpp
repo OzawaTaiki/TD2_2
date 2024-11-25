@@ -7,7 +7,7 @@
 #include "TextureManager.h"
 #include "../FollowCamera.h"
 #include "ImGuiManager.h"
-#include "../Collider/CollisionManager.h"
+#include "CollisionManager.h"
 
 
 
@@ -76,9 +76,10 @@ void Enemy::Initialize()
 	color_.Initialize();
 	color_.SetColor(defaultColor_);
 
-	modelBullet_ = Model::CreateFromObj("electricBall/electricBall.obj");;
-	modelStageArm_ = Model::CreateFromObj("bossAtackArm/bossAtackArm.obj");;
-	modelThunder_ = Model::CreateFromObj("PredictionBox/PredictionSphere.obj");;
+	modelBullet_ = Model::CreateFromObj("electricBall/electricBall.obj");
+	modelStageArm_ = Model::CreateFromObj("bossAtackArm/bossAtackArm.obj");
+	modelThunder_ = Model::CreateFromObj("PredictionBox/PredictionSphere.obj");
+
 
 
 
@@ -94,9 +95,9 @@ void Enemy::Initialize()
 	// コライダーの初期化
 	collider_ = std::make_unique<Collider>();
 	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-	collider_->SetShape(model_->GetMin(0), model_->GetMax(0));
+	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("enemy");
-	collider_->SetMask({ "enemy" });
+	collider_->SetMask({ "enemy","enemyBullet"});
 
 	collider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });

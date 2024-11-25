@@ -25,8 +25,8 @@ void Weapon::Initialize()
 
 void Weapon::UpdateWorldTransform()
 {
-	worldTransform_.UpdateData();
 
+	worldTransform_.UpdateData();
 	hitPatricles_->Update();
 
 }
