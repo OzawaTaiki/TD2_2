@@ -84,10 +84,16 @@ void Stage::Draw(const Camera& camera)
 	// モデル
 	modelFloor_->Draw(worldFloor_, &camera, &color_);
 
-	// 壁(前)
-	if ((enemy_->GetBehavior() != Enemy::Behavior::kAttack) && (enemy_->GetattackBehavior() != Enemy::AttackBehavior::kSpecial) && (enemy_->GetSpecialAttack() != Enemy::SpecialAttack::kAttack2)) {
+	bool isNotAttackBehavior = (enemy_->GetBehavior() != Enemy::Behavior::kAttack);
+	bool isNotSpecialAttackBehavior = (enemy_->GetattackBehavior() != Enemy::AttackBehavior::kSpecial);
+	bool isNotSpecialAttack2 = (enemy_->GetSpecialAttack() != Enemy::SpecialAttack::kAttack2);
+
+	if (isNotAttackBehavior || (isNotSpecialAttackBehavior || isNotSpecialAttack2)) {
 
 		modelWallFlont_->Draw(worldWallFlont, &camera, &color_);
+	}
+	else {
+		worldWallFlont.UpdateData();
 	}
 
 	modelWallFlont_->Draw(worldWallBack, &camera, &color_);
