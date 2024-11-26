@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	SceneManager::RegisterScene("game", GameScene::Create);
     SceneManager::RegisterScene("gameclear", GameClearScene::Create);
     SceneManager::RegisterScene("gameover", GameOverScene::Create);
-	SceneManager::GetInstance()->Initialize("game");
+	SceneManager::GetInstance()->Initialize("title");
 
 	///
 	/// メインループ
