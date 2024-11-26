@@ -327,6 +327,9 @@
     <ClCompile Include="Application\HitEffect.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Enemy\EnemyDeathParticle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -572,6 +575,9 @@
     </ClInclude>
     <ClInclude Include="Application\HitEffect.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\EnemyDeathParticle.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,0 +1,138 @@
+{
+    "DeathParticle": {
+        "acceleration_max": [
+            [
+                2.0,
+                2.0,
+                2.0
+            ]
+        ],
+        "acceleration_min": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "changeColor": [
+            0
+        ],
+        "changeSize": [
+            1
+        ],
+        "color_max": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "color_min": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "countPerEmit": [
+            20
+        ],
+        "direction": [
+            2
+        ],
+        "direction_max": [
+            [
+                2.0,
+                2.0,
+                2.0
+            ]
+        ],
+        "direction_min": [
+            [
+                -2.0,
+                -2.0,
+                -2.0
+            ]
+        ],
+        "emitPerSec": [
+            3
+        ],
+        "emitRepeatCount": [
+            0
+        ],
+        "fadeAlpha": [
+            257
+        ],
+        "fadeStartRatio": [
+            0.0
+        ],
+        "lifeTime_max": [
+            1.0
+        ],
+        "lifeTime_min": [
+            1.0
+        ],
+        "loop": [
+            65793
+        ],
+        "maxParticles": [
+            0
+        ],
+        "offset": [
+            [
+                0.0,
+                4.0,
+                0.0
+            ]
+        ],
+        "radius": [
+            0.0
+        ],
+        "rotate_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "rotate_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "shape": [
+            0
+        ],
+        "size": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "size_max": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "size_min": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "spped_max": [
+            3.0
+        ],
+        "spped_min": [
+            3.0
+        ]
+    }
+}

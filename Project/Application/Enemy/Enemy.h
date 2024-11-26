@@ -21,6 +21,7 @@
 #include "EnemyThunder.h"
 
 #include "ParticleEmitters.h"
+#include "EnemyDeathParticle.h"
 
 //
 #include <list>
@@ -40,6 +41,7 @@ public: //ふるまい関係
 		kRoot,		// 通常状態
 		kFear,      // 怯み状態
 		kAttack,	// 攻撃選択
+		kDie,       // 死亡状態
 	};
 
 	//振るまい
@@ -171,7 +173,6 @@ public: //ふるまい関係
 
 #pragma endregion // 通常行動関係
 
-
 #pragma region fear
 
 	// 怯み位置
@@ -209,6 +210,33 @@ public: //ふるまい関係
 #pragma endregion // 怯み関係
 
 
+#pragma region Die
+
+	struct Die {
+		bool isFlag = false;
+
+		// カメラワーク時間
+		uint32_t cameraWorkTime;
+		uint32_t MaxCameraWorkTime = 30;
+
+		// シェイク時間
+		uint32_t shakeTime;
+		uint32_t MaxShakeTime = 60;
+
+		// 爆発フラグ
+		bool isExplosion = false;
+
+		// クールタイム
+		uint32_t coolTime = 0;
+		uint32_t MaxCoolTime = 120;
+
+	};
+
+
+#pragma endregion // 死亡演出
+
+
+
 	FollowCamera* follow_;
 
 	// 攻撃4
@@ -232,8 +260,8 @@ public: //ふるまい関係
 		float spinTime = 0;
 		float MaxSpinTime = 120.0f;
 		// 動きが止まるまでの時間
-		float stoppingTime = 0;
-		float MaxStoppingTime = 20;
+		//float stoppingTime = 0;
+		//float MaxStoppingTime = 20;
 
 		// 動きが止まってから回復する（浮く）までの時間
 		float cooldownTime = 60;
@@ -471,9 +499,12 @@ private:
 
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
+	// 死亡演出
+	//std::array<ParticleEmitter, 1>deathParticleEmitter_;
 
-	//Camera attackCamera2_;
+	std::unique_ptr<EnemyDeathParticle> deashParticle_;
 
+	
     std::unique_ptr<Collider> bodyCollider_;
     std::unique_ptr<Collider> leftArmCollider_;
     std::unique_ptr<Collider> rightArmCollider_;

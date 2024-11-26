@@ -121,6 +121,11 @@ void Enemy::Initialize()
     rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
+	deashParticle_ = std::make_unique<EnemyDeathParticle>();
+	deashParticle_->Initialize();
+	deashParticle_->SetPlayerMat(&worldTransform_);
+
+
     ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
@@ -175,7 +180,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
 	configManager->SetVariable("attack4", "speed", &attack4_.speed);
 	configManager->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
-	configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
+	//configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	configManager->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
 	// 通常近距離攻撃1
@@ -184,7 +189,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot1_", "SpinTime", &normalAttackShot1_.MaxSpinTime);
 	configManager->SetVariable("normalAttackShot1_", "speed", &normalAttackShot1_.speed);
 	configManager->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
-	configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
+	//configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
 	
 	// 通常近距離攻撃2
@@ -247,7 +252,6 @@ void Enemy::Initialize()
 
    
 	hp = MaxHp;
-	//MaxHp = Hp_uint;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
@@ -276,6 +280,8 @@ void Enemy::Update()
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kDie:
+			break;
 		}
 		// ふるまいリクエストリセット
 		behaviorRequest_ = std::nullopt;
@@ -293,6 +299,8 @@ void Enemy::Update()
 		break;
 	case Behavior::kAttack: // 攻撃行動更新
 		BehaviorAttackUpdate();
+		break;
+	case Behavior::kDie:
 		break;
 	}
 
@@ -321,6 +329,10 @@ void Enemy::Update()
 			if (ImGui::Button("Fear")) {
 				behaviorTimer_ = 0;
 				behaviorRequest_ = Behavior::kFear;
+			}
+			if (ImGui::Button("Death")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kDie;
 			}
 			if (ImGui::Button("SpecialAttack")) {
 				behaviorTimer_ = 0;
@@ -478,7 +490,7 @@ void Enemy::Update()
 			ImGui::DragFloat("SpinTime", &attack4_.MaxSpinTime, 0.01f);
 			ImGui::DragFloat("MaxRotateSpeed", &attack4_.MaxRotateSpeed, 0.01f);
 			ImGui::DragFloat("MinRotateSpeed", &attack4_.MinxRotateSpeed, 0.01f);
-			ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
+			//ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -490,7 +502,7 @@ void Enemy::Update()
 			ImGui::DragFloat("SpinTime", &normalAttackShot1_.MaxSpinTime, 0.01f);
 			ImGui::DragFloat("MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed, 0.01f);
 			ImGui::DragFloat("MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed, 0.01f);
-			ImGui::DragFloat("StoppingTime", &normalAttackShot1_.MaxStoppingTime, 0.01f);
+			//ImGui::DragFloat("StoppingTime", &normalAttackShot1_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &normalAttackShot1_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -531,6 +543,8 @@ void Enemy::Update()
         bodyCollider_->RegsterCollider();
 	}
 
+	deashParticle_->Update(true);
+
 }
 
 void Enemy::Draw(const Camera& camera)
@@ -558,7 +572,9 @@ void Enemy::Draw(const Camera& camera)
 		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
 			modelPrediction_->Draw(worldPrediction_, &camera, &colorPrediction_);
 		}
-	default:
+		break;
+	case Behavior::kDie:
+		deashParticle_->Draw();
 		break;
 	case Behavior::kAttack:
 
@@ -608,6 +624,8 @@ void Enemy::Draw(const Camera& camera)
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
 		particleEmitter_[index].Draw();
 
+
+	deashParticle_->Draw();
 #ifdef _DEBUG
 	bodyCollider_->Draw();
 #endif // _DEBUG
@@ -1724,7 +1742,7 @@ void Enemy::SpecialAttack4Initialize()
 	worldTransformRight_.transform_ = { 0,0,0 };
 	attack4_.spinTime = 0;
 	attack4_.armGrowthToSpinDelay = 0;
-	attack4_.stoppingTime = 0;
+	//attack4_.stoppingTime = 0;
 	attack4_.recoilTime = 0;
 }
 
@@ -1815,7 +1833,7 @@ void Enemy::NormalShotAttack1Initialize()
 	worldTransformRight_.transform_ = { 0,0,0 };
 	normalAttackShot1_.spinTime = 0;
 	normalAttackShot1_.armGrowthToSpinDelay = 0;
-	normalAttackShot1_.stoppingTime = 0;
+	//normalAttackShot1_.stoppingTime = 0;
 	normalAttackShot1_.recoilTime = 0;
 }
 

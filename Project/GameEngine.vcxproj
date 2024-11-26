@@ -113,6 +113,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Application\Enemy\Enemy.cpp" />
     <ClCompile Include="Application\Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Application\Enemy\EnemyDeathParticle.cpp" />
     <ClCompile Include="Application\Enemy\EnemyStageArm.cpp" />
     <ClCompile Include="Application\Enemy\EnemyThunder.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
@@ -242,6 +243,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Application\Enemy\Enemy.h" />
     <ClInclude Include="Application\Enemy\EnemyBullet.h" />
+    <ClInclude Include="Application\Enemy\EnemyDeathParticle.h" />
     <ClInclude Include="Application\Enemy\EnemyStageArm.h" />
     <ClInclude Include="Application\Enemy\EnemyThunder.h" />
     <ClInclude Include="Application\FollowCamera.h" />
