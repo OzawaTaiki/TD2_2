@@ -262,7 +262,9 @@ void Player::BehaviorRootUpdate()
 		// 移動量に速さを反映
 		velocity_ = Multiply(Normalize(velocity_), speed);
 
-		if (velocity_ != 0) { isMove_ = true; }
+		if (Length(velocity_) != 0) { isMove_ = true; }
+
+
 
 		if ((velocity_.x != 0.0f || velocity_.z != 0.0f)) {
 			// 移動ベクトルをカメラの角度だけ回転する
@@ -272,6 +274,10 @@ void Player::BehaviorRootUpdate()
 				worldTransform_.rotate_.y = std::atan2(velocity_.x, velocity_.z);
 			}
 		}
+
+		// 移動時の傾き
+		TiltMotion();
+
 		// 移動
 		worldTransform_.transform_ = Add(worldTransform_.transform_, velocity_);
 	}
@@ -386,13 +392,13 @@ void Player::BehaviorRootUpdate()
 
 #pragma endregion // キーボード
 
-#ifdef _DEBUG
-	ImGui::Begin("Play");
-	ImGui::InputFloat3("velo", &velocity_.x);
-	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
-	ImGui::Checkbox("isMove", &isMove_);
-	ImGui::End();
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	ImGui::Begin("Play");
+//	ImGui::InputFloat3("velo", &velocity_.x);
+//	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
+//	ImGui::Checkbox("isMove", &isMove_);
+//	ImGui::End();
+//#endif // _DEBUG
 
 
 #pragma endregion
