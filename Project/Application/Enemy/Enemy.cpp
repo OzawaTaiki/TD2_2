@@ -1900,7 +1900,7 @@ void Enemy::NormalShotAttack2Initialize()
 	normalAttackShot2_.stoppingTime = 0;
 	normalAttackShot2_.recoilTime = 0;
 
-	Move(0.1f, false);
+	Move(normalAttackShot2_.speed, false);
 }
 
 void Enemy::NormalShotAttack2Update()
