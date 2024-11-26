@@ -7,12 +7,12 @@ void TitleEnemy::Initialize()
     model_ = std::make_unique<ObjectModel>();
     model_->Initialize("boss/boss.obj");
 
-    ConfigManager::GetInstance()->SetVariable("TitleEnemy", "basePos_", &basePos_);
-    ConfigManager::GetInstance()->SetVariable("TitleEnemy", "scale", &model_->scale_);
-    ConfigManager::GetInstance()->SetVariable("TitleEnemy", "rotate", &model_->rotate_);
+    ConfigManager::GetInstance()->SetVariable("Title", "ebasePos_", &basePos_);
+    ConfigManager::GetInstance()->SetVariable("Title", "escale", &model_->scale_);
+    ConfigManager::GetInstance()->SetVariable("Title", "erotate", &model_->rotate_);
 
-    ConfigManager::GetInstance()->SetVariable("TitleEnemy", "range", &range_);
-    ConfigManager::GetInstance()->SetVariable("TitleEnemy", "speed", &speed_);
+    ConfigManager::GetInstance()->SetVariable("Title", "erange", &range_);
+    ConfigManager::GetInstance()->SetVariable("Title", "espeed", &speed_);
 
     model_->translate_ = basePos_;
 

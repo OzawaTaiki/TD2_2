@@ -360,6 +360,12 @@
     <ClCompile Include="Application\TItleUI.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Application\ResultPlayer.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ResultUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -628,6 +634,12 @@
       <Filter>Engine\UI</Filter>
     </ClInclude>
     <ClInclude Include="Application\TItleUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultPlayer.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultUI.h">
       <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>

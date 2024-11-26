@@ -8,12 +8,12 @@ void TItlePlayer::Initialize()
     model_ = std::make_unique<ObjectModel>();
     model_->Initialize("playerBody/playerbody.obj");
 
-    ConfigManager::GetInstance()->SetVariable("TitlePlayer", "basePos_", &basePos_);
-    ConfigManager::GetInstance()->SetVariable("TitlePlayer", "scale", &model_->scale_);
-    ConfigManager::GetInstance()->SetVariable("TitlePlayer", "rotate", &model_->rotate_);
+    ConfigManager::GetInstance()->SetVariable("Title", "pbasePos_", &basePos_);
+    ConfigManager::GetInstance()->SetVariable("Title", "pscale", &model_->scale_);
+    ConfigManager::GetInstance()->SetVariable("Title", "protate", &model_->rotate_);
 
-    ConfigManager::GetInstance()->SetVariable("TitlePlayer", "range", &range_);
-    ConfigManager::GetInstance()->SetVariable("TitlePlayer", "speed", &speed_);
+    ConfigManager::GetInstance()->SetVariable("Title", "prange", &range_);
+    ConfigManager::GetInstance()->SetVariable("Title", "pspeed", &speed_);
 
     model_->translate_ = basePos_;
 }
@@ -57,7 +57,7 @@ void TItlePlayer::ImGui()
 
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("TitlePlayer");
+        ConfigManager::GetInstance()->SaveData("Title");
     }
     ImGui::PopID();
 }

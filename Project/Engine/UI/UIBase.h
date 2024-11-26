@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector2.h"
+#include "Sprite.h"
 #include <string>
 
 class  UIBase
@@ -12,7 +13,7 @@ public:
 
     virtual void Initialize(const std::string& _label);
     virtual void Update() {};
-    virtual void Draw() = 0;
+    virtual void Draw();
 
     bool IsActive() const { return isActive_; }
     void SetActive(bool _isActive) { isActive_ = _isActive; }
@@ -34,6 +35,8 @@ public:
 
 
 protected:
+    Sprite* sprite_ = nullptr;
+
     Vector2 position_ = { 0,0 };
     Vector2 size_ = { 0,0 };
 

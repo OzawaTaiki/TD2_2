@@ -31,7 +31,7 @@ void TitleScene::Initialize()
     UIs_ = std::make_unique<TitleUI>();
     UIs_->Initialize();
 
-    ConfigManager::GetInstance()->SetVariable("TitleUI", "backGroundTexturePath", &backGroundTexturePath_);
+    ConfigManager::GetInstance()->SetVariable("Title", "backGroundTexturePath", &backGroundTexturePath_);
 
     uint32_t handle = TextureManager::GetInstance()->Load(backGroundTexturePath_);
 
@@ -44,7 +44,6 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-
     Input::GetInstance()->Update();
 
     camera_.Update();
@@ -91,7 +90,7 @@ void TitleScene::ImGui()
     }
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("TitleUI");
+        ConfigManager::GetInstance()->SaveData("Title");
         backGround_->SetTextureHandle(TextureManager::GetInstance()->Load(backGroundTexturePath_));
         UIs_->Save();
     }

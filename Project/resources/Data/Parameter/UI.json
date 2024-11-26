@@ -1,0 +1,67 @@
+{
+    "UI": {
+        "Retryanchor": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "RetryisActive": [
+            257
+        ],
+        "RetryisVisible": [
+            1
+        ],
+        "Retrylabel": [
+            "Retry"
+        ],
+        "Retrypos": [
+            [
+                119.0,
+                212.0
+            ]
+        ],
+        "Retrysize": [
+            [
+                358.0,
+                213.0
+            ]
+        ],
+        "RetrytextureName": [
+            ""
+        ],
+        "Titleanchor": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "TitleisActive": [
+            257
+        ],
+        "TitleisVisible": [
+            1
+        ],
+        "Titlelabel": [
+            "Title"
+        ],
+        "Titlepos": [
+            [
+                152.0,
+                102.0
+            ]
+        ],
+        "Titlesize": [
+            [
+                798.0,
+                101.0
+            ]
+        ],
+        "TitletextureName": [
+            ""
+        ],
+        "label": [
+            "Title"
+        ]
+    }
+}

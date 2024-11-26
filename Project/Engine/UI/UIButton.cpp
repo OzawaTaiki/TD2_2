@@ -10,16 +10,21 @@ void UIButton::Initialize(const std::string& _label)
 
 void UIButton::Update()
 {
+#ifdef _DEBUG
+    ImGui();
+#endif // _DEBUG
+
 }
 
 void UIButton::Draw()
 {
+    UIBase::Draw();
 }
 
 bool UIButton::IsClicked() const
 {
     if (IsMousePointerInside() &&
-        (Input::GetInstance()->IsMouseTriggered(0)||Input::GetInstance()->IsPadTriggered(PadButton::iPad_A)))
+        Input::GetInstance()->IsMouseTriggered(0))
     {
         return true;
     }

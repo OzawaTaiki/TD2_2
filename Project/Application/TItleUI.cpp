@@ -11,12 +11,12 @@ void TitleUI::Initialize()
     pressAnyKey_->Initialize();
 
     ConfigManager* config = ConfigManager::GetInstance();
-    config->SetVariable("TitleUI", "pos", &pressAnyKey_->translate_);
-    config->SetVariable("TitleUI", "scale", &pressAnyKey_->scale_);
-    config->SetVariable("TitleUI", "rotate", &pressAnyKey_->rotate_);
-    config->SetVariable("TitleUI", "color", &pressTextColor_);
-    config->SetVariable("TitleUI", "TextTexture", &textTextureParh_);
-    config->SetVariable("TitleUI", "titleModel", &titleModelpath_);
+    config->SetVariable("Title", "UIpos", &pressAnyKey_->translate_);
+    config->SetVariable("Title", "UIscale", &pressAnyKey_->scale_);
+    config->SetVariable("Title", "UIrotate", &pressAnyKey_->rotate_);
+    config->SetVariable("Title", "UIcolor", &pressTextColor_);
+    config->SetVariable("Title", "UITextTexture", &textTextureParh_);
+    config->SetVariable("Title", "UItitleModel", &titleModelpath_);
 
     uint32_t handle = TextureManager::GetInstance()->Load(textTextureParh_);
     pressAnyKey_->SetTextureHandle(handle);
