@@ -161,7 +161,6 @@ void FollowCamera::Update()
 				}
 			}
 
-			//camera_.rotate_.y = fmod(camera_.rotate_.y, DegreesToRadians(360.0f));
 			if (camera_.rotate_.y < -1) {
 				camera_.rotate_.y += DegreesToRadians(360.0f);
 			}

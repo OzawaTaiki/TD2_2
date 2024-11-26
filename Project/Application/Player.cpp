@@ -64,6 +64,7 @@ void Player::Initialize()
     ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("Player", "speed", &speed);
+	configManager->SetVariable("Player", "transform", &worldTransform_.transform_);
 	configManager->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
 	configManager->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 

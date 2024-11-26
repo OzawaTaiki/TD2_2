@@ -85,16 +85,10 @@ void Enemy::Initialize()
 	// 移動予測線
 	worldPrediction_.Initialize();
 
-	modelPrediction_ = Model::CreateFromObj("PredictionBox/PredictionPlane.obj");;
+	modelPrediction_ = Model::CreateFromObj("PredictionBox/PredictionPlaneBox.obj");;
 
 	colorPrediction_.Initialize();
 	colorPrediction_.SetColor({ 1, 0.271f, 0,1 });
-
-	attackCamera2_.Initialize();
-	attackCamera2_.translate_ = { 0,35,-120 };
-	attackCamera2_.rotate_ = { 0.25f,0,0 };
-
-
 
 	InitializeParticleEmitter();
 
@@ -129,10 +123,13 @@ void Enemy::Initialize()
 
     ConfigManager* configManager = ConfigManager::GetInstance();
 
-	// カメラ
-	configManager->SetVariable("attackCamera2", "translate", &attackCamera2_.translate_);
-	configManager->SetVariable("attackCamera2", "rotate", &attackCamera2_.rotate_);
-
+	//uint32_t hpT = uint32_t(MaxHp);
+	configManager->SetVariable("enemy", "MaxHp", &Hp_uint);
+	
+	configManager->SetVariable("enemy", "transform", &worldTransform_.transform_);
+	
+	
+	
 	configManager->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
 	configManager->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
 	configManager->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
@@ -191,6 +188,13 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
 	configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
+	
+	// 通常近距離攻撃2
+	configManager->SetVariable("normalAttackShot2_", "MaxAssaultTime", &normalAttackShot2_.MaxAssaultTime);
+	configManager->SetVariable("normalAttackShot2_", "speed", &normalAttackShot2_.speed);
+	configManager->SetVariable("normalAttackShot2_", "ArmGrowthToSpinDelay", &normalAttackShot2_.MaxArmGrowthToSpinDelay);
+	configManager->SetVariable("normalAttackShot2_", "StoppingTime", &normalAttackShot2_.MaxStoppingTime);
+	configManager->SetVariable("normalAttackShot2_", "cooldownTime", &normalAttackShot2_.cooldownTime);
 
 
 	// 通常攻撃確率
@@ -208,12 +212,39 @@ void Enemy::Initialize()
     configManager->SetVariable("enemy", "damageCoolTimeMax", &damageCoolMaxTime_);
 
 
+	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
+	rootMove_.isBehavior_ = false;
+	rootMove_.startPos = worldTransform_.transform_;
+	rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+	rootMove_.targetPos.z = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+	rootMove_.targetPos.y = worldTransform_.transform_.y;
+	rootMove_.transitionFactor = 0;
+	rootMove_.numMovePhase = 0;
+	rootMove_.coolTime = 0;
 
+
+	// 対象から対象へのベクトル
+	Vector3 sub = Subtract(rootMove_.targetPos, rootMove_.startPos);
+
+	float length = Length(sub);
+
+	// Y軸周り角度
+	worldPrediction_.transform_ = rootMove_.startPos;
+	worldPrediction_.transform_.y = -2.5f;
+	worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
+	worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
+
+
+
+   
+
+	MaxHp = Hp_uint;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
 void Enemy::Update()
 {
+	
 	if (behaviorRequest_) {
 		// ふるまいを変更する
 		behavior_ = behaviorRequest_.value();
@@ -228,6 +259,7 @@ void Enemy::Update()
 					follow_->SetT(0);
 				}
 			};
+
 			break;
 		case Behavior::kFear:
 			BehaviorFearInitialize();
@@ -272,8 +304,6 @@ void Enemy::Update()
 		if (ImGui::BeginTabItem("enemy"))
 		{
 
-			ImGui::DragFloat3("AttackCamera2 translate", &attackCamera2_.translate_.x, 0.01f);
-			ImGui::DragFloat3("AttackCamera2 rotate", &attackCamera2_.rotate_.x, 0.01f);
 			ImGui::DragInt("hp", &hp, 1.0f);
 			ImGui::DragInt("MaxHp", &MaxHp, 1.0f);
 			ImGui::Checkbox("debugAttack", &isDebugAttack);
@@ -453,6 +483,19 @@ void Enemy::Update()
 			ImGui::DragFloat("speed", &normalAttackShot1_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
+
+		if (ImGui::BeginTabItem("normalAttackShot2_"))
+		{
+			//normalAttackShot2_.
+			ImGui::DragFloat("ArmGrowthToSpinDelay", &normalAttackShot2_.MaxArmGrowthToSpinDelay, 0.01f);
+			ImGui::DragFloat("cooldown", &normalAttackShot2_.cooldownTime, 0.01f);
+			ImGui::DragFloat("MaxAssaultTime", &normalAttackShot2_.MaxAssaultTime, 0.01f);
+			ImGui::DragFloat("StoppingTime", &normalAttackShot2_.MaxStoppingTime, 0.01f);
+			ImGui::DragFloat("speed", &normalAttackShot2_.speed, 0.01f);
+			ImGui::EndTabItem();
+		}
+
+
 		ImGui::EndTabBar();
 	}
 #endif // _DEBUG
@@ -470,8 +513,7 @@ void Enemy::Update()
 
 	worldPrediction_.UpdateData();
 
-	attackCamera2_.UpdateMatrix();
-
+	
 	if (isAlive)
 	{
 		UpdateHitColor();
@@ -625,7 +667,6 @@ void Enemy::BehaviorRootInitialize()
 	// 浮遊ギミック
 	InitializeFloatingGimmick();
 
-	//srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 	// 不規則な移動数
 	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
 	rootMove_.isBehavior_ = false;
@@ -1845,8 +1886,8 @@ void Enemy::NormalShotAttack2Update()
 	float endm = -4;
 
 	float rotS = DegreesToRadians(0);
-	float rotE = DegreesToRadians(280);
-	float rotEm = DegreesToRadians(-280);
+	float rotE = DegreesToRadians(140);
+	float rotEm = DegreesToRadians(-140);
 	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay) {
 		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot2_.transitionFactor);
 		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot2_.transitionFactor);
@@ -1854,8 +1895,10 @@ void Enemy::NormalShotAttack2Update()
 		worldTransformLeft_.rotate_.y = StartEnd(rotS, rotE, normalAttackShot2_.transitionFactor);
 		worldTransformRight_.rotate_.y = StartEnd(rotS, rotEm, normalAttackShot2_.transitionFactor);
 
-		if (worldTransformLeft_.transform_.x >= endm) {
-			//worldTransformBody_.rotate_.y -= 0.01f;
+		if (worldTransformLeft_.transform_.x <= endm) {
+			
+			worldTransformLeft_.rotate_.y = DegreesToRadians(90);
+			worldTransformRight_.rotate_.y = DegreesToRadians(-90);
 		}
 	}
 	else {

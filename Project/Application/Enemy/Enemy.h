@@ -90,11 +90,14 @@ public: //ふるまい関係
 		uint32_t randMethod; // 確率で攻撃方法を決める
 
 		uint32_t randAttack;
-
+		// 確率を出すための(変数)
 		uint32_t normalProbability; // 通常攻撃の確率
 
-		uint32_t probabilityPhase1 = 0;
+		// 1フェーズ目の通常攻撃確率
+		uint32_t probabilityPhase1 = 90;
+		// 2フェーズ目の通常攻撃確率
 		uint32_t probabilityPhase2 = 50;
+		// 3フェーズ目の通常攻撃確率
 		uint32_t probabilityPhase3 = 10;
 	};
 	AttackMethod atMethod_;
@@ -119,7 +122,9 @@ public: //ふるまい関係
 	// 移動
 	struct RootMove {
 
+		//開始位置
 		Vector3 startPos;
+		// 終了位置
 		Vector3 targetPos;
 
 		// t補間用
@@ -128,30 +133,36 @@ public: //ふるまい関係
 		float transitionSpeed = 0.005f;
 		// 追ってくる速度
 		float speed = 0.3f;
-		// 移動時間
+		// 移動時間(time)
 		float moveTime;
+		// 移動時間(最大)
 		float MaxMoveTime = 60;
 
 
-		//移動
+		// 移動開始までの時間(time)
 		float startDelay = 0;
+		// 移動開始までの時間(最大)
 		float MaxStartDelay = 40;
 
 
-		//
+		//何回移動するか(最大)
 		int MaxNumMovePhase = 1;
+		// 移動回数をランダムで出すよう(変数)
 		uint32_t MaxRandMovePhase = 2;
+		// 何回移動するか(カウント用)
 		int numMovePhase = 0;
-		//
+		// 動き終わった後の止まる時間(time)
 		float coolTime = 0;
+		// 動き終わった後の止まる時間(最大)
 		float MaxCoolTime = 30;
+		//  動き終わった後の止まる時間をランダムで不規則にするための(変数)
 		float MaxRandCoolTime = 30;
 
-
+		// 移動距離
 		int MaxMove = 40;
 
 
-		//
+		// 状態遷移許可用
 		bool isBehavior_ = false;
 	};
 	RootMove rootMove_;
@@ -253,9 +264,8 @@ public: //ふるまい関係
 		// 移動方向
 		Vector3 moveDirection{};
 
-		// 移動スピード
-
-		// 動きが止まってから回復する（浮く）までの時間
+		
+		// 動きが止まってから回復するまでの時間
 		float cooldownTime = 60;
 
 		// 反動時間
@@ -417,9 +427,6 @@ public:
 	const AttackBehavior& GetattackBehavior() const { return attackBehavior_; };
 	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
 	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
-
-	const Camera& GetCamera2() { return attackCamera2_; };
-
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -466,7 +473,7 @@ private:
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
 
-	Camera attackCamera2_;
+	//Camera attackCamera2_;
 
     std::unique_ptr<Collider> bodyCollider_;
     std::unique_ptr<Collider> leftArmCollider_;
@@ -488,6 +495,8 @@ private:
 
 
 	// hp
+
+	uint32_t Hp_uint = 0;
 	int hp = 100;
 	int MaxHp = 100;
 	// 生死フラグ
