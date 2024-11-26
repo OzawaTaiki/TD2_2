@@ -107,6 +107,7 @@ void Player::Update()
 			ImGui::DragFloat("speed", &speed, 0.01f);
 			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
 			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
+			ImGui::DragInt("HP", &hp,1.0f);
 			if (ImGui::TreeNode("hitColor"))
 			{
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
