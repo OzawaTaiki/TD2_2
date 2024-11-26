@@ -496,9 +496,9 @@ private:
 
 	// hp
 
-	uint32_t Hp_uint = 0;
+	//uint32_t Hp_uint = 0;
 	int hp = 100;
-	int MaxHp = 100;
+	uint32_t MaxHp = 100;
 	// 生死フラグ
 	bool isAlive = true;
 	// 行動タイマー

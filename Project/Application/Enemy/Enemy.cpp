@@ -123,10 +123,8 @@ void Enemy::Initialize()
 
     ConfigManager* configManager = ConfigManager::GetInstance();
 
-	//uint32_t hpT = uint32_t(MaxHp);
-	configManager->SetVariable("enemy", "MaxHp", &Hp_uint);
-	
-	configManager->SetVariable("enemy", "transform", &worldTransform_.transform_);
+	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
+	//configManager->SetVariable("enemy", "transform", &worldTransform_.transform_);
 	
 	
 	
@@ -237,8 +235,8 @@ void Enemy::Initialize()
 
 
    
-
-	MaxHp = Hp_uint;
+	hp = MaxHp;
+	//MaxHp = Hp_uint;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
@@ -305,7 +303,9 @@ void Enemy::Update()
 		{
 
 			ImGui::DragInt("hp", &hp, 1.0f);
-			ImGui::DragInt("MaxHp", &MaxHp, 1.0f);
+			int mma = int(MaxHp);
+			ImGui::DragInt("MaxHp", &mma, 1.0f);
+			MaxHp = uint32_t(mma);
 			ImGui::Checkbox("debugAttack", &isDebugAttack);
 			if (ImGui::Button("Fear")) {
 				behaviorTimer_ = 0;
@@ -1854,8 +1854,14 @@ void Enemy::NormalShotAttack1Update()
 				}
 			}
 		}
-
 	}
+	leftArmCollider_->RegsterCollider();
+	rightArmCollider_->RegsterCollider();
+
+#ifdef _DEBUG
+	leftArmCollider_->Draw();
+	rightArmCollider_->Draw();
+#endif // _DEBUG
 }
 
 #pragma endregion // 通常近距離攻撃1
@@ -1930,6 +1936,13 @@ void Enemy::NormalShotAttack2Update()
 		}
 
 	}
+	leftArmCollider_->RegsterCollider();
+	rightArmCollider_->RegsterCollider();
+
+#ifdef _DEBUG
+	leftArmCollider_->Draw();
+	rightArmCollider_->Draw();
+#endif // _DEBUG
 }
 
 #pragma endregion // 通常近距離攻撃２
@@ -1997,6 +2010,8 @@ void Enemy::NormalLongAttack1Update()
 		behaviorRequest_ = Behavior::kRoot;
 		behaviorTimer_ = 0;
 	}
+
+
 }
 
 #pragma endregion // 通常遠距離攻撃1
