@@ -11,7 +11,7 @@ public:
     EnemyDeathParticle() = default;
     ~EnemyDeathParticle() = default;
 
-    void Initialize();
+    void Initialize(const std::string& _name);
     void Update(bool _move);
     void Draw();
 

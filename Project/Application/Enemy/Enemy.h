@@ -14,6 +14,7 @@
 #include "../Collider/Collider.h"
 #include <MatrixFunction.h>
 #include "VectorFunction.h"
+#include "Audio.h"
 
 // application
 #include "EnemyBullet.h"
@@ -500,9 +501,9 @@ private:
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
 	// 死亡演出
-	//std::array<ParticleEmitter, 1>deathParticleEmitter_;
-
+	
 	std::unique_ptr<EnemyDeathParticle> deashParticle_;
+	std::unique_ptr<EnemyDeathParticle> deashExplosionParticle_;
 
 	
     std::unique_ptr<Collider> bodyCollider_;
@@ -557,6 +558,10 @@ private:
     bool isCoolTime_ = false;
     float damageCoolTimer_ = 0;
     float damageCoolMaxTime_ = 2;
+
+	std::unique_ptr<Audio> audio_;
+
+	uint32_t sound = 0;
 
 };
 
