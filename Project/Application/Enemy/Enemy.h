@@ -248,6 +248,7 @@ public: //ふるまい関係
 	struct AssaultAttack {
 		// t補間用
 		float transitionFactor = 0;
+		float transitionFactorSpeed = 0.01f;
 		//腕が生えてから回転開始までの時間）
 		float armGrowthToSpinDelay = 0;
 		float MaxArmGrowthToSpinDelay = 30.0f;

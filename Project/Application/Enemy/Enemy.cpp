@@ -193,6 +193,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot2_", "ArmGrowthToSpinDelay", &normalAttackShot2_.MaxArmGrowthToSpinDelay);
 	configManager->SetVariable("normalAttackShot2_", "StoppingTime", &normalAttackShot2_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot2_", "cooldownTime", &normalAttackShot2_.cooldownTime);
+	configManager->SetVariable("normalAttackShot2_", "rotateSpeed", &normalAttackShot2_.transitionFactorSpeed);
 
 
 	// 通常攻撃確率
@@ -503,6 +504,7 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxAssaultTime", &normalAttackShot2_.MaxAssaultTime, 0.01f);
 			ImGui::DragFloat("StoppingTime", &normalAttackShot2_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &normalAttackShot2_.speed, 0.01f);
+			ImGui::DragFloat("rotateSpeed", &normalAttackShot2_.transitionFactorSpeed, 0.01f);
 			ImGui::EndTabItem();
 		}
 
@@ -1905,18 +1907,20 @@ void Enemy::NormalShotAttack2Initialize()
 
 void Enemy::NormalShotAttack2Update()
 {
-	static float transitionFactor = 0.01f;
-
-	normalAttackShot2_.transitionFactor += transitionFactor;
+	
+	normalAttackShot2_.transitionFactor += normalAttackShot2_.transitionFactorSpeed;
 
 	float str = 0;
 	float end = 4;
 	float endm = -4;
 
 	float rotS = DegreesToRadians(0);
-	float rotE = DegreesToRadians(140);
-	float rotEm = DegreesToRadians(-140);
-	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay) {
+	float rotE = DegreesToRadians(90);
+	float rotEm = DegreesToRadians(-90);
+	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay || normalAttackShot2_.transitionFactor <= 1.0f) {
+		if (normalAttackShot2_.transitionFactor >= 1.0f) {
+			normalAttackShot2_.transitionFactor = 1.0f;
+		}
 		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot2_.transitionFactor);
 		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot2_.transitionFactor);
 
