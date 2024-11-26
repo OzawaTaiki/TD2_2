@@ -1,0 +1,36 @@
+{
+    "TitleUI": {
+        "TextTexture": [
+            "cube.jpg"
+        ],
+        "backGroundTexturePath": [
+            "white.png"
+        ],
+        "color": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "pos": [
+            [
+                653.0,
+                505.0
+            ]
+        ],
+        "rotate": [
+            0.0
+        ],
+        "scale": [
+            [
+                0.9800000190734863,
+                0.30000001192092896
+            ]
+        ],
+        "titleModel": [
+            "cube/cube.obj"
+        ]
+    }
+}

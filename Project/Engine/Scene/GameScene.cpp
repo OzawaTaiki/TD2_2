@@ -22,7 +22,6 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-    ConfigManager::GetInstance()->LoadData();
 
     input_ = Input::GetInstance();
 

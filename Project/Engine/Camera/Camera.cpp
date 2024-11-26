@@ -13,7 +13,7 @@
 void Camera::Initialize()
 {
     Map();
-    TransferData();
+    UpdateMatrix();
 }
 
 void Camera::Update(bool _showImGui)

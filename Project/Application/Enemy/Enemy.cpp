@@ -181,6 +181,9 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
 	configManager->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
 	configManager->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
+	configManager->SetVariable("attack3", "Cooldown", &attack3_.MaxAttackCooldown);
+
+	configManager->SetVariable("attack3", "ElectricCount", &attack3_.numElectricCount);
 
 	// 攻撃4
 	configManager->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
@@ -206,12 +209,14 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot2_", "ArmGrowthToSpinDelay", &normalAttackShot2_.MaxArmGrowthToSpinDelay);
 	configManager->SetVariable("normalAttackShot2_", "StoppingTime", &normalAttackShot2_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot2_", "cooldownTime", &normalAttackShot2_.cooldownTime);
+	configManager->SetVariable("normalAttackShot2_", "rotateSpeed", &normalAttackShot2_.transitionFactorSpeed);
 
 
 	// 通常攻撃確率
 	configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "distanceSwich", &atMethod_.distanceSwich);
 
 
 	// hitcolorの設定
@@ -454,6 +459,7 @@ void Enemy::Update()
 			int phase3 = atMethod_.probabilityPhase3;
 			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
 			atMethod_.probabilityPhase3 = phase3;
+			ImGui::DragFloat("distanceSwich", &atMethod_.distanceSwich, 0.1f);
 			ImGui::EndTabItem();
 		}
 
@@ -496,6 +502,10 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxYTime", &attack3_.MaxYTime, 0.01f);
 			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 1.0f);
 			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
+			ImGui::DragFloat("AttackCooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			int ii = int(attack3_.numElectricCount);
+			ImGui::DragInt("numElectricCount", &ii, 1.0f);
+			attack3_.numElectricCount = uint32_t(ii);
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -532,6 +542,7 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxAssaultTime", &normalAttackShot2_.MaxAssaultTime, 0.01f);
 			ImGui::DragFloat("StoppingTime", &normalAttackShot2_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &normalAttackShot2_.speed, 0.01f);
+			ImGui::DragFloat("rotateSpeed", &normalAttackShot2_.transitionFactorSpeed, 0.01f);
 			ImGui::EndTabItem();
 		}
 
@@ -971,7 +982,7 @@ void Enemy::BehaviorAttackInitialize()
 		else {// 通常攻撃より低い値が出たら
 
 
-			if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
+			if (atMethod_.distanceSwich >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
 				atMethod_.randAttack = rand() % 2 + 1;
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kNormalShort1;
@@ -2017,23 +2028,25 @@ void Enemy::NormalShotAttack2Initialize()
 	normalAttackShot2_.stoppingTime = 0;
 	normalAttackShot2_.recoilTime = 0;
 
-	Move(0.1f, false);
+	Move(normalAttackShot2_.speed, false);
 }
 
 void Enemy::NormalShotAttack2Update()
 {
-	static float transitionFactor = 0.01f;
-
-	normalAttackShot2_.transitionFactor += transitionFactor;
+	
+	normalAttackShot2_.transitionFactor += normalAttackShot2_.transitionFactorSpeed;
 
 	float str = 0;
 	float end = 4;
 	float endm = -4;
 
 	float rotS = DegreesToRadians(0);
-	float rotE = DegreesToRadians(140);
-	float rotEm = DegreesToRadians(-140);
-	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay) {
+	float rotE = DegreesToRadians(90);
+	float rotEm = DegreesToRadians(-90);
+	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay || normalAttackShot2_.transitionFactor <= 1.0f) {
+		if (normalAttackShot2_.transitionFactor >= 1.0f) {
+			normalAttackShot2_.transitionFactor = 1.0f;
+		}
 		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot2_.transitionFactor);
 		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot2_.transitionFactor);
 
@@ -2229,6 +2242,7 @@ void Enemy::NormalLongAttack2Update()
 #pragma endregion // 通常遠距離攻撃2
 
 #pragma endregion 通常攻撃
+
 
 void Enemy::InitializeParticleEmitter()
 {

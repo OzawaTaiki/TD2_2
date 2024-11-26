@@ -102,6 +102,8 @@ public: //ふるまい関係
 		uint32_t probabilityPhase2 = 50;
 		// 3フェーズ目の通常攻撃確率
 		uint32_t probabilityPhase3 = 10;
+
+		float distanceSwich = 20;
 	};
 	AttackMethod atMethod_;
 
@@ -288,6 +290,7 @@ public: //ふるまい関係
 	struct AssaultAttack {
 		// t補間用
 		float transitionFactor = 0;
+		float transitionFactorSpeed = 0.01f;
 		//腕が生えてから回転開始までの時間）
 		float armGrowthToSpinDelay = 0;
 		float MaxArmGrowthToSpinDelay = 30.0f;
