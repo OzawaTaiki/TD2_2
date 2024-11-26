@@ -1,0 +1,138 @@
+{
+    "DeathExplosionParticle": {
+        "acceleration_max": [
+            [
+                10.0,
+                10.0,
+                10.0
+            ]
+        ],
+        "acceleration_min": [
+            [
+                -10.0,
+                -10.0,
+                -10.0
+            ]
+        ],
+        "changeColor": [
+            0
+        ],
+        "changeSize": [
+            1
+        ],
+        "color_max": [
+            [
+                0.7401961088180542,
+                0.7401961088180542,
+                0.7401961088180542,
+                1.0
+            ]
+        ],
+        "color_min": [
+            [
+                0.779411792755127,
+                0.779411792755127,
+                0.779411792755127,
+                1.0
+            ]
+        ],
+        "countPerEmit": [
+            10
+        ],
+        "direction": [
+            2
+        ],
+        "direction_max": [
+            [
+                10.0,
+                10.0,
+                10.0
+            ]
+        ],
+        "direction_min": [
+            [
+                -10.0,
+                -10.0,
+                -10.0
+            ]
+        ],
+        "emitPerSec": [
+            1
+        ],
+        "emitRepeatCount": [
+            0
+        ],
+        "fadeAlpha": [
+            257
+        ],
+        "fadeStartRatio": [
+            0.0
+        ],
+        "lifeTime_max": [
+            2.0
+        ],
+        "lifeTime_min": [
+            2.0
+        ],
+        "loop": [
+            65793
+        ],
+        "maxParticles": [
+            0
+        ],
+        "offset": [
+            [
+                0.0,
+                4.0,
+                0.0
+            ]
+        ],
+        "radius": [
+            0.0
+        ],
+        "rotate_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "rotate_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "shape": [
+            0
+        ],
+        "size": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "size_max": [
+            [
+                3.0,
+                3.0,
+                3.0
+            ]
+        ],
+        "size_min": [
+            [
+                3.0,
+                3.0,
+                3.0
+            ]
+        ],
+        "spped_max": [
+            10.0
+        ],
+        "spped_min": [
+            10.0
+        ]
+    }
+}

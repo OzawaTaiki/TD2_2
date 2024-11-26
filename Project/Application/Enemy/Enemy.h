@@ -328,6 +328,13 @@ private: //状態
 	//怯み行動更新
 	void BehaviorFearUpdate();
 
+	//怯み行動初期化
+	void BehaviorDieInitialize();
+
+	//怯み行動更新
+	void BehaviorDieUpdate();
+
+
 #pragma region Attack
 
 	/// <summary>

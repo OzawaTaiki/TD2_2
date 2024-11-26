@@ -287,6 +287,7 @@ void Enemy::Update()
 			BehaviorAttackInitialize();
 			break;
 		case Behavior::kDie:
+			BehaviorDieInitialize();
 			//audio_->SoundStop(sound);
 			break;
 		}
@@ -308,8 +309,7 @@ void Enemy::Update()
 		BehaviorAttackUpdate();
 		break;
 	case Behavior::kDie:
-		deashParticle_->Update(true);
-		deashExplosionParticle_->Update(true);
+		BehaviorDieUpdate();
 		break;
 	}
 
@@ -584,6 +584,8 @@ void Enemy::Draw(const Camera& camera)
 		break;
 	case Behavior::kDie:
 		deashParticle_->Draw();
+		
+		deashExplosionParticle_->Draw();
 		break;
 	case Behavior::kAttack:
 
@@ -1194,6 +1196,22 @@ void Enemy::BehaviorFearUpdate()
 }
 
 #pragma endregion // 怯み行動
+
+#pragma region Die
+
+void Enemy::BehaviorDieInitialize()
+{
+
+}
+
+void Enemy::BehaviorDieUpdate()
+{
+	deashParticle_->Update(true);
+	
+	deashExplosionParticle_->Update(true);
+}
+
+#pragma endregion // 死亡
 
 #pragma endregion // 大まかな状態
 
