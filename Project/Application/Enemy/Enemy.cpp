@@ -168,6 +168,9 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
 	configManager->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
 	configManager->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
+	configManager->SetVariable("attack3", "Cooldown", &attack3_.MaxAttackCooldown);
+
+	configManager->SetVariable("attack3", "ElectricCount", &attack3_.numElectricCount);
 
 	// 攻撃4
 	configManager->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
@@ -468,6 +471,10 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxYTime", &attack3_.MaxYTime, 0.01f);
 			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 1.0f);
 			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
+			ImGui::DragFloat("AttackCooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			int ii = int(attack3_.numElectricCount);
+			ImGui::DragInt("numElectricCount", &ii, 1.0f);
+			attack3_.numElectricCount = uint32_t(ii);
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
