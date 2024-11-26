@@ -36,7 +36,7 @@ private:
 
     struct Type
     {
-        std::variant<uint32_t*, float*, Vector2*, Vector3*, Vector4*> variable;
+        std::variant<uint32_t*, float*, Vector2*, Vector3*, Vector4*,std::string*> variable;
     };
 
     std::unordered_map<std::string, std::unordered_map<std::string, Type>> data_;
@@ -82,6 +82,12 @@ inline void ConfigManager::SetVariable(const std::string& _groupName, const std:
             {
                 *_variablePtr = *std::get<Vector4*>(data_[_groupName][_variableName].variable);
                 delete std::get<Vector4*>(data_[_groupName][_variableName].variable);
+                data_[_groupName][_variableName].variable = _variablePtr;
+            }
+            else if constexpr (std::is_same<T, std::string>::value)
+            {
+                *_variablePtr = *std::get<std::string*>(data_[_groupName][_variableName].variable);
+                delete std::get<std::string*>(data_[_groupName][_variableName].variable);
                 data_[_groupName][_variableName].variable = _variablePtr;
             }
         }

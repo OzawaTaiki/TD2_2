@@ -11,9 +11,14 @@
 #include "ParticleManager.h"
 #include "RandomGenerator.h"
 #include "ConfigManager.h"
+
+/*-----シーン-----*/
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include <random>
+#include "Application/Scene/GameClearScene.h"
+#include "Application/Scene/GameOverScene.h"
+/*---------------*/
+
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -36,6 +41,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	particle->Initialize();
 
 	ConfigManager::GetInstance()->Initialize();
+	ConfigManager::GetInstance()->LoadData();
 
 	TextureManager::GetInstance()->Initialize();
 	TextureManager::GetInstance()->Load("cube.jpg");
@@ -53,7 +59,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	SceneManager::RegisterScene("title", TitleScene::Create);
 	SceneManager::RegisterScene("game", GameScene::Create);
-	SceneManager::GetInstance()->Initialize("game");
+    SceneManager::RegisterScene("gameclear", GameClearScene::Create);
+    SceneManager::RegisterScene("gameover", GameOverScene::Create);
+	SceneManager::GetInstance()->Initialize("title");
 
 	///
 	/// メインループ

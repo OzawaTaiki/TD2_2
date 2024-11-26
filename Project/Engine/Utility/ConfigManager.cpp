@@ -145,6 +145,12 @@ void ConfigManager::SaveData(const std::string& _groupName)
             Vector4* ptr = std::get<Vector4*>(value.variable);
             json_->SetData(_groupName, variableName, *ptr);
         }
+        else if (value.variable.index() == 5)
+        {
+            // std::string
+            std::string* ptr = std::get<std::string*>(value.variable);
+            json_->SetData(_groupName, variableName, *ptr);
+        }
     }
     json_->SaveJson(_groupName);
 
