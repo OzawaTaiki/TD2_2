@@ -218,25 +218,36 @@ public: //ふるまい関係
 
 		// カメラワーク時間
 		uint32_t cameraWorkTime;
-		uint32_t MaxCameraWorkTime = 30;
+		uint32_t MaxCameraWorkTime = 120;
 
 		// シェイク時間
 		uint32_t shakeTime;
-		uint32_t MaxShakeTime = 60;
+		uint32_t MaxShakeTime = 120;
+
+		Vector3 shakePos;
+
+		// 煙カウント
+		uint32_t smokeCount = 0;
+
+		// 煙タイム
+		uint32_t smokeTimer = 0;
+		uint32_t MaxSmokeTimer = 30;
+
+		uint32_t smokeFlag[5];
 
 		// 爆発フラグ
 		bool isExplosion = false;
 
+		bool enmey = true;
+
 		// クールタイム
 		uint32_t coolTime = 0;
-		uint32_t MaxCoolTime = 120;
+		uint32_t MaxCoolTime = 65;
 
 	};
-
+	Die die_;
 
 #pragma endregion // 死亡演出
-
-
 
 	FollowCamera* follow_;
 
@@ -511,6 +522,9 @@ private:
 	
 	std::unique_ptr<EnemyDeathParticle> deashParticle_;
 	std::unique_ptr<EnemyDeathParticle> deashExplosionParticle_;
+	
+	// 煙
+	std::array<std::unique_ptr<EnemyDeathParticle>,5> deashSmokeParticle_;
 
 	
     std::unique_ptr<Collider> bodyCollider_;

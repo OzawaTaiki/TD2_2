@@ -16,7 +16,6 @@ T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
-
 //easeInOutSine 関数
 float easeInOutSine(float t) {
 	return -(cosf(float(M_PI) * t) - 1) / 2;
@@ -38,7 +37,6 @@ float easyInOutElastic(float t) {
 		return (powf(2, -20 * t + 10) * sinf((20 * t - 11.125f) * c5)) / 2.0f + 1.0f;
 	}
 }
-
 
 // 最短角度での線形補間
 float ShortestAngleLerp(float start, float end, float factor) {
@@ -129,6 +127,16 @@ void Enemy::Initialize()
 	deashExplosionParticle_->Initialize("DeathExplosionParticle");
 	deashExplosionParticle_->SetPlayerMat(&worldTransform_);
 
+
+
+
+	for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+	{
+		deashSmokeParticle_[index] = std::make_unique<EnemyDeathParticle>();
+		std::string str = "enemySmoke" + std::to_string(index);
+		deashSmokeParticle_[index]->Initialize(str);
+		deashSmokeParticle_[index]->SetPlayerMat(&worldTransform_);
+	}
 
     ConfigManager* configManager = ConfigManager::GetInstance();
 
@@ -535,8 +543,9 @@ void Enemy::Update()
 	StageMovementRestrictions();
 
 	// エミッターの更新
-	UpdateParticleEmitter();
-
+	if (die_.enmey) {
+		UpdateParticleEmitter();
+	}
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
 	worldTransformLeft_.UpdateData();
@@ -558,8 +567,9 @@ void Enemy::Update()
 
 void Enemy::Draw(const Camera& camera)
 {
-	model_->Draw(worldTransformBody_, &camera, &color_);
-
+	if (die_.enmey) {
+		model_->Draw(worldTransformBody_, &camera, &color_);
+	}
 	for (const auto& bullet : bullets_) {
 		bullet->Draw(camera);
 	}
@@ -583,9 +593,16 @@ void Enemy::Draw(const Camera& camera)
 		}
 		break;
 	case Behavior::kDie:
-		deashParticle_->Draw();
+		//deashParticle_->Draw();
 		
 		deashExplosionParticle_->Draw();
+
+		if (die_.enmey) {
+			for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+			{
+				deashSmokeParticle_[index]->Draw();
+			}
+		}
 		break;
 	case Behavior::kAttack:
 
@@ -1201,14 +1218,76 @@ void Enemy::BehaviorFearUpdate()
 
 void Enemy::BehaviorDieInitialize()
 {
-
+	die_.coolTime = 0;
+	die_.shakeTime = 0;
+	die_.isExplosion = false;
+	die_.shakePos = worldTransform_.transform_;
+	for (int i = 0; i < 5; i++) {
+		die_.smokeFlag[i] = false;
+	}
 }
 
 void Enemy::BehaviorDieUpdate()
 {
-	deashParticle_->Update(true);
+
 	
-	deashExplosionParticle_->Update(true);
+
+	if (die_.coolTime >= die_.MaxCoolTime) {
+		
+		die_.isExplosion = false;
+		die_.enmey = false;
+	}
+
+	// カウントを5回まで
+	if (die_.smokeCount < 5) {
+		// 煙を続々出していく
+		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
+			
+			
+			die_.smokeFlag[die_.smokeCount] = true;
+
+			die_.smokeTimer = 0;
+			die_.smokeCount++;
+		}
+	}
+	else {
+		// シェイク
+		if (++die_.shakeTime <= die_.MaxShakeTime) {
+			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			worldTransform_.transform_ = die_.shakePos + shake;
+
+			
+		}
+		else {
+			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			worldTransform_.transform_ = die_.shakePos + shake;
+
+			if (die_.enmey) {
+				die_.isExplosion = true;
+			}
+		}
+	}
+	
+	if (die_.isExplosion) {
+		die_.coolTime++;
+		
+	}
+
+
+	
+	// 爆発パーティクル
+	deashExplosionParticle_->Update(die_.isExplosion);
+
+
+
+	// 煙パーティクル
+	if (die_.enmey) {
+		for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+		{
+			deashSmokeParticle_[index]->Update(die_.smokeFlag[index]);
+		}
+	}
+	
 }
 
 #pragma endregion // 死亡
