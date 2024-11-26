@@ -71,6 +71,7 @@ void FollowCamera::Initialize()
 
     ConfigManager::GetInstance()->SetVariable("followCamera", "offset", &offset_);
 	ConfigManager::GetInstance()->SetVariable("followCamera", "rotate", &camera_.rotate_);
+	ConfigManager::GetInstance()->SetVariable("followCamera", "attackTranslate_", &attackTranslate_);
 
 	startPos = camera_.translate_;
 	startRot = camera_.rotate_;
@@ -95,6 +96,7 @@ void FollowCamera::Update()
 		{
 			ImGui::DragFloat3("offset", &offset_.x, 0.01f);
 			ImGui::DragFloat3("rotate", &camera_.rotate_.x, 0.01f);
+			ImGui::DragFloat3("attackTranslate", &attackTranslate_.x, 0.1f);
 
 			camera_.ShakeParametaerSettingFromImGui();
 

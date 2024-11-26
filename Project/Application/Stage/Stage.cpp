@@ -3,11 +3,19 @@
 
 void Stage::Initialize()
 {
+	worldSkyBox.Initialize();
+	worldSkyBox.transform_ = { 0,0,0 };
+	worldSkyBox.scale_ = { 3,3,3 };
+
+	colorSky_.Initialize();
+	colorSky_.SetColor(Vector4(0.77f, 0.77f, 0.77f, 1.0f));
+
+	modelSkyBox_ = Model::CreateFromObj("SkyBox/SkyBox.obj");
 	// 床
 	worldFloor_.Initialize();
 	worldFloor_.transform_ = Vector3{ 0,-3.0f,0 };
 	worldFloor_.rotate_.y = { 1.57f };
-
+	worldFloor_.scale_ = { 0.55f,0.55f,0.55f };
 	// 床モデル
 	modelFloor_ = Model::CreateFromObj("Tile/Tile.gltf");
 
@@ -75,6 +83,7 @@ void Stage::Update()
 	}
 #endif // _DEBUG
 
+	worldSkyBox.UpdateData();
 
 	worldWallFlont.UpdateData();
 
@@ -104,4 +113,6 @@ void Stage::Draw(const Camera& camera)
 	modelWallFlont_->Draw(worldWallBack, &camera, &color_);
 	modelWallFlont_->Draw(worldWallLeft, &camera, &color_);
 	modelWallFlont_->Draw(worldWallRight, &camera, &color_);
+
+	modelSkyBox_->Draw(worldSkyBox, &camera, &colorSky_);
 }

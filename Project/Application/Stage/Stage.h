@@ -60,9 +60,11 @@ private:
 	Model* modelWallRight_ = nullptr;
 	Model* modelWallLeft_ = nullptr;
 	Model* modelWallBack_ = nullptr;
+	Model* modelSkyBox_ = nullptr;
 
 	// モデルカラー
 	ObjectColor color_;
+	ObjectColor colorSky_;
 
 	// 床
 	WorldTransform worldFloor_;
@@ -73,6 +75,9 @@ private:
 	WorldTransform worldWallRight;
 	WorldTransform worldWallLeft;
 	WorldTransform worldWallBack;
+
+	// 天球
+	WorldTransform worldSkyBox;
 
 	Enemy* enemy_;
 };
