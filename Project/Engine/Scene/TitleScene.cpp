@@ -35,7 +35,7 @@ void TitleScene::Initialize()
 
     uint32_t handle = TextureManager::GetInstance()->Load(backGroundTexturePath_);
 
-    backGround_ = Sprite::Create(0, { 0,0 });
+    backGround_ = Sprite::Create(handle, { 0,0 });
     backGround_->Initialize();
     backGround_->SetSize({ 1280,720 });
 
