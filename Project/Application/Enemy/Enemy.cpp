@@ -203,6 +203,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "distanceSwich", &atMethod_.distanceSwich);
 
 
 	// hitcolorの設定
@@ -429,6 +430,7 @@ void Enemy::Update()
 			int phase3 = atMethod_.probabilityPhase3;
 			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
 			atMethod_.probabilityPhase3 = phase3;
+			ImGui::DragFloat("distanceSwich", &atMethod_.distanceSwich, 0.1f);
 			ImGui::EndTabItem();
 		}
 
@@ -934,7 +936,7 @@ void Enemy::BehaviorAttackInitialize()
 		else {// 通常攻撃より低い値が出たら
 
 
-			if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
+			if (atMethod_.distanceSwich >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
 				atMethod_.randAttack = rand() % 2 + 1;
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kNormalShort1;
@@ -2123,6 +2125,7 @@ void Enemy::NormalLongAttack2Update()
 #pragma endregion // 通常遠距離攻撃2
 
 #pragma endregion 通常攻撃
+
 
 void Enemy::InitializeParticleEmitter()
 {

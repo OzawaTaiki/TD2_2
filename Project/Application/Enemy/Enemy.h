@@ -99,6 +99,8 @@ public: //ふるまい関係
 		uint32_t probabilityPhase2 = 50;
 		// 3フェーズ目の通常攻撃確率
 		uint32_t probabilityPhase3 = 10;
+
+		float distanceSwich = 20;
 	};
 	AttackMethod atMethod_;
 
