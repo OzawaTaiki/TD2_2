@@ -219,7 +219,18 @@ void Enemy::Initialize()
 	rootMove_.transitionFactor = 0;
 	rootMove_.numMovePhase = 0;
 	rootMove_.coolTime = 0;
-
+	if (rootMove_.targetPos.x >= 0) {
+		rootMove_.targetPos.x += rootMove_.MinMove;
+	}
+	else {
+		rootMove_.targetPos.x -= rootMove_.MinMove;
+	}
+	if (rootMove_.targetPos.z >= 0) {
+		rootMove_.targetPos.z += rootMove_.MinMove;
+	}
+	else {
+		rootMove_.targetPos.z -= rootMove_.MinMove;
+	}
 
 	// 対象から対象へのベクトル
 	Vector3 sub = Subtract(rootMove_.targetPos, rootMove_.startPos);
@@ -673,6 +684,19 @@ void Enemy::BehaviorRootInitialize()
 	rootMove_.startPos = worldTransform_.transform_;
 	rootMove_.targetPos.x = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
 	rootMove_.targetPos.z = float(rand() % rootMove_.MaxMove - ((rootMove_.MaxMove / 2)));
+	if (rootMove_.targetPos.x >= 0) {
+		rootMove_.targetPos.x += rootMove_.MinMove;
+	}
+	else {
+		rootMove_.targetPos.x -= rootMove_.MinMove;
+	}
+	if (rootMove_.targetPos.z >= 0) {
+		rootMove_.targetPos.z += rootMove_.MinMove;
+	}
+	else {
+		rootMove_.targetPos.z -= rootMove_.MinMove;
+	}
+
 	rootMove_.targetPos.y = worldTransform_.transform_.y;
 	rootMove_.transitionFactor = 0;
 	rootMove_.numMovePhase = 0;
@@ -1774,8 +1798,6 @@ void Enemy::SpecialAttack4Update()
 #endif // _DEBUG
 
 }
-
-
 
 #pragma endregion // 攻撃4
 

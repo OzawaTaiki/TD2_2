@@ -157,9 +157,11 @@ public: //ふるまい関係
 		float MaxCoolTime = 30;
 		//  動き終わった後の止まる時間をランダムで不規則にするための(変数)
 		float MaxRandCoolTime = 30;
+		// 最小値
+		float MinMove = 10;
 
 		// 移動距離
-		int MaxMove = 40;
+		int MaxMove = 30;
 
 
 		// 状態遷移許可用
@@ -208,7 +210,6 @@ public: //ふるまい関係
 
 
 	FollowCamera* follow_;
-
 
 	// 攻撃4
 	struct SpinAttack {
@@ -354,8 +355,6 @@ private: //状態
 
 #pragma endregion // 攻撃行動関係
 
-
-
 	// エミッターの初期化
 	void InitializeParticleEmitter();
 
@@ -496,7 +495,6 @@ private:
 
 	// hp
 
-	//uint32_t Hp_uint = 0;
 	int hp = 100;
 	uint32_t MaxHp = 100;
 	// 生死フラグ
