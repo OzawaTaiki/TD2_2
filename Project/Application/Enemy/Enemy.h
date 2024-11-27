@@ -14,6 +14,7 @@
 #include "../Collider/Collider.h"
 #include <MatrixFunction.h>
 #include "VectorFunction.h"
+#include "Audio.h"
 
 // application
 #include "EnemyBullet.h"
@@ -21,6 +22,7 @@
 #include "EnemyThunder.h"
 
 #include "ParticleEmitters.h"
+#include "EnemyDeathParticle.h"
 
 //
 #include <list>
@@ -40,6 +42,7 @@ public: //ふるまい関係
 		kRoot,		// 通常状態
 		kFear,      // 怯み状態
 		kAttack,	// 攻撃選択
+		kDie,       // 死亡状態
 	};
 
 	//振るまい
@@ -99,6 +102,8 @@ public: //ふるまい関係
 		uint32_t probabilityPhase2 = 50;
 		// 3フェーズ目の通常攻撃確率
 		uint32_t probabilityPhase3 = 10;
+
+		float distanceSwich = 20;
 	};
 	AttackMethod atMethod_;
 
@@ -171,7 +176,6 @@ public: //ふるまい関係
 
 #pragma endregion // 通常行動関係
 
-
 #pragma region fear
 
 	// 怯み位置
@@ -209,6 +213,44 @@ public: //ふるまい関係
 #pragma endregion // 怯み関係
 
 
+#pragma region Die
+
+	struct Die {
+		bool isFlag = false;
+
+		// カメラワーク時間
+		uint32_t cameraWorkTime;
+		uint32_t MaxCameraWorkTime = 120;
+
+		// シェイク時間
+		uint32_t shakeTime;
+		uint32_t MaxShakeTime = 120;
+
+		Vector3 shakePos;
+
+		// 煙カウント
+		uint32_t smokeCount = 0;
+
+		// 煙タイム
+		uint32_t smokeTimer = 0;
+		uint32_t MaxSmokeTimer = 30;
+
+		uint32_t smokeFlag[5];
+
+		// 爆発フラグ
+		bool isExplosion = false;
+
+		bool enmey = true;
+
+		// クールタイム
+		uint32_t coolTime = 0;
+		uint32_t MaxCoolTime = 65;
+
+	};
+	Die die_;
+
+#pragma endregion // 死亡演出
+
 	FollowCamera* follow_;
 
 	// 攻撃4
@@ -232,8 +274,8 @@ public: //ふるまい関係
 		float spinTime = 0;
 		float MaxSpinTime = 120.0f;
 		// 動きが止まるまでの時間
-		float stoppingTime = 0;
-		float MaxStoppingTime = 20;
+		//float stoppingTime = 0;
+		//float MaxStoppingTime = 20;
 
 		// 動きが止まってから回復する（浮く）までの時間
 		float cooldownTime = 60;
@@ -299,6 +341,13 @@ private: //状態
 
 	//怯み行動更新
 	void BehaviorFearUpdate();
+
+	//死亡行動初期化
+	void BehaviorDieInitialize();
+
+	//死亡行動更新
+	void BehaviorDieUpdate();
+
 
 #pragma region Attack
 
@@ -472,9 +521,15 @@ private:
 
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
+	// 死亡演出
+	
+	std::unique_ptr<EnemyDeathParticle> deashParticle_;
+	std::unique_ptr<EnemyDeathParticle> deashExplosionParticle_;
+	
+	// 煙
+	std::array<std::unique_ptr<EnemyDeathParticle>,5> deashSmokeParticle_;
 
-	//Camera attackCamera2_;
-
+	
     std::unique_ptr<Collider> bodyCollider_;
     std::unique_ptr<Collider> leftArmCollider_;
     std::unique_ptr<Collider> rightArmCollider_;
@@ -527,6 +582,10 @@ private:
     bool isCoolTime_ = false;
     float damageCoolTimer_ = 0;
     float damageCoolMaxTime_ = 2;
+
+	std::unique_ptr<Audio> audio_;
+
+	uint32_t sound = 0;
 
 };
 

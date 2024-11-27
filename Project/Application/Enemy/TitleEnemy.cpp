@@ -5,7 +5,7 @@
 void TitleEnemy::Initialize()
 {
     model_ = std::make_unique<ObjectModel>();
-    model_->Initialize("boss/boss.obj");
+    model_->Initialize("bossTitle/bossTitle.obj");
 
     ConfigManager::GetInstance()->SetVariable("Title", "ebasePos_", &basePos_);
     ConfigManager::GetInstance()->SetVariable("Title", "escale", &model_->scale_);

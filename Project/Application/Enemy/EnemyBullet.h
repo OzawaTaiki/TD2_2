@@ -45,7 +45,7 @@ public:
 		// 弾のスピード
 		float speed = 0.3f;
 		// 球の個数
-		int numElectricCount = 16;
+		uint32_t numElectricCount = 16;
 		// 1フェーズでの回数
 		int numShotsPerPhase = 0;
 		int MaxNumShotsPerPhase = 3;

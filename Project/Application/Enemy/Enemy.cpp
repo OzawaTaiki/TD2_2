@@ -16,7 +16,6 @@ T Lerp(const T& a, const T& b, float t) {
 	return a * (1.0f - t) + b * t;
 }
 
-
 //easeInOutSine 関数
 float easeInOutSine(float t) {
 	return -(cosf(float(M_PI) * t) - 1) / 2;
@@ -38,7 +37,6 @@ float easyInOutElastic(float t) {
 		return (powf(2, -20 * t + 10) * sinf((20 * t - 11.125f) * c5)) / 2.0f + 1.0f;
 	}
 }
-
 
 // 最短角度での線形補間
 float ShortestAngleLerp(float start, float end, float factor) {
@@ -121,17 +119,32 @@ void Enemy::Initialize()
     rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
+	deashParticle_ = std::make_unique<EnemyDeathParticle>();
+	deashParticle_->Initialize("DeathParticle");
+	deashParticle_->SetPlayerMat(&worldTransform_);
+
+	deashExplosionParticle_ = std::make_unique<EnemyDeathParticle>();
+	deashExplosionParticle_->Initialize("DeathExplosionParticle");
+	deashExplosionParticle_->SetPlayerMat(&worldTransform_);
+
+
+
+
+	for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+	{
+		deashSmokeParticle_[index] = std::make_unique<EnemyDeathParticle>();
+		std::string str = "enemySmoke" + std::to_string(index);
+		deashSmokeParticle_[index]->Initialize(str);
+		deashSmokeParticle_[index]->SetPlayerMat(&worldTransform_);
+	}
+
     ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
-	//configManager->SetVariable("enemy", "transform", &worldTransform_.transform_);
-	
-	
 	
 	configManager->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
 	configManager->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
 	configManager->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
-	//configManager->SetVariable("root", "MaxMove", &rootMove_.MaxMove);
 	// 通常行動
 
 
@@ -168,6 +181,9 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack3", "MinYTime", &attack3_.MinYTime);
 	configManager->SetVariable("attack3", "MaxPosY", &attack3_.MaxPosY);
 	configManager->SetVariable("attack3", "MinPosY", &attack3_.MinPosY);
+	configManager->SetVariable("attack3", "Cooldown", &attack3_.MaxAttackCooldown);
+
+	configManager->SetVariable("attack3", "ElectricCount", &attack3_.numElectricCount);
 
 	// 攻撃4
 	configManager->SetVariable("attack4", "MaxRotateSpeed", &attack4_.MaxRotateSpeed);
@@ -175,7 +191,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
 	configManager->SetVariable("attack4", "speed", &attack4_.speed);
 	configManager->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
-	configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
+	//configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	configManager->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
 	// 通常近距離攻撃1
@@ -184,7 +200,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot1_", "SpinTime", &normalAttackShot1_.MaxSpinTime);
 	configManager->SetVariable("normalAttackShot1_", "speed", &normalAttackShot1_.speed);
 	configManager->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
-	configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
+	//configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
 	
 	// 通常近距離攻撃2
@@ -200,6 +216,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+	configManager->SetVariable("attack", "distanceSwich", &atMethod_.distanceSwich);
 
 
 	// hitcolorの設定
@@ -244,17 +261,20 @@ void Enemy::Initialize()
 	worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
 	worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
 
+	audio_ = std::make_unique<Audio>();
+	audio_->Initialize();
 
-
+	sound = audio_->SoundLoadWave("resources/Sounds/Alarm01.wav");
    
 	hp = MaxHp;
-	//MaxHp = Hp_uint;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
 void Enemy::Update()
 {
 	
+	
+
 	if (behaviorRequest_) {
 		// ふるまいを変更する
 		behavior_ = behaviorRequest_.value();
@@ -263,6 +283,8 @@ void Enemy::Update()
 		case Behavior::kRoot:
 			BehaviorRootInitialize();
 
+			// 音入れ
+			//audio_->SoundPlay(sound, 0.2f,false);
 
 			if (attackBehaviorOld_ == AttackBehavior::kSpecial) {
 				if (specialAttackBehaviorOld_ == SpecialAttack::kAttack2) {
@@ -276,6 +298,10 @@ void Enemy::Update()
 			break;
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
+			break;
+		case Behavior::kDie:
+			BehaviorDieInitialize();
+			//audio_->SoundStop(sound);
 			break;
 		}
 		// ふるまいリクエストリセット
@@ -294,6 +320,9 @@ void Enemy::Update()
 		break;
 	case Behavior::kAttack: // 攻撃行動更新
 		BehaviorAttackUpdate();
+		break;
+	case Behavior::kDie:
+		BehaviorDieUpdate();
 		break;
 	}
 
@@ -322,6 +351,10 @@ void Enemy::Update()
 			if (ImGui::Button("Fear")) {
 				behaviorTimer_ = 0;
 				behaviorRequest_ = Behavior::kFear;
+			}
+			if (ImGui::Button("Death")) {
+				behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kDie;
 			}
 			if (ImGui::Button("SpecialAttack")) {
 				behaviorTimer_ = 0;
@@ -426,6 +459,7 @@ void Enemy::Update()
 			int phase3 = atMethod_.probabilityPhase3;
 			ImGui::DragInt("probabilityPhase3", &phase3, 1.0f);
 			atMethod_.probabilityPhase3 = phase3;
+			ImGui::DragFloat("distanceSwich", &atMethod_.distanceSwich, 0.1f);
 			ImGui::EndTabItem();
 		}
 
@@ -468,6 +502,10 @@ void Enemy::Update()
 			ImGui::DragFloat("MaxYTime", &attack3_.MaxYTime, 0.01f);
 			ImGui::DragInt("numShotsPerPhase", &attack3_.MaxNumShotsPerPhase, 1.0f);
 			ImGui::DragFloat("attackPower", &attack3_.attackPower, 0.01f);
+			ImGui::DragFloat("AttackCooldown", &attack3_.MaxAttackCooldown, 0.01f);
+			int ii = int(attack3_.numElectricCount);
+			ImGui::DragInt("numElectricCount", &ii, 1.0f);
+			attack3_.numElectricCount = uint32_t(ii);
 			ImGui::DragFloat("speed", &attack3_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -479,7 +517,7 @@ void Enemy::Update()
 			ImGui::DragFloat("SpinTime", &attack4_.MaxSpinTime, 0.01f);
 			ImGui::DragFloat("MaxRotateSpeed", &attack4_.MaxRotateSpeed, 0.01f);
 			ImGui::DragFloat("MinRotateSpeed", &attack4_.MinxRotateSpeed, 0.01f);
-			ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
+			//ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -491,7 +529,7 @@ void Enemy::Update()
 			ImGui::DragFloat("SpinTime", &normalAttackShot1_.MaxSpinTime, 0.01f);
 			ImGui::DragFloat("MaxRotateSpeed", &normalAttackShot1_.MaxRotateSpeed, 0.01f);
 			ImGui::DragFloat("MinRotateSpeed", &normalAttackShot1_.MinxRotateSpeed, 0.01f);
-			ImGui::DragFloat("StoppingTime", &normalAttackShot1_.MaxStoppingTime, 0.01f);
+			//ImGui::DragFloat("StoppingTime", &normalAttackShot1_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &normalAttackShot1_.speed, 0.01f);
 			ImGui::EndTabItem();
 		}
@@ -516,8 +554,9 @@ void Enemy::Update()
 	StageMovementRestrictions();
 
 	// エミッターの更新
-	UpdateParticleEmitter();
-
+	if (die_.enmey) {
+		UpdateParticleEmitter();
+	}
 	// ワールドトランスフォーム更新
 	worldTransform_.UpdateData();
 	worldTransformLeft_.UpdateData();
@@ -533,12 +572,15 @@ void Enemy::Update()
         bodyCollider_->RegsterCollider();
 	}
 
+	
+
 }
 
 void Enemy::Draw(const Camera& camera)
 {
-	model_->Draw(worldTransformBody_, &camera, &color_);
-
+	if (die_.enmey) {
+		model_->Draw(worldTransformBody_, &camera, &color_);
+	}
 	for (const auto& bullet : bullets_) {
 		bullet->Draw(camera);
 	}
@@ -560,7 +602,18 @@ void Enemy::Draw(const Camera& camera)
 		if (rootMove_.numMovePhase < rootMove_.MaxNumMovePhase) {
 			modelPrediction_->Draw(worldPrediction_, &camera, &colorPrediction_);
 		}
-	default:
+		break;
+	case Behavior::kDie:
+		//deashParticle_->Draw();
+		
+		deashExplosionParticle_->Draw();
+
+		if (die_.enmey) {
+			for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+			{
+				deashSmokeParticle_[index]->Draw();
+			}
+		}
 		break;
 	case Behavior::kAttack:
 
@@ -610,6 +663,8 @@ void Enemy::Draw(const Camera& camera)
 	for (uint32_t index = 0; index < particleEmitter_.size(); ++index)
 		particleEmitter_[index].Draw();
 
+
+	
 #ifdef _DEBUG
 	bodyCollider_->Draw();
 #endif // _DEBUG
@@ -927,7 +982,7 @@ void Enemy::BehaviorAttackInitialize()
 		else {// 通常攻撃より低い値が出たら
 
 
-			if (20 >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
+			if (atMethod_.distanceSwich >= DistanceXZ(worldTransform_.GetWorldPosition(), player_->GetWorldTransform().GetWorldPosition())) {
 				atMethod_.randAttack = rand() % 2 + 1;
 				if (atMethod_.randAttack == 1) {
 					allAttack_ = AllAttack::kNormalShort1;
@@ -950,9 +1005,6 @@ void Enemy::BehaviorAttackInitialize()
 	else {
 		allAttack_ = AllAttack::kNone;
 	}
-
-
-
 
 	switch (allAttack_)
 	{
@@ -991,10 +1043,6 @@ void Enemy::BehaviorAttackInitialize()
 	default:
 		break;
 	}
-
-
-
-
 
 	if (attackBehaviorRequest_) {
 		// ふるまいを変更する
@@ -1176,6 +1224,84 @@ void Enemy::BehaviorFearUpdate()
 }
 
 #pragma endregion // 怯み行動
+
+#pragma region Die
+
+void Enemy::BehaviorDieInitialize()
+{
+	die_.coolTime = 0;
+	die_.shakeTime = 0;
+	die_.isExplosion = false;
+	die_.shakePos = worldTransform_.transform_;
+	for (int i = 0; i < 5; i++) {
+		die_.smokeFlag[i] = false;
+	}
+}
+
+void Enemy::BehaviorDieUpdate()
+{
+
+	
+
+	if (die_.coolTime >= die_.MaxCoolTime) {
+		
+		die_.isExplosion = false;
+		die_.enmey = false;
+	}
+
+	// カウントを5回まで
+	if (die_.smokeCount < 5) {
+		// 煙を続々出していく
+		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
+			
+			
+			die_.smokeFlag[die_.smokeCount] = true;
+
+			die_.smokeTimer = 0;
+			die_.smokeCount++;
+		}
+	}
+	else {
+		// シェイク
+		if (++die_.shakeTime <= die_.MaxShakeTime) {
+			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			worldTransform_.transform_ = die_.shakePos + shake;
+
+			
+		}
+		else {
+			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			worldTransform_.transform_ = die_.shakePos + shake;
+
+			if (die_.enmey) {
+				die_.isExplosion = true;
+			}
+		}
+	}
+	
+	if (die_.isExplosion) {
+		die_.coolTime++;
+		
+	}
+
+
+	
+	// 爆発パーティクル
+	deashExplosionParticle_->Update(die_.isExplosion);
+
+
+
+	// 煙パーティクル
+	if (die_.enmey) {
+		for (uint32_t index = 0; index < deashSmokeParticle_.size(); ++index)
+		{
+			deashSmokeParticle_[index]->Update(die_.smokeFlag[index]);
+		}
+	}
+	
+}
+
+#pragma endregion // 死亡
 
 #pragma endregion // 大まかな状態
 
@@ -1726,7 +1852,7 @@ void Enemy::SpecialAttack4Initialize()
 	worldTransformRight_.transform_ = { 0,0,0 };
 	attack4_.spinTime = 0;
 	attack4_.armGrowthToSpinDelay = 0;
-	attack4_.stoppingTime = 0;
+	//attack4_.stoppingTime = 0;
 	attack4_.recoilTime = 0;
 }
 
@@ -1817,7 +1943,7 @@ void Enemy::NormalShotAttack1Initialize()
 	worldTransformRight_.transform_ = { 0,0,0 };
 	normalAttackShot1_.spinTime = 0;
 	normalAttackShot1_.armGrowthToSpinDelay = 0;
-	normalAttackShot1_.stoppingTime = 0;
+	//normalAttackShot1_.stoppingTime = 0;
 	normalAttackShot1_.recoilTime = 0;
 }
 
@@ -2116,6 +2242,7 @@ void Enemy::NormalLongAttack2Update()
 #pragma endregion // 通常遠距離攻撃2
 
 #pragma endregion 通常攻撃
+
 
 void Enemy::InitializeParticleEmitter()
 {

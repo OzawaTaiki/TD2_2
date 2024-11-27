@@ -1,0 +1,138 @@
+{
+    "playerSmoke1": {
+        "acceleration_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "acceleration_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "changeColor": [
+            0
+        ],
+        "changeSize": [
+            0
+        ],
+        "color_max": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "color_min": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "countPerEmit": [
+            10
+        ],
+        "direction": [
+            2
+        ],
+        "direction_max": [
+            [
+                10.0,
+                10.0,
+                0.0
+            ]
+        ],
+        "direction_min": [
+            [
+                10.0,
+                10.0,
+                0.0
+            ]
+        ],
+        "emitPerSec": [
+            10
+        ],
+        "emitRepeatCount": [
+            0
+        ],
+        "fadeAlpha": [
+            1
+        ],
+        "fadeStartRatio": [
+            0.0
+        ],
+        "lifeTime_max": [
+            0.5
+        ],
+        "lifeTime_min": [
+            0.5
+        ],
+        "loop": [
+            257
+        ],
+        "maxParticles": [
+            0
+        ],
+        "offset": [
+            [
+                1.350000023841858,
+                2.7799999713897705,
+                0.0
+            ]
+        ],
+        "radius": [
+            0.0
+        ],
+        "rotate_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "rotate_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "shape": [
+            0
+        ],
+        "size": [
+            [
+                0.25,
+                0.25,
+                0.25
+            ]
+        ],
+        "size_max": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "size_min": [
+            [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ]
+        ],
+        "spped_max": [
+            10.0
+        ],
+        "spped_min": [
+            5.0
+        ]
+    }
+}

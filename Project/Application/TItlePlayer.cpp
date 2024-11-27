@@ -6,7 +6,7 @@
 void TItlePlayer::Initialize()
 {
     model_ = std::make_unique<ObjectModel>();
-    model_->Initialize("playerBody/playerbody.obj");
+    model_->Initialize("playerTitle/playerTitle.obj");
 
     ConfigManager::GetInstance()->SetVariable("Title", "pbasePos_", &basePos_);
     ConfigManager::GetInstance()->SetVariable("Title", "pscale", &model_->scale_);

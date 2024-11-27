@@ -115,37 +115,49 @@ void ConfigManager::SaveData(const std::string& _groupName)
         {
             // uint32_t
             uint32_t* ptr = std::get<uint32_t*>(value.address);
+            if (!ptr)
+                continue;
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 1)
         {
             // float
             float* ptr = std::get<float*>(value.address);
+            if (!ptr)
+                continue;
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 2)
         {
             // Vector2
             Vector2* ptr = std::get<Vector2*>(value.address);
+            if (!ptr)
+                continue;
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 3)
         {
             // Vector3
             Vector3* ptr = std::get<Vector3*>(value.address);
+            if (!ptr)
+                continue;
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 4)
         {
             // Vector4
             Vector4* ptr = std::get<Vector4*>(value.address);
+            if (!ptr)
+                continue;
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 5)
         {
-            // std::string
-            //std::string* ptr = std::get<std::string*>(value.address);
-            //json_->SetData(_groupName, variableName, *ptr);
+        //    // std::string
+        //    std::string* ptr = std::get<std::string*>(value.address);
+        //    if (ptr == nullptr || ptr->empty())
+        //        continue;
+        //    json_->SetData(_groupName, variableName, *ptr);
         }
     }
     json_->SaveJson(_groupName);
