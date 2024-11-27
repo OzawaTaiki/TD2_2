@@ -27,8 +27,6 @@ void TitleUI::Initialize()
     config->SetVariable("Title", "titleRotate", &title_->rotate_);
 
 
-
-
     uint32_t handle = TextureManager::GetInstance()->Load(textTextureParh_);
     pressAnyKey_->SetTextureHandle(handle);
 
@@ -38,6 +36,7 @@ void TitleUI::Initialize()
 void TitleUI::Update()
 {
     title_->Update();
+    TextUpdate();
 
 #ifdef _DEBUG
 
@@ -89,4 +88,40 @@ void TitleUI::Save()
 {
     title_->SetModel(titleModelpath_);
     pressAnyKey_->SetTextureHandle(TextureManager::GetInstance()->Load(textTextureParh_));
+}
+
+void TitleUI::TextUpdate()
+{
+    currentTime_ += 1.0f / 60.0f;
+    if (currentTime_ >= cycle_)
+    {
+        currentTime_ = 0.0f;
+    }
+    float t = currentTime_ / cycle_;
+
+    float n1 = 7.5625f;
+    float d1 = 2.75f;
+
+    float easedT = 0.0f;
+    if (t < 1.0f / d1) {
+        easedT= n1 * t * t;
+    }
+    else if (t < 2 / d1) {
+        easedT = n1 * (t -= 1.5f / d1) * t + 0.8f;
+    }
+    else if (t < 2.5 / d1) {
+        easedT = n1 * (t -= 2.25f / d1) * t + 0.9375f;
+    }
+    else {
+        easedT = n1 * (t -= 2.625f / d1) * t + 0.984375f;
+    }
+
+    if (easedT < threshold_)
+    {
+        pressTextColor_.w = 0;
+    }
+    else
+    {
+        pressTextColor_.w = 1;
+    }
 }
