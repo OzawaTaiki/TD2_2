@@ -60,4 +60,9 @@ private:
     // UI
     std::unique_ptr<GameSceneUI> ui_;
 
+    // 敵撃破からフェードを始めるまでの時間
+    float fadeStartDelay_ = 3.0f;
+
+    float timer_ = 0.0f;
+
 };
