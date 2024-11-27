@@ -53,7 +53,8 @@ void TitleScene::Update()
 
     camera_.UpdateMatrix();
 
-    if (Input::GetInstance()->IsKeyTriggered(DIK_SPACE))
+    if (Input::GetInstance()->IsKeyTriggered(DIK_SPACE) ||
+        Input::GetInstance()->IsPadTriggered(PadButton::iPad_A))
     {
         SceneManager::ReserveScene("game");
     }
