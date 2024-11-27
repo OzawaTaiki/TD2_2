@@ -118,7 +118,7 @@ void Player::Initialize()
 	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("player");
-	collider_->SetMask({ "player","weapon" });
+	collider_->SetMask({ "player","weapon"});
 	collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
@@ -278,7 +278,9 @@ void Player::OnCollision(const Collider* _other)
 	if (_other->GetName() == ("enemy")) {
 		if (collider_->IsCollisionEnter()) {
 			if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
-				hp--;
+				if (behavior_ != Behavior::kAttack) {
+					hp--;
+				}
 			}
 		}
 	}

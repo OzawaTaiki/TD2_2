@@ -692,6 +692,10 @@ void Enemy::OnCollision([[maybe_unused]] const Collider* _other)
 			hp  -= player_->GetDamege();
             if (hp <= 0)
             {
+				if (isAlive) {
+					behaviorRequest_ = Behavior::kDie;
+				}
+
                 isAlive = false;
             }
 		}
