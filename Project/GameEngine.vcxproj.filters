@@ -362,7 +362,6 @@
     </ClCompile>
     <ClCompile Include="Application\TItleUI.cpp">
       <Filter>Application</Filter>
-
     </ClCompile>
     <ClCompile Include="Application\ResultPlayer.cpp">
       <Filter>Application\Player</Filter>
@@ -372,6 +371,9 @@
     </ClCompile>
     <ClCompile Include="Application\Enemy\ResultEnemy.cpp">
       <Filter>Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameSceneUI.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -654,6 +656,9 @@
     </ClInclude>
     <ClInclude Include="Application\Enemy\ResultEnemy.h">
       <Filter>Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameSceneUI.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -72,20 +72,26 @@ void GameScene::Initialize()
     stage_->SetEnemy(enemy_.get());
 
     player_->SetEnemy(enemy_.get());
+
+    ParticleManager::GetInstance()->Initialize();
+
+    // ui
+    ui_ = std::make_unique<GameSceneUI>();
+    ui_->Initialize();
+
 }
 
 void GameScene::Update()
 {
 #ifdef _DEBUG
-#endif // _DEBUG
-
-    //input_->Update();
-    CollisionManager::GetInstance()->ResetColliderList();
-
     if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
     {
         activeDebugCamera_ = !activeDebugCamera_;
     }
+#endif // _DEBUG
+
+    CollisionManager::GetInstance()->ResetColliderList();
+
 
     //<-----------------------
     camera_->Update(0);
@@ -129,6 +135,8 @@ void GameScene::Update()
     followCamera_->Update();
     ParticleManager::GetInstance()->Update(camera_.get());
     CollisionManager::GetInstance()->CheckAllCollision();
+
+    ui_->Update(player_->GetHPRatio(), enemy_->GetHPRatio());
     //<-----------------------
 }
 
@@ -159,7 +167,7 @@ void GameScene::Draw()
     Sprite::PreDraw();
     //<------------------------
 
-
+    ui_->Draw();
 
     //<------------------------
     lineDrawer_->Draw();

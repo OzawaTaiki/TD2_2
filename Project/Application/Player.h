@@ -74,6 +74,8 @@ public :
 
 	const float& GetRotateY() { return worldTransform_.rotate_.y; };
 
+	float GetHPRatio()const { return (float)hp / (float)maxHp; }
+
 	void SetStage(Stage* stage) { stage_ = stage; }
 	const float& GetDamege() const { return damage_; }
 

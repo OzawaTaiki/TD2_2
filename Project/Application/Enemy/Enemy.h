@@ -308,7 +308,7 @@ public: //ふるまい関係
 		// 移動方向
 		Vector3 moveDirection{};
 
-		
+
 		// 動きが止まってから回復するまでの時間
 		float cooldownTime = 60;
 
@@ -451,9 +451,9 @@ public:
 
 	// 弾の初期化
 	void StageArmInitialize(int num);
-	
+
 	void StageArmInitialize(int num,int i);
-	
+
 	// 雷の初期化
 	void ThunderInitialize(Vector3 pos);
 	 // 衝突処理
@@ -476,6 +476,9 @@ public:
 	const AttackBehavior& GetattackBehavior() const { return attackBehavior_; };
 	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
 	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
+
+	float GetHPRatio()const { return (float)hp / (float)MaxHp; }
+
 
 	const float& GetDamege() const { return damage_; }
 private:
@@ -524,14 +527,14 @@ private:
 	std::array<ParticleEmitter, 3>particleEmitter_;
 
 	// 死亡演出
-	
+
 	std::unique_ptr<EnemyDeathParticle> deashParticle_;
 	std::unique_ptr<EnemyDeathParticle> deashExplosionParticle_;
-	
+
 	// 煙
 	std::array<std::unique_ptr<EnemyDeathParticle>,5> deashSmokeParticle_;
 
-	
+
     std::unique_ptr<Collider> bodyCollider_;
     std::unique_ptr<Collider> leftArmCollider_;
     std::unique_ptr<Collider> rightArmCollider_;
