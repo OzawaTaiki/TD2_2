@@ -1865,7 +1865,7 @@ void Enemy::SpecialAttack3Update() {
 
 			// 補間の進行度を更新
 			if (attack3_.transitionFactor < 1.0f) {
-				attack3_.transitionFactor += transitionSpeed * 10.0f;
+				attack3_.transitionFactor += transitionSpeed * 3.0f;
 
 
 			}
