@@ -77,9 +77,7 @@ void Weapon::OnCollision(const Collider* _other)
     }
 }
 
-void Weapon::StartSlashEffect()
+void Weapon::SetLight(LightGroup* _ptr)
 {
-    SlashUpdate_ = true;
-    isSlashEffect_ = true;
+    model_->SetLightGroup(_ptr);
 }
-

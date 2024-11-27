@@ -64,6 +64,7 @@ T easeOutBounce(const T& a, const T& b, float t) {
 
 void Player::Initialize()
 {
+#pragma region MyRegion
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = Vector3{ 0,0,0 };
 
@@ -118,11 +119,55 @@ void Player::Initialize()
 	collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	collider_->SetShape(model_->GetMin(), model_->GetMax());
 	collider_->SetAtrribute("player");
-	collider_->SetMask({ "player","weapon"});
+	collider_->SetMask({ "player","weapon" });
 	collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
 	hp = int(maxHp);
+#pragma endregion
+
+
+	
+
+	SoundInitialize();
+}
+void Player::SoundInitialize()
+{
+	//音
+	audio_ = std::make_unique<Audio>();
+	audio_->Initialize();
+	audio2_ = std::make_unique<Audio>();
+	audio2_->Initialize();
+
+	// 移動音
+	sounds_.playerMove.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerMove.wav");
+	//sounds_.playerMove.voiceHandle = audio_->IsPlaying(sounds_.playerMove.soundDataHandle);
+	sounds_.playerMove.volume = 0.2f;
+
+	// 被弾音
+	sounds_.playerDamage.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerDamage.wav");
+	//sounds_.playerDamage.voiceHandle = audio_->IsPlaying(sounds_.playerDamage.soundDataHandle);
+	sounds_.playerDamage.volume = 0.2f;
+
+	// 斬撃音
+	sounds_.playerAttack.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerAttack.wav");
+	//sounds_.playerDamage.voiceHandle = audio_->IsPlaying(sounds_.playerDamage.soundDataHandle);
+	sounds_.playerAttack.volume = 0.2f;
+
+	// 最後斬撃音
+	sounds_.playerAttackLast.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerAttackLast.wav");
+	sounds_.playerAttackLast.volume = 0.2f;
+
+
+
+	// 倒れる
+	sounds_.playerDieDown.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerDieDown.wav");
+	sounds_.playerDieDown.volume = 0.2f;
+
+	// 煙
+	sounds_.playerDieSmoke.soundDataHandle = audio2_->SoundLoadWave("resources/Sounds/playerDieSmoke.wav");
+	sounds_.playerDieSmoke.volume = 0.2f;
+
 }
 
 void Player::Update()
@@ -274,50 +319,67 @@ void Player::Draw(const Camera& camera)
 
 void Player::OnCollision(const Collider* _other)
 {
+	if (enemy_->GetBehavior() != Enemy::Behavior::kDie) {
+		if (_other->GetName() == ("enemy")) {
+			if (collider_->IsCollisionEnter()) {
+				if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
+					if (behavior_ != Behavior::kAttack) {
+						hp--;
+						audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
 
-	if (_other->GetName() == ("enemy")) {
-		if (collider_->IsCollisionEnter()) {
-			if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
-				if (behavior_ != Behavior::kAttack) {
-					hp--;
+					}
 				}
 			}
 		}
-	}
-	if (_other->GetName() == ("enemyBullet")) {
-		if (enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack3) {
-			hp -= enemy_->GetDamege();
+		if (_other->GetName() == ("enemyBullet")) {
+			if (enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack3) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
+			else if (collider_->IsCollisionEnter()) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
 		}
-		else if (collider_->IsCollisionEnter()) {
-			hp -= enemy_->GetDamege();
+		if (_other->GetName() == ("enemyStageArm")) {
+			if (collider_->IsCollisionEnter()) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
 		}
-	}
-	if (_other->GetName() == ("enemyStageArm")) {
-		if (collider_->IsCollisionEnter()) {
-			hp -= enemy_->GetDamege();
+		if (_other->GetName() == ("enemyThunder")) {
+			if (collider_->IsCollisionEnter()) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
 		}
-	}
-	if(_other->GetName() == ("enemyThunder")) {
-		if (collider_->IsCollisionEnter()) {
-			hp -= enemy_->GetDamege();
+		if (_other->GetName() == ("enemyRight")) {
+			if (collider_->IsCollisionEnter()) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
 		}
-	}
-	if(_other->GetName() == ("enemyRight")) {
-		if (collider_->IsCollisionEnter()) {
-			hp -= enemy_->GetDamege();
+		if (_other->GetName() == ("enemyLeft")) {
+			if (collider_->IsCollisionEnter()) {
+				hp -= enemy_->GetDamege();
+				audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+			}
 		}
-	}
-	if(_other->GetName() == ("enemyLeft")) {
-		if (collider_->IsCollisionEnter()) {
-			hp -= enemy_->GetDamege();
-		}
-	}
-	
-	if (isHitColor_)
-		return;
 
-	isHitColor_ = true;
-	color_.SetColor(hitColor_);
+		if (isHitColor_)
+			return;
+
+
+		isHitColor_ = true;
+		color_.SetColor(hitColor_);
+	}
+}
+
+void Player::SetLight(LightGroup* _ptr)
+{
+	model_->SetLightGroup(_ptr);
+	weapon_->SetLight(_ptr);
+
 }
 
 void Player::StageMovementRestrictions()
@@ -358,6 +420,8 @@ void Player::BehaviorRootUpdate()
 #pragma region Key
 
 
+
+
 	if (Input::GetInstance()->IsControllerConnected()) {
 
 
@@ -385,6 +449,17 @@ void Player::BehaviorRootUpdate()
 
 		// 移動
 		worldTransform_.transform_ = Add(worldTransform_.transform_, velocity_);
+
+		if (isMove_) {
+			audio_->SoundPlay(sounds_.playerMove.voiceHandle, sounds_.playerMove.volume, 0, 0);
+		}
+		else {
+			if (!isMove_) {
+				if (sounds_.playerMove.voiceHandle) {
+					audio_->SoundStop(sounds_.playerMove.voiceHandle);
+				}
+			}
+		}
 	}
 	else {
 
@@ -493,18 +568,26 @@ void Player::BehaviorRootUpdate()
 			worldTransform_.rotate_.y = targetRotationY;
 		}
 
+
+		
+		
+		if (isMove_) {
+			audio_->SoundPlay(sounds_.playerMove.voiceHandle, sounds_.playerMove.volume, 0, 0);
+		}
+		else {
+			if (!isMove_) {
+				if (sounds_.playerMove.voiceHandle) {
+					audio_->SoundStop(sounds_.playerMove.voiceHandle);
+				}
+			}
+		}
 	}
 
+	
+	
 #pragma endregion // キーボード
 
-	//#ifdef _DEBUG
-	//	ImGui::Begin("Play");
-	//	ImGui::InputFloat3("velo", &velocity_.x);
-	//	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
-	//	ImGui::Checkbox("isMove", &isMove_);
-	//	ImGui::End();
-	//#endif // _DEBUG
-
+	
 
 #pragma endregion
 
@@ -512,12 +595,12 @@ void Player::BehaviorRootUpdate()
 	if (pressedSPACE) {
 		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
-			weapon_->StartSlashEffect();
 		}
 	}
 	if (Input::GetInstance()->IsPadPressed(PadButton::iPad_A)) {
 		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
+			//audio_->SoundPlay(sounds_.playerAttack.soundDataHandle, sounds_.playerAttack.volume, 0, 1);
 		}
 	}
 }
@@ -546,6 +629,8 @@ void Player::BehaviorAttackUpdate()
 			// 攻撃ボタンをトリガーしたら
 				// コンボ有効
 			workAttack.comboNext = true;
+
+			
 		}
 	}
 
@@ -647,9 +732,8 @@ void Player::BehaviorDieInitialize()
 void Player::BehaviorDieUpdate()
 {
 	if (die_.coolTime >= die_.MaxCoolTime) {
-
-		die_.isExplosion = false;
-		//die_.player = false;
+		//die_.isExplosion = false;
+		die_.player = false;
 	}
 
 	// カウントを5回まで
@@ -657,6 +741,7 @@ void Player::BehaviorDieUpdate()
 		// 煙を続々出していく
 		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
 
+			audio2_->SoundPlay(sounds_.playerDieSmoke.soundDataHandle, sounds_.playerDieSmoke.volume, 0, 1);
 
 			die_.smokeFlag[die_.smokeCount] = true;
 
@@ -665,6 +750,8 @@ void Player::BehaviorDieUpdate()
 		}
 	}
 	else {
+
+
 		// シェイク
 		if (++die_.shakeTime <= die_.MaxShakeTime) {
 			Vector3 shake = Vector3(rand() % 3 - 2, rand() % 3 - 1, rand() % 3 - 1);
@@ -688,11 +775,15 @@ void Player::BehaviorDieUpdate()
 		die_.transitionFactor += die_.transitionFactorSpeed;
 		if (die_.transitionFactor >= 1.0f) {
 			die_.transitionFactor = 1.0f;
+
 		}
-
+		if (die_.transitionFactor <= 0.2f) {
+			if (die_.player) {
+				audio_->SoundPlay(sounds_.playerDieDown.soundDataHandle, sounds_.playerDieDown.volume, 0, 0);
+			}
+		}
 		die_.coolTime++;
-		//worldTransformBody_.rotate_.x += 0.01f;
-
+		
 		worldTransform_.rotate_.x = easeOutBounce(die_.strRotate.x, DegreesToRadians(90), die_.transitionFactor);
 	}
 
@@ -727,8 +818,17 @@ void Player::AttackParameter()
 
 void Player::SetAttackCombo(int parameter)
 {
+	if (workAttack.attackParameter_ == 0) {
+		if ((workAttack.comboIndex == 3)) {
+			audio_->SoundPlay(sounds_.playerAttackLast.soundDataHandle, sounds_.playerAttackLast.volume, 0, 1);
+		}
+		else {
+			audio_->SoundPlay(sounds_.playerAttack.soundDataHandle, sounds_.playerAttack.volume, 0, 1);
+		}
+	}
 	//  既定の時間経過で通常行動に戻る
 	if (++workAttack.attackParameter_ >= parameter) {
+		
 		// コンボ継続なら次のコンボに進む
 		if (workAttack.comboNext) {
 
@@ -737,8 +837,7 @@ void Player::SetAttackCombo(int parameter)
 			// 攻撃の色々な変数をリセットする
 			attackParameter = 0;
 			workAttack.attackParameter_ = 0;
-			if (!(workAttack.comboIndex == 0)) {
-			}
+			
 			//weapon_->ContactRecordClear();
 			// 各パーツの角度などを次のコンボ用に初期化
 
@@ -799,5 +898,7 @@ void Player::UpdateHitColor()
 		}
 	}
 }
+
+
 
 

@@ -27,14 +27,14 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = { 1, 5, 1 };
+	worldTransform2_.scale_ = { 1, 3, 1 };
 
-	model2_ = Model::CreateFromObj("PredictionBox/PredictionCylinder.obj");
+	model2_ = Model::CreateFromObj("thunder/thunder.obj");
 
 	color_.Initialize();
-	color_.SetColor(Vector4{ 1, 1, 1, 1 });
+	color_.SetColor(Vector4{ 1, 0, 0, 1 });
 	color2_.Initialize();
-	color2_.SetColor(Vector4{ 1, 0, 0, 1.0f });
+	color2_.SetColor(Vector4{ 1, 1, 1, 1.0f });
 
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = Velocity;
@@ -59,7 +59,7 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 }
 
-void EnemyThunder::Update()
+void EnemyThunder::Update(Audio* audio, Audio::Sound sound)
 {
 
 	if (++attackPreparationTime_ > attack_->MaxAttackPreparationTime) {
@@ -67,6 +67,9 @@ void EnemyThunder::Update()
 			//if (++thunderStrikeTime > attack_->MaxThunderStrikeTime) {
 		collider_->RegsterCollider();
 		if (attack_->transitionFactor >= 0.9f) {
+			if (attack_->transitionFactor <= 1.0f) {
+				audio->SoundPlay(sound.soundDataHandle, sound.volume, 0, 0);
+			}
 			expandTime_++;
 			worldTransform2_.scale_.x = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.x);
 			worldTransform2_.scale_.z = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.z);

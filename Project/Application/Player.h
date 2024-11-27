@@ -12,6 +12,7 @@
 #include "ConfigManager.h"
 #include "MyLib.h"
 #include "../Collider/Collider.h"
+#include "Audio.h"
 
 //Application
 #include "Weapon.h"
@@ -69,6 +70,8 @@ public :
 	void SetCamera(const Camera* camera) { camera_ = camera; };
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
+	void SetLight(LightGroup* _ptr);
+
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 	WorldTransform& GetWorldTransformBody() { return worldTransformBody_; };
 
@@ -116,7 +119,7 @@ private:
     // ヒットカラーの更新
     void UpdateHitColor();
 
-
+	void SoundInitialize();
 private:
 	Enemy* enemy_;
 
@@ -274,4 +277,27 @@ private:
 	Die die_;
 
 #pragma endregion // 死亡演出
+
+	std::unique_ptr<Audio> audio_;
+	std::unique_ptr<Audio> audio2_;
+
+	// 音
+	struct Sound {
+		uint32_t soundDataHandle;
+		uint32_t voiceHandle;
+		float volume;
+	};
+
+	struct Sounds {
+		Sound playerMove;
+		Sound playerDamage;
+		Sound playerAttack;
+		Sound playerAttackLast;
+
+		Sound playerDieSmoke;
+		Sound playerDieDown;
+
+	};
+	Sounds sounds_;
+
 };

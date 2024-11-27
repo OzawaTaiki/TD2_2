@@ -48,7 +48,7 @@ public:
 		uint32_t numElectricCount = 16;
 		// 1フェーズでの回数
 		int numShotsPerPhase = 0;
-		int MaxNumShotsPerPhase = 3;
+		int MaxNumShotsPerPhase = 4;
 		//次の攻撃までの時間
 		float attackCooldown = 0.0f;
 		float MaxAttackCooldown = 20.0f;

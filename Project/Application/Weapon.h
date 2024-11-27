@@ -28,8 +28,7 @@ public:
 	void RegisterCollider();
 	void OnCollision(const Collider* _other);
 
-    // 斬撃のエフェクトを開始
-    void StartSlashEffect();
+	void SetLight(LightGroup* _ptr);
 
 
 	// ゲッター、セッター

@@ -67,24 +67,24 @@
             ]
         ],
         "RetryisActive": [
-            256
+            257
         ],
         "RetryisVisible": [
-            1
+            1073741825
         ],
         "Retrylabel": [
             "Retry"
         ],
         "Retrypos": [
             [
-                333.0,
-                300.0
+                273.0,
+                526.0
             ]
         ],
         "Retrysize": [
             [
-                300.0,
-                100.0
+                1272.11279296875,
+                716.056396484375
             ]
         ],
         "RetrytextureName": [
@@ -100,21 +100,21 @@
             257
         ],
         "TitleisVisible": [
-            1
+            1056964609
         ],
         "Titlelabel": [
             "Title"
         ],
         "Titlepos": [
             [
-                986.0,
-                300.0
+                1050.0,
+                518.0
             ]
         ],
         "Titlesize": [
             [
-                307.2308654785156,
-                103.61543273925781
+                1262.25146484375,
+                711.125732421875
             ]
         ],
         "TitletextureName": [
@@ -133,24 +133,24 @@
             ]
         ],
         "continueisActive": [
-            257
+            256
         ],
         "continueisVisible": [
-            1
+            1040187393
         ],
         "continuelabel": [
             "continue"
         ],
         "continuepos": [
             [
-                333.0,
-                300.0
+                275.0,
+                518.0
             ]
         ],
         "continuesize": [
             [
-                295.703857421875,
-                97.8519287109375
+                1280.0,
+                720.0
             ]
         ],
         "continuetextureName": [

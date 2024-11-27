@@ -6,8 +6,10 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "Audio.h"
 
 #include "Collider.h"
+
 
 
 class EnemyStageArm
@@ -69,8 +71,9 @@ public:
 		int rrr;
 
 	};
-
-
+	std::unique_ptr<Audio> audio_;
+	
+	Audio::Sound bossArmStickOut;		//腕はえ
 public:
 	/// <summary>
 	/// 初期化
@@ -80,7 +83,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(Audio* audio, Audio::Sound sound);
 
 	/// <summary>
 	/// 描画

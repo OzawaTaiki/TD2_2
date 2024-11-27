@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "ObjectColor.h"
 #include "Collider.h"
+#include "Audio.h"
 
 class EnemyThunder
 {
@@ -63,7 +64,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(Audio* audio, Audio::Sound sound);
 
 	/// <summary>
 	/// 描画

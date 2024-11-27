@@ -18,6 +18,8 @@ public:
     void Update();
     void Draw(const Camera* _camera);
 
+    void SetLight(LightGroup* _ptr);
+
 private:
     void Scaling();
 
@@ -31,7 +33,7 @@ private:
 
     float scaleSpeed_ = 0.1f;
 
-    std::string modelName_ = "playerbody/playerbody.obj";
+    std::string modelName_ = "playerClear/playerClear.obj";
 
 
 
