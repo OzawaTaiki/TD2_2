@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include "ImGuiManager.h"
+#include <SceneManager.h>
 
 std::unique_ptr<BaseScene> GameScene::Create()
 {
@@ -138,6 +139,24 @@ void GameScene::Update()
 
     ui_->Update(player_->GetHPRatio(), enemy_->GetHPRatio());
     //<-----------------------
+
+    if (enemy_->isPostKillEffectFinished())
+    {
+        timer_ += 1.0f / 60.0f;
+        if (timer_ > fadeStartDelay_)
+        {
+            SceneManager::ReserveScene("gameclear");
+        }
+    }
+    else if (player_->IsPostDieEffectFinished())
+    {
+        timer_ += 1.0f / 60.0f;
+        if (timer_ > fadeStartDelay_)
+        {
+            SceneManager::ReserveScene("gameover");
+        }
+    }
+
 }
 
 void GameScene::Draw()

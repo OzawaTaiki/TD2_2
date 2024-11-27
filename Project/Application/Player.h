@@ -79,6 +79,8 @@ public :
 	void SetStage(Stage* stage) { stage_ = stage; }
 	const float& GetDamege() const { return damage_; }
 
+	bool IsPostDieEffectFinished() const { return die_.coolTime >= die_.MaxCoolTime; }
+
 	// 移動制限
 	void StageMovementRestrictions();
 

@@ -481,6 +481,9 @@ public:
 
 
 	const float& GetDamege() const { return damage_; }
+
+    bool isPostKillEffectFinished() const { return die_.coolTime >= die_.MaxCoolTime; }
+
 private:
 	// モデル
 	Model* model_ = nullptr;
