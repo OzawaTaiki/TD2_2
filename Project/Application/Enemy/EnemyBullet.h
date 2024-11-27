@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "Collider.h"
 
 
 class EnemyBullet
@@ -13,10 +14,21 @@ public:
 	// 攻撃3
 	struct Bullet {
 		//移動位置
-		Vector3 attackPos = { 0,10,0 };
-
+		
 		// 最高度
-		float MaxPosY;
+		float MaxPosY = 10;
+		// 最低位置
+		float MinPosY = 0;
+
+		// 最高高度にいる時間
+		float MaxYTime = 20;
+		float maxYTime = 0;
+
+		// 最低位置にいる時間
+		float MinYTime = 20;
+		float minYTime = 0;
+
+
 
 		// 上下移動切り替え
 		int clock1 = 1;
@@ -24,6 +36,8 @@ public:
 		bool isBulletShot = 0;
 		// t補間用
 		float transitionFactor = 0;
+		// プレイヤーのold位置
+		Vector3 oldTraget{};
 		// start
 
 
@@ -31,10 +45,10 @@ public:
 		// 弾のスピード
 		float speed = 0.3f;
 		// 球の個数
-		int numElectricCount = 16;
+		uint32_t numElectricCount = 16;
 		// 1フェーズでの回数
 		int numShotsPerPhase = 0;
-		int MaxNumShotsPerPhase = 3;
+		int MaxNumShotsPerPhase = 4;
 		//次の攻撃までの時間
 		float attackCooldown = 0.0f;
 		float MaxAttackCooldown = 20.0f;
@@ -62,6 +76,7 @@ public:
 
 	void SetParent(const WorldTransform* parent);
 
+    void Oncollision(const Collider* _other);
 	
 private:
 	// モデル
@@ -88,6 +103,8 @@ private:
 	// デスフラグ
 	bool isDead_ = false;
 
+	// コライダー
+    std::unique_ptr<Collider> collider_ = nullptr;
 
 
 };

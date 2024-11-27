@@ -1,7 +1,7 @@
 {
     "attack2": {
         "attackPower": [
-            1.0
+            3.0
         ],
         "attackPreparationTime": [
             120.0
@@ -16,7 +16,7 @@
             5.0
         ],
         "minSize": [
-            1.0
+            0.5
         ],
         "thicknessStartTime": [
             10.0

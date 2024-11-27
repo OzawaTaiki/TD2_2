@@ -1,0 +1,95 @@
+{
+    "GameOver": {
+        "backGroundTexturePath": [
+            "backGround.png"
+        ],
+        "baseSize": [
+            [
+                1280.0,
+                720.0
+            ]
+        ],
+        "eBaseScale": [
+            [
+                0.75,
+                0.75,
+                0.75
+            ]
+        ],
+        "eCurrentTime": [
+            253.89878845214844
+        ],
+        "ePosition": [
+            [
+                0.0,
+                -6.909999847412109,
+                5.449999809265137
+            ]
+        ],
+        "eScaleRange": [
+            [
+                0.0,
+                0.019999999552965164,
+                0.009999999776482582
+            ]
+        ],
+        "eScaleSpeed": [
+            2.0
+        ],
+        "erotate": [
+            [
+                -0.11999999731779099,
+                3.119999885559082,
+                -0.009999999776482582
+            ]
+        ],
+        "resizeSpeed": [
+            2.0
+        ],
+        "retryButtonTexturePath": [
+            "clearRetry.png"
+        ],
+        "retrySize": [
+            [
+                1280.0,
+                720.0
+            ]
+        ],
+        "sizeRange": [
+            [
+                20.0,
+                10.0
+            ]
+        ],
+        "textBasePos": [
+            [
+                615.0,
+                110.0
+            ]
+        ],
+        "textSize": [
+            [
+                1280.0,
+                720.0
+            ]
+        ],
+        "textTexturePath": [
+            "gameOver.png"
+        ],
+        "textfloatingRange": [
+            10.0
+        ],
+        "textfloatingSpeed": [
+            1.0
+        ],
+        "titleButtonTexturePath": [
+            "clearTitle.png"
+        ],
+        "titleSize": [
+            [
+                1267.8985595703125,
+                713.9492797851563
+            ]
+        ]
+    }
+}

@@ -1,91 +1,130 @@
 #include "Stage.h"
+#include "../Enemy/Enemy.h"
 
 void Stage::Initialize()
 {
-    // 床
-    worldFloor_.Initialize();
-    worldFloor_.transform_ = Vector3{ 0,-3.0f,0 };
-    worldFloor_.rotate_.y = { 1.57f };
+	worldSkyBox.Initialize();
+	worldSkyBox.transform_ = { 0,0,0 };
+	worldSkyBox.scale_ = { 3,3,3 };
 
-    // 床モデル
-    modelFloor_ = Model::CreateFromObj("Tile/Tile.gltf");
+	colorSky_.Initialize();
+	colorSky_.SetColor(Vector4(0.77f, 0.77f, 0.77f, 1.0f));
 
-    // 壁(前)
-    worldWallFlont.Initialize();
-    worldWallFlont.transform_ = Vector3{ 0,0,-100 };
-    worldWallFlont.rotate_ = Vector3{ 0,0,0};
-    
-    worldWallBack.Initialize();
-    worldWallBack.transform_ = Vector3{ 0,0,100 };
-    worldWallBack.rotate_ = Vector3{ 0,-3.14,0 };
+	modelSkyBox_ = Model::CreateFromObj("SkyBox/SkyBox.obj");
+	// 床
+	worldFloor_.Initialize();
+	worldFloor_.transform_ = Vector3{ 0,-3.0f,0 };
+	worldFloor_.rotate_.y = { 1.57f };
+	worldFloor_.scale_ = { 0.55f,0.55f,0.55f };
+	// 床モデル
+	modelFloor_ = Model::CreateFromObj("Tile/Tile.obj");
 
-    worldWallRight.Initialize();
-    worldWallRight.transform_ = Vector3{ 100,0,0 };
-    worldWallRight.rotate_ = Vector3{ 0,DegreesToRadians(-90),0};
+	// 壁(前)
+	worldWallFlont.Initialize();
+	worldWallFlont.transform_ = Vector3{ 0,0,-100 };
+	worldWallFlont.rotate_ = Vector3{ 0,0,0 };
 
-    worldWallLeft.Initialize();
-    worldWallLeft.transform_ = Vector3{ -100,0,0 };
-    worldWallLeft.rotate_ = Vector3{ 0,DegreesToRadians(90),0 };
+	worldWallBack.Initialize();
+	worldWallBack.transform_ = Vector3{ 0,0,100 };
+	worldWallBack.rotate_ = Vector3{ 0,-3.14f,0 };
 
-    modelWallFlont_ = Model::CreateFromObj("wall/wall.obj");
+	worldWallRight.Initialize();
+	worldWallRight.transform_ = Vector3{ 100,0,0 };
+	worldWallRight.rotate_ = Vector3{ 0,DegreesToRadians(-90),0 };
 
-    color_.Initialize();
-    color_.SetColor(Vector4{ 1, 1, 1, 1 });
+	worldWallLeft.Initialize();
+	worldWallLeft.transform_ = Vector3{ -100,0,0 };
+	worldWallLeft.rotate_ = Vector3{ 0,DegreesToRadians(90),0 };
 
-    ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_translate", &worldFloor_.transform_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldFloor_rotate", &worldFloor_.rotate_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_translate", &worldWallFlont.transform_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallFlont_rotate", &worldWallFlont.rotate_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_translate", &worldWallBack.transform_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallBack_rotate", &worldWallBack.rotate_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_translate", &worldWallLeft.transform_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallLeft_rotate", &worldWallLeft.rotate_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_translate", &worldWallRight.transform_);
-    ConfigManager::GetInstance()->SetVariable("stage", "worldWallRight_rotate", &worldWallRight.rotate_);
+	modelWallFlont_ = Model::CreateFromObj("wall/wall.obj");
+
+	color_.Initialize();
+	color_.SetColor(Vector4{ 1, 1, 1, 1 });
+
+    ConfigManager* configManager = ConfigManager::GetInstance();
+
+	configManager->SetVariable("stage", "worldFloor_translate", &worldFloor_.transform_);
+	configManager->SetVariable("stage", "worldFloor_rotate", &worldFloor_.rotate_);
+	configManager->SetVariable("stage", "worldWallFlont_translate", &worldWallFlont.transform_);
+	configManager->SetVariable("stage", "worldWallFlont_rotate", &worldWallFlont.rotate_);
+	configManager->SetVariable("stage", "worldWallBack_translate", &worldWallBack.transform_);
+	configManager->SetVariable("stage", "worldWallBack_rotate", &worldWallBack.rotate_);
+	configManager->SetVariable("stage", "worldWallLeft_translate", &worldWallLeft.transform_);
+	configManager->SetVariable("stage", "worldWallLeft_rotate", &worldWallLeft.rotate_);
+	configManager->SetVariable("stage", "worldWallRight_translate", &worldWallRight.transform_);
+	configManager->SetVariable("stage", "worldWallRight_rotate", &worldWallRight.rotate_);
 
 
 }
 
 void Stage::Update()
 {
-    if (ImGui::BeginTabBar("GameScene"))
-    {
-        if (ImGui::BeginTabItem("stage"))
-        {
-            
-            
-            ImGui::DragFloat3("flontTranslate", &worldWallFlont.transform_.x, 0.1f);
-            ImGui::DragFloat3("flontRotate", &worldWallFlont.rotate_.x, 0.1f);
-            ImGui::DragFloat3("backTranslate", &worldWallBack.transform_.x, 0.1f);
-            ImGui::DragFloat3("backRotate", &worldWallBack.rotate_.x, 0.1f);
-            ImGui::DragFloat3("rightTranslate", &worldWallRight.transform_.x, 0.1f);
-            ImGui::DragFloat3("rightTrotate", &worldWallRight.rotate_.x, 0.1f);
-            ImGui::DragFloat3("leftTranslate", &worldWallLeft.transform_.x, 0.1f);
-            ImGui::DragFloat3("leftTotate", &worldWallLeft.rotate_.x, 0.1f);
-            ImGui::DragFloat3("floorTranslate", &worldFloor_.transform_.x, 0.1f);
-            ImGui::DragFloat3("floorRotate", &worldFloor_.rotate_.x, 0.1f);
-            ImGui::EndTabItem();
-        }
-        ImGui::EndTabBar();
-    }
+#ifdef _DEBUG
+
+	if (ImGui::BeginTabBar("GameScene"))
+	{
+		if (ImGui::BeginTabItem("stage"))
+		{
 
 
-   worldWallFlont.UpdateData();
+			ImGui::DragFloat3("flontTranslate", &worldWallFlont.transform_.x, 0.1f);
+			ImGui::DragFloat3("flontRotate", &worldWallFlont.rotate_.x, 0.1f);
+			ImGui::DragFloat3("backTranslate", &worldWallBack.transform_.x, 0.1f);
+			ImGui::DragFloat3("backRotate", &worldWallBack.rotate_.x, 0.1f);
+			ImGui::DragFloat3("rightTranslate", &worldWallRight.transform_.x, 0.1f);
+			ImGui::DragFloat3("rightTrotate", &worldWallRight.rotate_.x, 0.1f);
+			ImGui::DragFloat3("leftTranslate", &worldWallLeft.transform_.x, 0.1f);
+			ImGui::DragFloat3("leftTotate", &worldWallLeft.rotate_.x, 0.1f);
+			ImGui::DragFloat3("floorTranslate", &worldFloor_.transform_.x, 0.1f);
+			ImGui::DragFloat3("floorRotate", &worldFloor_.rotate_.x, 0.1f);
 
-    worldFloor_.UpdateData();
-    worldWallBack.UpdateData();
-    worldWallLeft.UpdateData();
-    worldWallRight.UpdateData();
+            if (ImGui::Button("Save"))
+            {
+                ConfigManager::GetInstance()->SaveData("stage");
+            }
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+#endif // _DEBUG
+
+	worldSkyBox.UpdateData();
+
+	worldWallFlont.UpdateData();
+
+	worldFloor_.UpdateData();
+	worldWallBack.UpdateData();
+	worldWallLeft.UpdateData();
+	worldWallRight.UpdateData();
 }
 
 void Stage::Draw(const Camera& camera)
 {
-    // モデル
-    modelFloor_->Draw(worldFloor_, &camera, &color_);
+	// モデル
+	modelFloor_->Draw(worldFloor_, &camera, &color_);
 
-    // 壁(前)
-    modelWallFlont_->Draw(worldWallFlont, &camera, &color_);
-    modelWallFlont_->Draw(worldWallBack, &camera, &color_);
-    modelWallFlont_->Draw(worldWallLeft, &camera, &color_);
-    modelWallFlont_->Draw(worldWallRight, &camera, &color_);
+	bool isNotAttackBehavior = (enemy_->GetBehavior() != Enemy::Behavior::kAttack);
+	bool isNotSpecialAttackBehavior = (enemy_->GetattackBehavior() != Enemy::AttackBehavior::kSpecial);
+	bool isNotSpecialAttack2 = (enemy_->GetSpecialAttack() != Enemy::SpecialAttack::kAttack2);
+
+	if (isNotAttackBehavior || (isNotSpecialAttackBehavior || isNotSpecialAttack2)) {
+
+		modelWallFlont_->Draw(worldWallFlont, &camera, &color_);
+	}
+	else {
+		worldWallFlont.UpdateData();
+	}
+
+	modelWallFlont_->Draw(worldWallBack, &camera, &color_);
+	modelWallFlont_->Draw(worldWallLeft, &camera, &color_);
+	modelWallFlont_->Draw(worldWallRight, &camera, &color_);
+
+	modelSkyBox_->Draw(worldSkyBox, &camera, &colorSky_);
+}
+
+void Stage::SetLight(LightGroup* _ptr)
+{
+    modelSkyBox_->SetLightGroup(_ptr);
+    modelFloor_->SetLightGroup(_ptr);
+    modelWallFlont_->SetLightGroup(_ptr);
 }

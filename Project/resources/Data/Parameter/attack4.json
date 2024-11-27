@@ -1,7 +1,10 @@
 {
     "attack4": {
         "ArmGrowthToSpinDelay": [
-            30.0
+            90.0
+        ],
+        "AttackPower": [
+            3.0
         ],
         "MaxRotateSpeed": [
             1.0
@@ -10,16 +13,16 @@
             0.009999999776482582
         ],
         "SpinTime": [
-            120.0
+            240.0
         ],
         "StoppingTime": [
             20.0
         ],
         "cooldownTime": [
-            120.0
+            260.0
         ],
         "speed": [
-            0.30000001192092896
+            0.2800000011920929
         ]
     }
 }

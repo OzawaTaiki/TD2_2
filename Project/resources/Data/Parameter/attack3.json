@@ -1,16 +1,34 @@
 {
     "attack3": {
+        "Cooldown": [
+            65.0
+        ],
+        "ElectricCount": [
+            14
+        ],
+        "MaxPosY": [
+            10.0
+        ],
+        "MaxYTime": [
+            20.0
+        ],
+        "MinPosY": [
+            0.0
+        ],
+        "MinYTime": [
+            20.0
+        ],
         "attackPower": [
             1.0
         ],
         "cooldown": [
-            20.0
+            65.0
         ],
         "numShotsPerPhase": [
-            2.1579996350602183e-43
+            -107374176.0
         ],
         "speed": [
-            0.30000001192092896
+            0.3499999940395355
         ]
     }
 }

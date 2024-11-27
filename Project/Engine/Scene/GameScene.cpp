@@ -3,11 +3,13 @@
 #include "Sprite.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "ParticleManager.h"
 #include "../Collider/Collider.h"
 #include "../Collider/CollisionManager.h"
 
 #include <chrono>
-#include <imgui.h>
+#include "ImGuiManager.h"
+#include <SceneManager.h>
 
 std::unique_ptr<BaseScene> GameScene::Create()
 {
@@ -21,8 +23,7 @@ GameScene::~GameScene()
 
 void GameScene::Initialize()
 {
-    ConfigManager::GetInstance()->LoadData();
-  
+
     input_ = Input::GetInstance();
 
     camera_ = std::make_unique<Camera>();
@@ -35,6 +36,8 @@ void GameScene::Initialize()
     stage_->Initialize();
 
 
+
+
     debugCamera_ = std::make_unique<DebugCamera>();
     debugCamera_->Initialize();
 
@@ -44,7 +47,12 @@ void GameScene::Initialize()
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
+    // 移動音
+    gameBgm_.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/gameBgm.wav");
+    gameBgm_.volume = 0.08f;
+    gameBgm_.voiceHandle = audio_->SoundPlay(gameBgm_.soundDataHandle, gameBgm_.volume, 1, 0);
 
+    
     // フォローカメラ
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
@@ -63,31 +71,49 @@ void GameScene::Initialize()
     enemy_->Initialize();
     enemy_->SetPlayer(player_.get());
     enemy_->SetStage(stage_.get());
-    
+    enemy_->SetF(followCamera_.get());
 
+    followCamera_->SetEnemy(enemy_.get());
+
+    stage_->SetEnemy(enemy_.get());
+
+    player_->SetEnemy(enemy_.get());
+
+    ParticleManager::GetInstance()->Initialize();
+
+    // ui
+    ui_ = std::make_unique<GameSceneUI>();
+    ui_->Initialize();
+
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.4f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    player_->SetLight(lightGroup_.get());
+    enemy_->SetLight(lightGroup_.get());
+    stage_->SetLight(lightGroup_.get());
 }
 
 void GameScene::Update()
 {
-    ImGui::Begin("Engine");
-
-        if (ImGui::Button("save")) {
-            ConfigManager::GetInstance()->SaveData();
-            //JsonLoader::SaveJson()
-        }
-
-    input_->Update();
-    CollisionManager::GetInstance()->ResetColliderList();
-
+#ifdef _DEBUG
     if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
     {
         activeDebugCamera_ = !activeDebugCamera_;
     }
+#endif // _DEBUG
+
+    CollisionManager::GetInstance()->ResetColliderList();
+
 
     //<-----------------------
-    camera_->Update();
+    camera_->Update(0);
     // プレイヤー
-    player_->Update();
+    if(!activeDebugCamera_)
+        player_->Update();
 
     // 敵
     enemy_->Update();
@@ -95,7 +121,7 @@ void GameScene::Update()
     // ステージ
     stage_->Update();
 
-    
+
 
     if (activeDebugCamera_)
     {
@@ -103,18 +129,12 @@ void GameScene::Update()
         camera_->matView_ = debugCamera_->matView_;
         camera_->TransferData();
     }
-    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack) {
-        followCamera_->Update();
-        followCamera_->SetRotateY(0);
-        camera_->matView_ = enemy_->GetCamera().matView_;
-        camera_->matProjection_ = enemy_->GetCamera().matProjection_;
-    }
-    else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack2) {
+   /* else if (enemy_->GetBehavior() == Enemy::Behavior::kAttack && enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack2) {
         followCamera_->Update();
         followCamera_->SetRotateY(0);
         camera_->matView_ = enemy_->GetCamera2().matView_;
         camera_->matProjection_ = enemy_->GetCamera2().matProjection_;
-    }
+    }*/
     else {
         // 追従カメラの更新
         followCamera_->Update();
@@ -122,16 +142,40 @@ void GameScene::Update()
         camera_->matProjection_ = followCamera_->GetCamera().matProjection_;
     }
 
-   
+
     //camera_->UpdateMatrix();
     camera_->TransferData();
 
 
     // 追従カメラの更新
     followCamera_->Update();
+    ParticleManager::GetInstance()->Update(camera_.get());
     CollisionManager::GetInstance()->CheckAllCollision();
+
+    ui_->Update(player_->GetHPRatio(), enemy_->GetHPRatio());
     //<-----------------------
-    ImGui::End();
+
+    if (enemy_->isPostKillEffectFinished())
+    {
+        timer_ += 1.0f / 60.0f;
+        if (timer_ > fadeStartDelay_)
+        {
+            SceneManager::ReserveScene("gameclear");
+        }
+    }
+    else if (player_->IsPostDieEffectFinished())
+    {
+        timer_ += 1.0f / 60.0f;
+        if (timer_ > fadeStartDelay_)
+        {
+            SceneManager::ReserveScene("gameover");
+        }
+    }
+
+    if (enemy_->GetBehavior() == Enemy::Behavior::kDie) {
+        audio_->SoundStop(gameBgm_.voiceHandle);
+    }
+
 }
 
 void GameScene::Draw()
@@ -154,12 +198,14 @@ void GameScene::Draw()
     ModelManager::GetInstance()->PreDrawForAnimationModel();
     //<------------------------
 
+
+    ParticleManager::GetInstance()->Draw(camera_.get());
     //<------------------------
 
     Sprite::PreDraw();
     //<------------------------
 
-
+    ui_->Draw();
 
     //<------------------------
     lineDrawer_->Draw();

@@ -830,7 +830,6 @@ void PSOManager::CreatePSOForParticle()
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 
-
     /// InputLayoutの設定を行う
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
     inputElementDescs[0].SemanticName = "POSITION";
@@ -865,7 +864,7 @@ void PSOManager::CreatePSOForParticle()
     /// RasterizerStateの設定
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     //裏面(時計回り)を表示しない
-    rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+    rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
     //三角形を塗りつぶす
     rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 

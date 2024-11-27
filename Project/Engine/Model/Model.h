@@ -40,13 +40,13 @@ public:
     void QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const;
     void QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList,uint32_t _textureHandle) const;
 
-    void SetLightGroup(LightGroup* _lightGroup) { lightGroup_ = std::unique_ptr<LightGroup>(_lightGroup); }
+    void SetLightGroup(LightGroup* _lightGroup) { lightGroup_ = _lightGroup; }
 
     Mesh* GetMeshPtr() { return mesh_[0].get(); }
     Material* GetMaterialPtr() { return material_[0].get(); }
 
-    Vector3 GetMin(size_t _index = 0)const { return mesh_[_index]->GetMin(); }
-    Vector3 GetMax(size_t _index = 0)const { return mesh_[_index]->GetMax(); }
+    Vector3 GetMin(size_t _index = -1) const;
+    Vector3 GetMax(size_t _index = -1) const;
 
     Matrix4x4 GetAnimationMatrix()const;
     Matrix4x4 GetNodeMatrix()const { return node_.GetLocalMatrix(); }
@@ -65,7 +65,8 @@ private:
     SkinCluster skinCluster_ = {};
 
 
-    std::unique_ptr<LightGroup> lightGroup_ = nullptr;
+    std::unique_ptr<LightGroup> defaultLightGroup_ = nullptr;
+    LightGroup* lightGroup_ = nullptr;
 
     void LoadFile(const std::string& _filepath);
     void LoadMesh(const aiScene* _scene);

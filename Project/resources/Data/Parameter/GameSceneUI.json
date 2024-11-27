@@ -1,0 +1,52 @@
+{
+    "GameSceneUI": {
+        "cPos": [
+            [
+                1117.0,
+                640.0
+            ]
+        ],
+        "cSize": [
+            [
+                0.75,
+                0.75
+            ]
+        ],
+        "enemybarOffset": [
+            [
+                35.0,
+                0.0
+            ]
+        ],
+        "enemybasePos": [
+            [
+                169.0,
+                -148.0
+            ]
+        ],
+        "enemybaseSize": [
+            [
+                940.0,
+                435.0
+            ]
+        ],
+        "playerbarOffset": [
+            [
+                121.5,
+                0.0
+            ]
+        ],
+        "playerbasePos": [
+            [
+                -64.0,
+                496.0
+            ]
+        ],
+        "playerbaseSize": [
+            [
+                640.0,
+                360.0
+            ]
+        ]
+    }
+}

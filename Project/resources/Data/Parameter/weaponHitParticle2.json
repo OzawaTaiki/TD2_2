@@ -1,0 +1,141 @@
+{
+    "weaponHitParticle2": {
+        "acceleration_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "acceleration_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "changeColor": [
+            65536
+        ],
+        "changeSize": [
+            16777217
+        ],
+        "color_max": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "color_min": [
+            [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "countPerEmit": [
+            1
+        ],
+        "direction": [
+            2
+        ],
+        "direction_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "direction_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "emitPerSec": [
+            60
+        ],
+        "emitRepeatCount": [
+            1
+        ],
+        "fadeAlpha": [
+            257
+        ],
+        "fadeStartRatio": [
+            0.2199999988079071
+        ],
+        "lifeTime_max": [
+            0.14000000059604645
+        ],
+        "lifeTime_min": [
+            0.14000000059604645
+        ],
+        "loop": [
+            65792
+        ],
+        "maxParticles": [
+            0
+        ],
+        "offset": [
+            [
+                0.0,
+                10.0,
+                0.0
+            ]
+        ],
+        "radius": [
+            0.0
+        ],
+        "rotate_max": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "rotate_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "shape": [
+            1
+        ],
+        "size": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "size_max": [
+            [
+                5.0,
+                5.0,
+                5.0
+            ]
+        ],
+        "size_min": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "spped_max": [
+            0.0
+        ],
+        "spped_min": [
+            0.0
+        ],
+        "useBillboard": [
+            2919235585
+        ]
+    }
+}

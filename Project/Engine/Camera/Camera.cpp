@@ -4,25 +4,39 @@
 #include "Input.h"
 #include "VectorFunction.h"
 #include "MatrixFunction.h"
+#include "RandomGenerator.h"
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
+
 
 void Camera::Initialize()
 {
     Map();
-    TransferData();
+    UpdateMatrix();
 }
 
-void Camera::Update()
+void Camera::Update(bool _showImGui)
 {
-    if(ImGui::BeginTabBar("camera"))
+#ifdef _DEBUG
+    if(_showImGui)
     {
-        if (ImGui::BeginTabItem("camera"))
+        if (ImGui::BeginTabBar("camera"))
         {
-            ImGui::DragFloat3("translate", &translate_.x, 0.01f);
-            ImGui::DragFloat3("rotate", &rotate_.x, 0.01f);
-            ImGui::EndTabItem();
+            if (ImGui::BeginTabItem("camera"))
+            {
+                ImGui::DragFloat3("translate", &translate_.x, 0.01f);
+                ImGui::DragFloat3("rotate", &rotate_.x, 0.01f);
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
         }
-        ImGui::EndTabBar();
+    }
+#endif // _DEBUG
+
+    if (shaking_)
+    {
+        UpdateShake();
     }
 
     //Vector3 move;
@@ -70,9 +84,48 @@ void Camera::UpdateMatrix()
 
 }
 
+void Camera::Shake(float _time, const Vector2& _RangeMin, const Vector2& _RangeMax)
+{
+    shaking_ = true;
+    shakeTime_ = _time;
+    shakeTimer_ = 0.0f;
+    shakeRangeMin_ = _RangeMin;
+    shakeRangeMax_ = _RangeMax;
+}
+
+void Camera::ShakeParametaerSettingFromImGui()
+{
+#ifdef _DEBUG
+
+    ImGui::SeparatorText("Shake");
+    ImGui::DragFloat("time", &shakeTime_, 0.01f);
+    ImGui::DragFloat2("rangeMin", &shakeRangeMin_.x, 0.01f);
+    ImGui::DragFloat2("rangeMax", &shakeRangeMax_.x, 0.01f);
+    if (ImGui::Button("Shake"))
+    {
+        Shake(shakeTime_, shakeRangeMin_, shakeRangeMax_);
+    }
+#endif // _DEBUG
+}
+
 void Camera::QueueCommand(ID3D12GraphicsCommandList* _cmdList, UINT _index) const
 {
     _cmdList->SetGraphicsRootConstantBufferView(_index, resource_->GetGPUVirtualAddress());
+}
+
+void Camera::UpdateShake()
+{
+    shakeTimer_ += 1.0f / 60.0f;
+    if (shakeTimer_ >= shakeTime_)
+    {
+        shaking_ = false;
+        shakeTimer_ = 0.0f;
+        shakeOffset_ = { 0.0f,0.0f,0.0f };
+    }
+    else
+    {
+        shakeOffset_ = RandomGenerator::GetInstance()->GetUniformVec2(shakeRangeMin_, shakeRangeMax_);
+    }
 }
 
 void Camera::Map()

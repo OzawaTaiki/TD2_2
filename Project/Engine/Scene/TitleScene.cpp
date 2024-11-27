@@ -1,61 +1,124 @@
 #include "TitleScene.h"
 
 #include "SceneManager.h"
+#include "Input.h"
+#include "ModelManager.h"
+#include "TextureManager.h"
+#include "ConfigManager.h"
 
 std::unique_ptr<BaseScene>TitleScene::Create()
 {
-    return std::make_unique<TitleScene>();
+	return std::make_unique<TitleScene>();
 }
 
 TitleScene::~TitleScene()
 {
-    if(true)
-    {
-        if (true)
-        {
 
-        }
-        // do something
-    }
 }
 
 void TitleScene::Initialize()
 {
+	player_ = std::make_unique<TItlePlayer>();
+	player_->Initialize();
+
+	enemy_ = std::make_unique<TitleEnemy>();
+	enemy_->Initialize();
+
+	camera_.Initialize();
+	camera_.translate_ = { 0,15,-50 };
+	camera_.rotate_ = { 0.26f,0,0 };
+
+	UIs_ = std::make_unique<TitleUI>();
+	UIs_->Initialize();
+
+	ConfigManager::GetInstance()->SetVariable("Title", "backGroundTexturePath", &backGroundTexturePath_);
+
+	uint32_t handle = TextureManager::GetInstance()->Load(backGroundTexturePath_);
+
+	backGround_ = Sprite::Create(handle, { 0,0 });
+	backGround_->Initialize();
+	backGround_->SetSize({ 1280,720 });
+
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.4f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    player_->SetLight(lightGroup_.get());
+    enemy_->SetLight(lightGroup_.get());
+
+	//音
+	audio_ = std::make_unique<Audio>();
+	audio_->Initialize();
+	audio2_ = std::make_unique<Audio>();
+	audio2_->Initialize();
+
+	// 移動音
+	titleBgm_.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/titleBgm.wav");
+	titleBgm_.volume = 0.2f;
+	titleBgm_.voiceHandle = audio_->SoundPlay(titleBgm_.soundDataHandle, titleBgm_.volume, 1, 0);
+
+	titleSpace_.soundDataHandle = audio2_->SoundLoadWave("resources/Sounds/titleSpace.wav");
+	titleSpace_.volume = 0.2f;
+	
 }
 
 void TitleScene::Update()
 {
-#ifdef _DEBUG
-    ImGui();
-#endif // _DEBUG
+	camera_.Update();
 
+	player_->Update();
+	enemy_->Update();
+
+	UIs_->Update();
+
+	camera_.UpdateMatrix();
+
+	
+	if (Input::GetInstance()->IsKeyTriggered(DIK_SPACE) ||
+		Input::GetInstance()->IsPadTriggered(PadButton::iPad_A))
+	{
+		titleSpace_.voiceHandle = audio2_->SoundPlay(titleSpace_.soundDataHandle, titleSpace_.volume, 1, 0);
+		audio_->SoundStop(titleBgm_.voiceHandle);
+		SceneManager::ReserveScene("game");
+	}
+	
+#ifdef _DEBUG
+	ImGui();
+#endif // _DEBUG
 }
 
 void TitleScene::Draw()
 {
+	Sprite::PreDraw();
+	backGround_->Draw();
+
+	ModelManager::GetInstance()->PreDrawForObjectModel();
+
+	player_->Draw(&camera_);
+	enemy_->Draw(&camera_);
+
+	UIs_->Draw(&camera_);
 }
 
 #ifdef _DEBUG
 #include <imgui.h>
 void TitleScene::ImGui()
 {
-    ImGui::BeginTabBar("Scene");
-    if (ImGui::BeginTabItem("Title"))
-    {
-        ImGui::Text("Title Scene");
-        char buf[128];
-        strcpy_s(buf, nextSceneName_.c_str());
-        if(ImGui::InputText("Next Scene", buf, sizeof(buf)))
-        {
-            nextSceneName_ = buf;
-        }
-        if (ImGui::Button("Change Scene"))
-        {
-            SceneManager::ReserveScene(nextSceneName_);
-        }
-        ImGui::EndTabItem();
-    }
-    ImGui::EndTabBar();
+	char buf[255];
+	strcpy_s(buf, backGroundTexturePath_.c_str());
+	if (ImGui::InputText("backGroundTexturePath", buf, sizeof(buf)))
+	{
+		backGroundTexturePath_ = buf;
+	}
+	if (ImGui::Button("save"))
+	{
+		ConfigManager::GetInstance()->SaveData("Title");
+		backGround_->SetTextureHandle(TextureManager::GetInstance()->Load(backGroundTexturePath_));
+		UIs_->Save();
+	}
 
 }
 #endif // _DEBUG

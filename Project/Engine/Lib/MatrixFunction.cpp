@@ -298,29 +298,6 @@ Matrix4x4  MakeIdentity4x4()
     return result;
 }
 
-void  MatrixScreenPrintf(int _x, int _y, const Matrix4x4& _m)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            //Novice::ScreenPrintf(_x + kColumnWidth * j, _y + kRowHeight * i, "%6.02f", _m.m[i][j]);
-        }
-    }
-}
-
-void  MatrixScreenPrintf(int _x, int _y, const Matrix4x4& _m, const char* _label)
-{
-    //Novice::ScreenPrintf(_x, _y, "%s", _label);
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            //Novice::ScreenPrintf(_x + kColumnWidth * j, _y + kRowHeight * (i + 1), "%6.02f", _m.m[i][j]);
-        }
-    }
-}
-
 Matrix4x4  MakeScaleMatrix(const Vector3& _scale)
 {
     Matrix4x4 result =

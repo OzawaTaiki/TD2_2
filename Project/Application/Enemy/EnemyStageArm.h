@@ -6,6 +6,9 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "Audio.h"
+
+#include "Collider.h"
 
 
 
@@ -24,22 +27,28 @@ public:
 		float transitionFactor = 0;
 		// 着地時間
 		float landingTime;
-		// 最大
+		// 最大着地時間
 		float MaxLandingTime = 300.0f;
 
 		/// アーム関係
 		// 攻撃出現場所
-		int attackSpawnLocation = 1;
-
-		int oldAttackSpawnLocation = attackSpawnLocation;
+		//int attackSpawnLocation = 1;
+		// 前回腕の出た場所
+		//int oldAttackSpawnLocation = attackSpawnLocation;
 		// 出る腕の本数
 		int armNum = 0;
 		// 出る腕の本数(最大値)
 		int MaxArmNum = 5;
 		// 予測が出てから攻撃するまでの時間(最大)
 		float MaxAttackPreparationTime = 120.0f;
+		// 点滅
+		float Maxblinking = 30.0f;
+
 		// 伸びる時間(最大)
-		float MaxAttaskMoveTime = 60.0f;
+		//float MaxAttaskMoveTime = 60.0f;
+		// 伸びる長さ最大
+		float MaxLength = 30;
+
 		// 腕の突き出す速度
 		float armSpeed = 0.5f;
 		// 攻撃してから次の予測線が出る時間
@@ -52,9 +61,19 @@ public:
 		float weakArmSpawnProbability = 10.0f;
 		// 攻撃力
 		float attackPower = 1;
+
+		// 位置
+		std::vector<int>availableLocations;
+
+		// 攻撃方法変更
+		int randAttack;
+		// 
+		int rrr;
+
 	};
-
-
+	std::unique_ptr<Audio> audio_;
+	
+	Audio::Sound bossArmStickOut;		//腕はえ
 public:
 	/// <summary>
 	/// 初期化
@@ -64,7 +83,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(Audio* audio, Audio::Sound sound);
 
 	/// <summary>
 	/// 描画
@@ -74,6 +93,8 @@ public:
 	bool IsDead() const { return isDead_; };
 
 	void SetParent(const WorldTransform* parent);
+
+    void OnCollision(const Collider* collider);
 private:
 	
 	AttackArm* attack_;
@@ -84,6 +105,8 @@ private:
 	
 	Model* model2_ = nullptr;
 
+    std::unique_ptr<Collider> collider_ ;
+	
 	// モデルカラー
 	ObjectColor color_;
 	ObjectColor color2_;
@@ -108,8 +131,9 @@ private:
 	// 予測が出てから攻撃するまでの時間
 	float attackPreparationTime = 0.0f;
 	// 伸びる時間
-	float attaskMoveTime = 0.0f;
+	//float attaskMoveTime = 0.0f;
 	// 引っ込むまでの時間
 	float armRetractTime = 0.0f;
-
+	// 伸びる長さ
+	float length = 0;
 };

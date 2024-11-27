@@ -6,7 +6,8 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
-
+#include "Collider.h"
+#include "Audio.h"
 
 class EnemyThunder
 {
@@ -15,7 +16,9 @@ public:
 	struct AttackThunder
 	{
 		// 移動位置
-		Vector3 attackPos = { 0,50,0 };
+		//Vector3 attackPos = { 0,50,0 };
+		float attackMinPos = 0;
+		float attackMaxPos = 50;
 		// 上下移動切り替え
 		int clock = 1;
 		//　雷をうつ
@@ -33,7 +36,7 @@ public:
 		float MaxAttackPreparationTime = 120.0f;
 		// 雷が出る時間(最大)
 		float MaxThunderStrikeTime = 30.0f;
-		// 細→太が始まる時間
+		// 細→太が始まるまで時間
 		float MaxThicknessStartTime = 10.0f;
 		// 細→太くなるまでの時間
 		float MaxExpandTime = 15.0f;
@@ -43,6 +46,14 @@ public:
 		float maxSize = 5.0f;
 		//攻撃力
 		float attackPower = 1;
+		// 一列行
+		int num = 4;
+		// 間隔
+		float positionInterval = 20;
+		// 消える時間
+		float deathTimer_;
+		float MaxDeathTimer_ = 20.0f;
+
 	};
 
 	/// <summary>
@@ -53,7 +64,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(Audio* audio, Audio::Sound sound);
 
 	/// <summary>
 	/// 描画
@@ -72,6 +83,9 @@ private:
 
 	Model* model2_ = nullptr;
 
+    std::unique_ptr<Collider> collider_ = nullptr;
+
+
 	// モデルカラー
 	ObjectColor color_;
 	ObjectColor color2_;
@@ -88,7 +102,7 @@ private:
 	static const int32_t kLifeTime = 60 * 4;
 
 	// デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	int32_t deathTimer_ = 0;// kLifeTime;
 
 	// デスフラグ
 	bool isDead_ = false;

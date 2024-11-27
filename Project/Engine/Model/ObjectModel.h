@@ -16,10 +16,14 @@ public:
     void Update();
     void Draw(const Camera* _camera ,const Vector4& _color);
 
+    void SetModel(const std::string& _filePath);
+    void SetLightGroup(LightGroup* _lightGroup) { model_->SetLightGroup(_lightGroup); }
+
     Vector3 translate_ = { 0,0,0 };
     Vector3 scale_ = { 1,1,1 };
-    Quaternion rotate_ = { 0,0,0,1 };
+    Vector3 rotate_ = { 0,0,0 };
 
+    void SetParent(const WorldTransform* _parent) { worldTransform_.parent_ = _parent; }
 
 private:
 
