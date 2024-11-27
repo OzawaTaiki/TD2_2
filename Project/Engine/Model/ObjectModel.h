@@ -23,6 +23,7 @@ public:
     Vector3 scale_ = { 1,1,1 };
     Vector3 rotate_ = { 0,0,0 };
 
+    void SetParent(const WorldTransform* _parent) { worldTransform_.parent_ = _parent; }
 
 private:
 

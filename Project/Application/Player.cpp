@@ -595,7 +595,6 @@ void Player::BehaviorRootUpdate()
 	if (pressedSPACE) {
 		if (recastTime >= MaxRecastTime) {
 			behaviorRequest_ = Behavior::kAttack;
-			//audio_->SoundPlay(sounds_.playerAttack.soundDataHandle, sounds_.playerAttack.volume, 0, 1);
 		}
 	}
 	if (Input::GetInstance()->IsPadPressed(PadButton::iPad_A)) {
@@ -611,6 +610,7 @@ void Player::BehaviorAttackInitialize()
 	workAttack.attackParameter_ = 0;
 	attackParameter = 0;
 	workAttack.comboIndex = 0;
+    isComboChanged_ = false;
 }
 
 void Player::BehaviorAttackUpdate()
@@ -647,6 +647,11 @@ void Player::BehaviorAttackUpdate()
 
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(15));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 1:
@@ -657,6 +662,11 @@ void Player::BehaviorAttackUpdate()
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(45));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 2:
@@ -667,6 +677,11 @@ void Player::BehaviorAttackUpdate()
 		weapon_->SetRotationX(weapon_->GetRotationX() + DegreesToRadians(12));
 		weapon_->SetRotationZ(DegreesToRadians(-45));
 
+		if (isComboChanged_)
+		{
+			weapon_->StartSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(15);
 		break;
 	case 3:
@@ -688,11 +703,17 @@ void Player::BehaviorAttackUpdate()
 
 		weapon_->SetRotationX(DegreesToRadians(90));
 
+		if (isComboChanged_)
+		{
+			weapon_->EndSlashEffect();
+			isComboChanged_ = false;
+		}
 		SetAttackCombo(25);
 		break;
 	default:
 		behavior_ = Behavior::kRoot;
 	}
+
 
 }
 
@@ -829,6 +850,7 @@ void Player::SetAttackCombo(int parameter)
 
 			// コンボ加算
 			workAttack.comboIndex++;
+            isComboChanged_ = true;
 		}
 		else {
 			// 何もしなかったら通常行動に

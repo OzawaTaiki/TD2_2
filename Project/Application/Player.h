@@ -192,6 +192,9 @@ private:
 	};
 	WrokAttack workAttack{};
 
+	// エフェクト用 コンボが変わったフレームか否か
+    bool isComboChanged_ = false;
+
 	struct Direction
 	{
 

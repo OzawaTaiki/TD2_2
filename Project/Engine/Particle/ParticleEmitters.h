@@ -85,6 +85,8 @@ public:
     void SetCenter(const Vector3& _center) { position_ = _center; }
     void SetEmit(bool _emit) { emit_ = _emit; }
 
+    bool IsBillboardEnabled() const { return useBillboard_; }
+
     void Emit();
 
     std::string GetName() const { return name_; }
@@ -112,6 +114,7 @@ private:
     bool                    changeSize_;        // 生成後にサイズを変更するか
     bool                    changeColor_;       // 生成後に色を変更するか
     bool                    randomColor_;       // 色をランダムで生成するか
+    bool                    useBillboard_;      // ビルボードを使用するか
     float                   fadeStartRatio_;    // アルファを変え始める割合
     uint32_t                maxParticles_;      // 最大数
     uint32_t                countPerEmit_;      // 回当たりの発生数
@@ -119,8 +122,8 @@ private:
     uint32_t                emitRepeatCount_;   // 繰り返し回数
     uint32_t                emitCount_;         // 発生回数
 
+
     bool                    emit_ = false;
 
     Particle GenerateParticleData();
-    void EmitParticles();
 };
