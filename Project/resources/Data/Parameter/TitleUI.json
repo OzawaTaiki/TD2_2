@@ -1,7 +1,7 @@
 {
     "TitleUI": {
         "TextTexture": [
-            "cube.jpg"
+            "titlePush.png"
         ],
         "backGroundTexturePath": [
             "white.png"
@@ -17,7 +17,7 @@
         "pos": [
             [
                 653.0,
-                505.0
+                580.0
             ]
         ],
         "rotate": [
@@ -25,12 +25,12 @@
         ],
         "scale": [
             [
-                0.9800000190734863,
-                0.30000001192092896
+                2.0,
+                1.0
             ]
         ],
         "titleModel": [
-            "cube/cube.obj"
+            "title/Title.obj"
         ]
     }
 }
