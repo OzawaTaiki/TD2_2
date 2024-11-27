@@ -42,8 +42,6 @@ void Weapon::UpdateWorldTransform()
         slashModel_->Update();
         SlashUpdate_ = false;
     }
-
-
 }
 
 void Weapon::Draw(const Camera& camera)
@@ -54,7 +52,17 @@ void Weapon::Draw(const Camera& camera)
         slashModel_->Draw(&camera, Vector4{ 1,1,1,1 });
 
 	hitPatricles_->Draw();
+
+#ifdef _DEBUG
     collider_->Draw();
+#endif // _DEBUG
+
+}
+
+void Weapon::StartSlashEffect()
+{
+    isSlashEffect_ = true;
+    SlashUpdate_ = true;
 }
 
 void Weapon::RegisterCollider()

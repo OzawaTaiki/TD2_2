@@ -610,7 +610,7 @@ void Player::BehaviorAttackInitialize()
 	workAttack.attackParameter_ = 0;
 	attackParameter = 0;
 	workAttack.comboIndex = 0;
-    isComboChanged_ = false;
+    isComboChanged_ = true;
 }
 
 void Player::BehaviorAttackUpdate()
