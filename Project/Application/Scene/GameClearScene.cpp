@@ -40,11 +40,11 @@ void GameClearScene::Update()
 
         if (select == 0)
         {
-            SceneManager::ReserveScene("game");
+            SceneManager::ReserveScene("title");
         }
         else if (select == 1)
         {
-            SceneManager::ReserveScene("title");
+            SceneManager::ReserveScene("game");
         }
     }
 
