@@ -22,6 +22,15 @@ void GameClearScene::Initialize()
 
     ui_.Initialize("Clear");
 
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.7f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    player_->SetLight(lightGroup_.get());
+
 
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();

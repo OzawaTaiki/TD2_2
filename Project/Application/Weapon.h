@@ -5,6 +5,8 @@
 #include "ObjectColor.h"
 #include "../Collider/Collider.h"
 #include "HitEffect.h"
+#include "ObjectModel.h"
+#include "ThrustEffect.h"
 
 #include <memory>
 
@@ -19,6 +21,7 @@ public:
 	// 描画
 	void Draw(const Camera& viewProjection);
 
+    void StartSlashEffect();
 
 	// 接触履歴を抹消
 	void ContactRecordClear();
@@ -26,6 +29,7 @@ public:
 	void RegisterCollider();
 	void OnCollision(const Collider* _other);
 
+	void SetLight(LightGroup* _ptr);
 
 
 	// ゲッター、セッター
@@ -43,13 +47,17 @@ public:
 	void SetRotationY(const float& rotation) { worldTransform_.rotate_.y = rotation; }
 	void SetRotationZ(const float& rotation) { worldTransform_.rotate_.z = rotation; }
 
+    void EndSlashEffect() { isSlashEffect_ = false; }
+
 	// ワールドトランスフォーム
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
+
 
 
 private:
 	// ハンマー武器
 	Model* model_;
+
 
 	WorldTransform worldTransform_;
 
@@ -60,5 +68,11 @@ private:
 
     std::unique_ptr<HitEffect> hitPatricles_ = nullptr;
 
-};
+    // 斬撃エフェクト
+	std::unique_ptr< ObjectModel> slashModel_;
+    bool isSlashEffect_ = false;
+    float slashEffectTime_ = 0.0f;
+    float slashEffectTimeMax_ = 0.5f;
+	bool SlashUpdate_ = false;
 
+};

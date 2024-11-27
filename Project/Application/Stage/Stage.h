@@ -53,6 +53,8 @@ public:
 	Vector3 GetWallLeft() { return worldWallLeft.GetWorldPosition();}
 	Vector3 GetWallRight() { return worldWallRight.GetWorldPosition();}
 
+	void SetLight(LightGroup* _ptr);
+
 private:
 	// モデル
 	Model* modelFloor_ = nullptr;

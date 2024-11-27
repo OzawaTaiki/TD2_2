@@ -39,6 +39,16 @@ void TitleScene::Initialize()
 	backGround_->Initialize();
 	backGround_->SetSize({ 1280,720 });
 
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.4f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    player_->SetLight(lightGroup_.get());
+    enemy_->SetLight(lightGroup_.get());
+
 	//音
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize();

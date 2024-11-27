@@ -121,3 +121,10 @@ void Stage::Draw(const Camera& camera)
 
 	modelSkyBox_->Draw(worldSkyBox, &camera, &colorSky_);
 }
+
+void Stage::SetLight(LightGroup* _ptr)
+{
+    modelSkyBox_->SetLightGroup(_ptr);
+    modelFloor_->SetLightGroup(_ptr);
+    modelWallFlont_->SetLightGroup(_ptr);
+}

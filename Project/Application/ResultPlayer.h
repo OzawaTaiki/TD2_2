@@ -18,6 +18,8 @@ public:
     void Update();
     void Draw(const Camera* _camera);
 
+    void SetLight(LightGroup* _ptr);
+
 private:
     void Scaling();
 

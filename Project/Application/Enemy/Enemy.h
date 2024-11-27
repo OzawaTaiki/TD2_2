@@ -481,6 +481,7 @@ public:
 
 	float GetHPRatio()const { return (float)hp / (float)MaxHp; }
 
+	void SetLight(LightGroup* _ptr);
 
 	const float& GetDamege() const { return damage_; }
 

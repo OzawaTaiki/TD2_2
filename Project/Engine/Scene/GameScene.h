@@ -12,6 +12,7 @@
 #include "ParticleEmitters.h"
 #include "ConfigManager.h"
 #include "DebugCamera.h"
+#include  "LightGroup.h"
 
 //Application
 #include "Player.h"
@@ -59,6 +60,9 @@ private:
 
     // UI
     std::unique_ptr<GameSceneUI> ui_;
+
+    // ライト
+    std::unique_ptr<LightGroup> lightGroup_;
 
     // 敵撃破からフェードを始めるまでの時間
     float fadeStartDelay_ = 3.0f;

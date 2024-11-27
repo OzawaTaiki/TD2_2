@@ -39,6 +39,8 @@ private:
     std::unique_ptr<Audio> audio_;
      std::unique_ptr<Audio> audio2_;
 
+     std::unique_ptr <LightGroup> lightGroup_ = nullptr;
+
    
     // 音
     struct Sound {

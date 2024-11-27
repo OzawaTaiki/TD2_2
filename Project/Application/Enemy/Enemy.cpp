@@ -899,6 +899,18 @@ void Enemy::UpdateFloatingGimmick()
 	worldTransform_.transform_.y = std::sin(floatingParameter_) * floatingAmplitude;
 }
 
+
+void Enemy::SetLight(LightGroup* _ptr)
+{
+	model_->SetLightGroup(_ptr);
+	modelLeftArm_->SetLightGroup(_ptr);
+	modelRightArm_->SetLightGroup(_ptr);
+	modelPrediction_->SetLightGroup(_ptr);
+	modelBullet_->SetLightGroup(_ptr);
+	modelStageArm_->SetLightGroup(_ptr);
+	modelThunder_->SetLightGroup(_ptr);
+}
+
 void Enemy::Move(float _speed, bool flag)
 {
 	if (DistanceXZ(player_->GetWorldTransform().GetWorldPosition(), worldTransform_.GetWorldPosition()) >= 1) {
@@ -1853,7 +1865,7 @@ void Enemy::SpecialAttack3Update() {
 
 			// 補間の進行度を更新
 			if (attack3_.transitionFactor < 1.0f) {
-				attack3_.transitionFactor += transitionSpeed * 10.0f;
+				attack3_.transitionFactor += transitionSpeed * 3.0f;
 
 
 			}

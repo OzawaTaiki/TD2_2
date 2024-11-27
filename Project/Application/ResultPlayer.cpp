@@ -36,6 +36,11 @@ void ResultPlayer::Draw(const Camera* _camera)
     model_->Draw(_camera, { 1,1,1,1 });
 }
 
+void ResultPlayer::SetLight(LightGroup* _ptr)
+{
+    model_->SetLightGroup(_ptr);
+}
+
 void ResultPlayer::Scaling()
 {
     currentTime_ += 1.0f / 60.0f;

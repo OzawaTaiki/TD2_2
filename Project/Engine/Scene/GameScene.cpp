@@ -85,6 +85,16 @@ void GameScene::Initialize()
     ui_ = std::make_unique<GameSceneUI>();
     ui_->Initialize();
 
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.4f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    player_->SetLight(lightGroup_.get());
+    enemy_->SetLight(lightGroup_.get());
+    stage_->SetLight(lightGroup_.get());
 }
 
 void GameScene::Update()

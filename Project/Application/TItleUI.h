@@ -20,6 +20,7 @@ public:
 
 private:
 
+    void TextUpdate();
     //void ChangeTexture(const std::);
 
     std::unique_ptr<ObjectModel> title_ = nullptr;
@@ -28,6 +29,14 @@ private:
     Sprite* pressAnyKey_ = nullptr;
     Vector4 pressTextColor_ = { 1,1,1,1 };
     std::string textTextureParh_ = "cube.jpg";
+
+    // テキストの点滅
+    // 現在の時間
+    float currentTime_ = 0.0f;
+    // 周期
+    float cycle_ = 3.0f;
+    // 閾値
+    float threshold_ = 0.9f;
 
 
 };
