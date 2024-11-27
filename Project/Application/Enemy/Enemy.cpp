@@ -215,9 +215,9 @@ void Enemy::Initialize()
 
 
 	// 通常攻撃確率
-	configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
-	configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
-	configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
+	//configManager->SetVariable("attack", "probabilityPhase1", &atMethod_.probabilityPhase1);
+	//configManager->SetVariable("attack", "probabilityPhase2", &atMethod_.probabilityPhase1);
+	//configManager->SetVariable("attack", "probabilityPhase3", &atMethod_.probabilityPhase1);
 	configManager->SetVariable("attack", "distanceSwich", &atMethod_.distanceSwich);
 
 
@@ -1080,19 +1080,19 @@ void Enemy::BehaviorAttackInitialize()
 				{
 				case Enemy::NormalAttack::kAttackShort1: // 近距離1
 					NormalShotAttack1Initialize();
-					damage_ = 5;
+					damage_ = 1;
 					break;
 				case Enemy::NormalAttack::kAttackShort2: // 近距離2
 					NormalShotAttack2Initialize();
-					damage_ = 5;
+					damage_ = 1;
 					break;
 				case Enemy::NormalAttack::kAttackLong1:  // 遠距離1
 					NormalLongAttack1Initialize();
-					damage_ = 2;
+					damage_ = 1;
 					break;
 				case Enemy::NormalAttack::kAttackLong2:  // 遠距離2
 					NormalLongAttack2Initialize();
-					damage_ = 2;
+					damage_ = 1;
 					break;
 				default:
 					break;
