@@ -36,19 +36,46 @@ float EaseOut(float t, float str, float end) {
 	return (1.0f - t2) * str + t2 * end;
 }
 
-
+template<typename T>
+T PLerp(const T& a, const T& b, float t) {
+	return a * (1.0f - t) + b * t;
+}
+// easeOutBounce 関数
+template <typename T>
+T easeOutBounce(const T& a, const T& b, float t) {
+	// t を 0.0～1.0 の範囲に正規化して処理
+	if (t < (1 / 2.75f)) {
+		return a + (b - a) * (7.5625f * t * t);
+	}
+	else if (t < (2 / 2.75f)) {
+		t -= (1.5f / 2.75f);
+		return a + (b - a) * (7.5625f * t * t + 0.75f);
+	}
+	else if (t < (2.5f / 2.75f)) {
+		t -= (2.25f / 2.75f);
+		return a + (b - a) * (7.5625f * t * t + 0.9375f);
+	}
+	else {
+		t -= (2.625f / 2.75f);
+		return a + (b - a) * (7.5625f * t * t + 0.984375f);
+	}
+}
 
 void Player::Initialize()
 {
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = Vector3{ 0,0,0 };
 
+	worldTransformBody_.Initialize();
+	worldTransformBody_.parent_ = &worldTransform_;
+	worldTransformBody_.transform_ = Vector3{ 0,0,0 };
+
 	oldWorldTransform_.Initialize();
 	oldWorldTransform_ = worldTransform_;
 
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
-	weapon_->SetPosition(Vector3{ 0.0f, 0.5f, 1.0f });
+	weapon_->SetPosition(Vector3{ 0.0f, 3.0f, 1.5f });
 	weapon_->GetWorldTransform().parent_ = &worldTransform_; // 本体が親
 
 	model_ = Model::CreateFromObj("playerBody/playerBody.obj");
@@ -58,8 +85,16 @@ void Player::Initialize()
 	color_.SetColor(Vector4{ 1, 1, 1, 1 });
 
 	dustParticle_ = std::make_unique<PlayerDustParticle>();
-	dustParticle_->Initialize();
+	dustParticle_->Initialize("PlayerDust");
 	dustParticle_->SetPlayerMat(&worldTransform_);
+
+	for (uint32_t index = 0; index < smokeParticle_.size(); ++index)
+	{
+		smokeParticle_[index] = std::make_unique<PlayerDustParticle>();
+		std::string str = "playerSmoke" + std::to_string(index);
+		smokeParticle_[index]->Initialize(str);
+		smokeParticle_[index]->SetPlayerMat(&worldTransformBody_);
+	}
 
     ConfigManager* configManager = ConfigManager::GetInstance();
 
@@ -67,7 +102,6 @@ void Player::Initialize()
 	configManager->SetVariable("Player", "transform", &worldTransform_.transform_);
 	configManager->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
 	configManager->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
-
 	configManager->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
 
 
@@ -99,7 +133,10 @@ void Player::Update()
 			ImGui::DragFloat3("translate", &worldTransform_.transform_.x, 0.01f);
 			Vector3 mat = Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]);
 			ImGui::DragFloat3("translateMat", &mat.x, 0.01f);
-			ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
+			ImGui::DragFloat3("bodyTranslate", &worldTransformBody_.transform_.x, 0.01f);
+			Vector3 mat2 = Vector3(worldTransformBody_.matWorld_.m[3][0], worldTransformBody_.matWorld_.m[3][1], worldTransformBody_.matWorld_.m[3][2]);
+			ImGui::DragFloat3("bodyTranslateMat", &mat2.x, 0.01f);
+			ImGui::DragFloat3("bodyRotate", &worldTransformBody_.rotate_.x, 0.01f);
 			ImGui::DragInt("recastTime", &recastTime, 0.01f);
 			int time = MaxRecastTime;
 			ImGui::DragInt("MaxRecastTime", &time, 1.0f);
@@ -114,6 +151,10 @@ void Player::Update()
 				ImGui::ColorEdit4("hitColor", &hitColor_.x);
 				ImGui::DragFloat("hitColorDuration", &hitColorDuration_, 0.01f, 0.0f, 10.0f);
 				ImGui::TreePop();
+			}
+			if (ImGui::Button("Death")) {
+				//behaviorTimer_ = 0;
+				behaviorRequest_ = Behavior::kDie;
 			}
 			if (ImGui::Button("save"))
 			{
@@ -146,7 +187,9 @@ void Player::Update()
 			BehaviorAttackInitialize();
 			break;
 		case Behavior::kJump:
-			//BehaviorJumpInitialize();
+			break;
+		case Behavior::kDie:
+			BehaviorDieInitialize();
 			break;
 		}
 		// ふるまいリクエストリセット
@@ -161,7 +204,9 @@ void Player::Update()
 		BehaviorAttackUpdate();
 		break;
 	case Behavior::kJump:
-		//BehaviorJumpUpdate(); // ジャンプ行動更新
+		break;
+	case Behavior::kDie:
+		BehaviorDieUpdate();
 		break;
 	}
 
@@ -174,8 +219,9 @@ void Player::Update()
 
 	// ワールドトランスフォーム更新
 	weapon_->UpdateWorldTransform();
+	worldTransformBody_.UpdateData();
 	worldTransform_.UpdateData();
-	worldTransform_.UpdateData();
+	
 
 	if (isAlive)
 	{
@@ -186,7 +232,7 @@ void Player::Update()
 
 void Player::Draw(const Camera& camera)
 {
-	model_->Draw(worldTransform_, &camera, &color_);
+	model_->Draw(worldTransformBody_, &camera, &color_);
 
 
 	switch (behavior_) {
@@ -199,6 +245,12 @@ void Player::Draw(const Camera& camera)
 		weapon_->UpdateWorldTransform();
 		weapon_->Draw(camera);
 		break;
+	case Behavior::kDie:
+		for (uint32_t index = 0; index < smokeParticle_.size(); ++index)
+		{
+			smokeParticle_[index]->Draw();
+		}
+		break;
 	}
 
 	dustParticle_->Draw();
@@ -208,12 +260,18 @@ void Player::Draw(const Camera& camera)
 
 void Player::OnCollision(const Collider* _other)
 {
+	
+	if (collider_->IsCollisionEnter()) {
+		hp--;
+	}
+
 	if (isHitColor_)
 		return;
 
 	isHitColor_ = true;
 	color_.SetColor(hitColor_);
-	hp--;
+	
+	
 }
 
 void Player::StageMovementRestrictions()
@@ -505,6 +563,86 @@ void Player::BehaviorAttackUpdate()
 		behavior_ = Behavior::kRoot;
 	}
 
+}
+
+void Player::BehaviorDieInitialize()
+{
+	die_.coolTime = 0;
+	die_.shakeTime = 0;
+	die_.isExplosion = false;
+	die_.shakePos = Vector3(0,0,0);
+	for (int i = 0; i < 5; i++) {
+		die_.smokeFlag[i] = false;
+	}
+	die_.strRotate.x = worldTransformBody_.rotate_.x;
+}
+
+void Player::BehaviorDieUpdate()
+{
+	if (die_.coolTime >= die_.MaxCoolTime) {
+
+		die_.isExplosion = false;
+		//die_.player = false;
+	}
+
+	// カウントを5回まで
+	if (die_.smokeCount < 5) {
+		// 煙を続々出していく
+		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
+
+
+			die_.smokeFlag[die_.smokeCount] = true;
+
+			die_.smokeTimer = 0;
+			die_.smokeCount++;
+		}
+	}
+	else {
+		// シェイク
+		if (++die_.shakeTime <= die_.MaxShakeTime) {
+			Vector3 shake = Vector3(rand() % 3 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			worldTransformBody_.transform_ = die_.shakePos + shake;
+
+
+		}
+		else {
+			Vector3 shake = Vector3(rand() % 3 - 2, rand() % 3 - 1, rand() % 3 - 1);
+			//worldTransformBody_.transform_ = die_.shakePos + shake;
+			for (int i = 0; i < 5; i++) {
+				die_.smokeFlag[i] = false;
+			}
+			if (die_.player) {
+				die_.isExplosion = true;
+			}
+		}
+	}
+	
+	if (die_.isExplosion) {
+		die_.transitionFactor += die_.transitionFactorSpeed;
+		if (die_.transitionFactor >= 1.0f) {
+			die_.transitionFactor = 1.0f;
+		}
+
+		die_.coolTime++;
+		//worldTransformBody_.rotate_.x += 0.01f;
+
+		worldTransform_.rotate_.x = easeOutBounce(die_.strRotate.x, DegreesToRadians(90), die_.transitionFactor);
+	}
+
+	
+
+	// 爆発パーティクル
+	//deashExplosionParticle_->Update(die_.isExplosion);
+
+
+
+	// 煙パーティクル
+	if (die_.player) {
+		for (uint32_t index = 0; index < smokeParticle_.size(); ++index)
+		{
+			smokeParticle_[index]->Update(die_.smokeFlag[index]);
+		}
+	}
 }
 
 void Player::AttackParameter()

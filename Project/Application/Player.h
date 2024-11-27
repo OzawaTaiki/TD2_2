@@ -68,6 +68,7 @@ public :
 
 
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
+	WorldTransform& GetWorldTransformBody() { return worldTransformBody_; };
 
 	const float& GetRotateY() { return worldTransform_.rotate_.y; };
 
@@ -86,13 +87,17 @@ private:
 	//通常行動更新
 	void BehaviorRootUpdate();
 
-
 	//攻撃行動初期化
 	void BehaviorAttackInitialize();
 
-
 	//攻撃行動更新
 	void BehaviorAttackUpdate();
+
+	//死亡行動初期化
+	void BehaviorDieInitialize();
+
+	//死亡行動更新
+	void BehaviorDieUpdate();
 
 	// 攻撃パラメータ
 	void AttackParameter();
@@ -116,6 +121,8 @@ private:
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+	WorldTransform worldTransformBody_;		//体
+
 	//
 	WorldTransform oldWorldTransform_;
 
@@ -125,6 +132,8 @@ private:
 	std::unique_ptr<Weapon> weapon_;
 
     std::unique_ptr< PlayerDustParticle> dustParticle_;
+
+	std::array < std::unique_ptr< PlayerDustParticle>,2> smokeParticle_;
 
 	//
 	const Camera* camera_ = nullptr;
@@ -151,6 +160,7 @@ private:
 		kRoot,   // 通常状態
 		kAttack, // 攻撃中
 		kJump,   // ジャンプ中
+		kDie,       // 死亡状態
 	};
 	//振るまい
 	Behavior behavior_ = Behavior::kRoot;
@@ -207,4 +217,49 @@ private:
     float hitColorDuration_ = 0.1f;
     // ヒットカラー
     Vector4 hitColor_ = { 1,0,0,1 };
+
+
+#pragma region Die
+
+	struct Die {
+		bool isFlag = false;
+
+		// カメラワーク時間
+		uint32_t cameraWorkTime;
+		uint32_t MaxCameraWorkTime = 120;
+
+		// シェイク時間
+		uint32_t shakeTime;
+		uint32_t MaxShakeTime = 120;
+
+		Vector3 shakePos;
+
+		// 煙カウント
+		uint32_t smokeCount = 0;
+
+		// 煙タイム
+		uint32_t smokeTimer = 0;
+		uint32_t MaxSmokeTimer = 30;
+
+		uint32_t smokeFlag[5];
+
+		// 爆発フラグ
+		bool isExplosion = false;
+
+		bool player = true;
+
+		// クールタイム
+		uint32_t coolTime = 0;
+		uint32_t MaxCoolTime = 65;
+
+		// t補間用
+		float transitionFactor = 0;
+		float transitionFactorSpeed = 0.01f;
+
+		Vector3 strRotate;
+
+	};
+	Die die_;
+
+#pragma endregion // 死亡演出
 };
