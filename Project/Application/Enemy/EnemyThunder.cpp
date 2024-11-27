@@ -59,7 +59,7 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 }
 
-void EnemyThunder::Update()
+void EnemyThunder::Update(Audio* audio, Audio::Sound sound)
 {
 
 	if (++attackPreparationTime_ > attack_->MaxAttackPreparationTime) {
@@ -67,6 +67,9 @@ void EnemyThunder::Update()
 			//if (++thunderStrikeTime > attack_->MaxThunderStrikeTime) {
 		collider_->RegsterCollider();
 		if (attack_->transitionFactor >= 0.9f) {
+			if (attack_->transitionFactor <= 1.0f) {
+				audio->SoundPlay(sound.soundDataHandle, sound.volume, 0, 0);
+			}
 			expandTime_++;
 			worldTransform2_.scale_.x = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.x);
 			worldTransform2_.scale_.z = MinMaxSize(attack_->MaxExpandTime, expandTime_, worldTransform2_.scale_.z);

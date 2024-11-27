@@ -42,6 +42,13 @@ private:
         unsigned int bufferSize;
     };
 public:
+    // 音
+    struct Sound {
+        uint32_t soundDataHandle;
+        uint32_t voiceHandle;
+        float volume;
+    };
+
 
     ~Audio();
 

@@ -65,4 +65,12 @@ private:
 
     float timer_ = 0.0f;
 
+
+    // 音
+    struct Sound {
+        uint32_t soundDataHandle;
+        uint32_t voiceHandle;
+        float volume;
+    };
+    Sound gameBgm_;
 };

@@ -100,23 +100,23 @@ void Enemy::Initialize()
 	bodyCollider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
 	bodyCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
-    // 左手コライダーの初期化
-    leftArmCollider_ = std::make_unique<Collider>();
-    leftArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-    leftArmCollider_->SetShape(modelLeftArm_->GetMin(), modelLeftArm_->GetMax());
-    leftArmCollider_->SetAtrribute("enemyLeft");
-    leftArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet"});
-    leftArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformLeft_.matWorld_; });
-    leftArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
+	// 左手コライダーの初期化
+	leftArmCollider_ = std::make_unique<Collider>();
+	leftArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	leftArmCollider_->SetShape(modelLeftArm_->GetMin(), modelLeftArm_->GetMax());
+	leftArmCollider_->SetAtrribute("enemyLeft");
+	leftArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet" });
+	leftArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformLeft_.matWorld_; });
+	leftArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
-    // 右手コライダーの初期化
-    rightArmCollider_ = std::make_unique<Collider>();
-    rightArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
-    rightArmCollider_->SetShape(modelRightArm_->GetMin(), modelRightArm_->GetMax());
-    rightArmCollider_->SetAtrribute("enemyRight");
-    rightArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet" });
-    rightArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformRight_.matWorld_; });
-    rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
+	// 右手コライダーの初期化
+	rightArmCollider_ = std::make_unique<Collider>();
+	rightArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	rightArmCollider_->SetShape(modelRightArm_->GetMin(), modelRightArm_->GetMax());
+	rightArmCollider_->SetAtrribute("enemyRight");
+	rightArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet" });
+	rightArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformRight_.matWorld_; });
+	rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
 
 	deashParticle_ = std::make_unique<EnemyDeathParticle>();
@@ -138,7 +138,8 @@ void Enemy::Initialize()
 		deashSmokeParticle_[index]->SetPlayerMat(&worldTransform_);
 	}
 
-    ConfigManager* configManager = ConfigManager::GetInstance();
+#pragma region ConfigManager
+	ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
 
@@ -226,8 +227,9 @@ void Enemy::Initialize()
 	configManager->SetVariable("enemy", "hitColorMaxTime", &damageCoolMaxTime_);
 
 	// クールタイム
-    configManager->SetVariable("enemy", "damageCoolTimeMax", &damageCoolMaxTime_);
+	configManager->SetVariable("enemy", "damageCoolTimeMax", &damageCoolMaxTime_);
 
+#pragma endregion // ConfigManager
 
 	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
 	rootMove_.isBehavior_ = false;
@@ -262,10 +264,8 @@ void Enemy::Initialize()
 	worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
 	worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
 
-	audio_ = std::make_unique<Audio>();
-	audio_->Initialize();
 
-	sound = audio_->SoundLoadWave("resources/Sounds/Alarm01.wav");
+	InitializeSound();
 
 	hp = MaxHp;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
@@ -411,7 +411,7 @@ void Enemy::Update()
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
 				ImGui::ColorEdit4("hitColor", &hitColor_.x);
 				ImGui::DragFloat("hitColorMaxTime", &damageCoolMaxTime_, 0.01f);
-                ImGui::DragFloat("damageCoolTimeMax", &damageCoolMaxTime_, 0.01f);
+				ImGui::DragFloat("damageCoolTimeMax", &damageCoolMaxTime_, 0.01f);
 
 				ImGui::TreePop();
 			}
@@ -420,14 +420,14 @@ void Enemy::Update()
 			{
 				ConfigManager* config = ConfigManager::GetInstance();
 				config->SaveData("enemy");
-                config->SaveData(" attack");
-                config->SaveData("attack1");
-                config->SaveData("attack2");
-                config->SaveData("attack3");
-                config->SaveData("attack4");
-                config->SaveData("normalAttackShot1_");
-                config->SaveData("normalAttackShot2_");
-                config->SaveData("root");
+				config->SaveData(" attack");
+				config->SaveData("attack1");
+				config->SaveData("attack2");
+				config->SaveData("attack3");
+				config->SaveData("attack4");
+				config->SaveData("normalAttackShot1_");
+				config->SaveData("normalAttackShot2_");
+				config->SaveData("root");
 			}
 		}
 
@@ -576,7 +576,7 @@ void Enemy::Update()
 	if (isAlive)
 	{
 		UpdateHitColor();
-        bodyCollider_->RegsterCollider();
+		bodyCollider_->RegsterCollider();
 	}
 
 
@@ -682,21 +682,23 @@ void Enemy::OnCollision([[maybe_unused]] const Collider* _other)
 {
 	if (_other->GetName() == "weapon")
 	{
-		if(!isCoolTime_)
+		if (!isCoolTime_)
 		{
 			color_.SetColor(hitColor_);
 			isHitColor_ = true;
 			isCoolTime_ = true;
 
-			hp  -= player_->GetDamege();
-            if (hp <= 0)
-            {
+			hp -= player_->GetDamege();
+			audio5_->SoundPlay(sounds_.bossDamage.soundDataHandle, sounds_.bossDamage.volume, 0, 1);
+
+			if (hp <= 0)
+			{
 				if (isAlive) {
 					behaviorRequest_ = Behavior::kDie;
 				}
 
-                isAlive = false;
-            }
+				isAlive = false;
+			}
 		}
 	}
 }
@@ -800,6 +802,8 @@ void Enemy::BehaviorRootUpdate()
 
 			if (rootMove_.transitionFactor >= 1.0f) {
 
+
+
 				if (++rootMove_.coolTime > rootMove_.MaxCoolTime) {
 					// 0に
 
@@ -841,6 +845,12 @@ void Enemy::BehaviorRootUpdate()
 				}
 			}
 			else {
+
+				// 音
+				if (rootMove_.transitionFactor >= 0.2f && rootMove_.transitionFactor <= 0.3f) {
+					audio_->SoundPlay(sounds_.bossMove.soundDataHandle, sounds_.bossMove.volume, 0, 0);
+				}
+
 				// 移動
 				worldTransform_.transform_ = Lerp(rootMove_.startPos, rootMove_.targetPos, easeInOutSine(rootMove_.transitionFactor));
 				Move(0.0f, false);
@@ -1263,6 +1273,13 @@ void Enemy::BehaviorDieUpdate()
 	if (die_.coolTime >= die_.MaxCoolTime) {
 
 		die_.isExplosion = false;
+		if (die_.enmey) {
+			audio2_->SoundPlay(sounds_.bossDieExplotion.soundDataHandle, sounds_.bossDieExplotion.volume, 0, 0);
+		}else 
+		{
+			audio4_->SoundStop(sounds_.bossDieTremble.voiceHandle);
+			audio3_->SoundStop(sounds_.smoke.voiceHandle);
+		}
 		die_.enmey = false;
 	}
 
@@ -1271,7 +1288,10 @@ void Enemy::BehaviorDieUpdate()
 		// 煙を続々出していく
 		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
 
-
+			if (die_.enmey) {
+				sounds_.smoke.voiceHandle = audio3_->SoundPlay(sounds_.smoke.soundDataHandle, sounds_.smoke.volume, 0, 1);
+			}
+			
 			die_.smokeFlag[die_.smokeCount] = true;
 
 			die_.smokeTimer = 0;
@@ -1279,6 +1299,11 @@ void Enemy::BehaviorDieUpdate()
 		}
 	}
 	else {
+		if (!die_.isExplosion) {
+			if (die_.enmey) {
+				sounds_.bossDieTremble.voiceHandle = audio4_->SoundPlay(sounds_.bossDieTremble.soundDataHandle, sounds_.bossDieTremble.volume, 0, 0);
+			}
+		}
 		// シェイク
 		if (++die_.shakeTime <= die_.MaxShakeTime) {
 			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
@@ -1292,13 +1317,14 @@ void Enemy::BehaviorDieUpdate()
 
 			if (die_.enmey) {
 				die_.isExplosion = true;
+
 			}
 		}
 	}
 
 	if (die_.isExplosion) {
 		die_.coolTime++;
-
+		
 	}
 
 
@@ -1410,10 +1436,12 @@ void Enemy::SpecialAttackUpdate()
 
 					// 初期化処理
 					StageArmInitialize(newLocation);
+
+					audio_->SoundPlay(sounds_.bossArmPrediction.soundDataHandle, sounds_.bossArmPrediction.volume, 0, 1);
 				}
 				else {
 
-
+					audio_->SoundPlay(sounds_.bossArmPrediction.soundDataHandle, sounds_.bossArmPrediction.volume, 0, 1);
 					if (attack1_.rrr == 0) {
 						StageArmInitialize(Stage::StageNum::kLeft, (attack1_.armNum - 2));
 						StageArmInitialize(Stage::StageNum::kRight, (attack1_.armNum - 2));
@@ -1527,8 +1555,8 @@ void Enemy::StageArmInitialize(int num, int i)
 	Vector3 direction{};
 	Vector3 stagePos{};
 	//direction = player_->GetWorldTransform().GetWorldPosition();
-	direction.x =  ((i + 1) * 25) - 15;
-	direction.z =  ((i + 1) * 25) - 15;
+	direction.x = ((i + 1) * 25) - 15;
+	direction.z = ((i + 1) * 25) - 15;
 
 	// 床から
 	if (num == Stage::StageNum::kFloor) {
@@ -1639,7 +1667,7 @@ void Enemy::SpecialAttack2Update()
 			if (attack2_.transitionFactor == 0) {
 
 				ThunderInitialize(pos);
-
+				audio_->SoundPlay(sounds_.bossJumpUp.soundDataHandle, sounds_.bossJumpUp.volume, 0, 0);
 
 			}
 			// 補間の進行度を更新
@@ -1671,6 +1699,8 @@ void Enemy::SpecialAttack2Update()
 			else {
 				attack2_.transitionFactor = 1.0f;
 				attack2_.isBulletShot = true;
+				audio_->SoundPlay(sounds_.bossGetOff.soundDataHandle, sounds_.bossGetOff.volume, 0, 0);
+
 			}
 
 			startPos = worldTransform_.transform_;
@@ -1734,7 +1764,7 @@ void Enemy::BulletInitialize(Vector3 pos)
 void Enemy::BulletUpdate()
 {
 	for (const auto& bullet : stageArm) {
-		bullet->Update();
+		bullet->Update(audio_.get(), sounds_.bossArmStickOut);
 	}
 
 	// デスフラグが立った弾を削除
@@ -1755,7 +1785,7 @@ void Enemy::BulletUpdate()
 
 
 	for (const auto& bullet : thunder_) {
-		bullet->Update();
+		bullet->Update(audio_.get(), sounds_.bossThunder);
 	}
 	// デスフラグが立った弾を削除
 	thunder_.remove_if([](const std::unique_ptr<EnemyThunder>& bullet) { return bullet->IsDead(); });
@@ -1784,6 +1814,10 @@ void Enemy::SpecialAttack3Update() {
 	Vector3 startPos;
 	if (attack3_.isBulletShot == false) {
 		if (attack3_.clock1 == 1) {
+			if (attack3_.transitionFactor == 0.0f) {
+				audio_->SoundPlay(sounds_.bossJumpUp.soundDataHandle, sounds_.bossJumpUp.volume, 0, 0);
+			}
+
 			targetPos.x = worldTransform_.transform_.x;
 			targetPos.y = attack3_.MaxPosY;
 			targetPos.z = worldTransform_.transform_.z;
@@ -1821,11 +1855,16 @@ void Enemy::SpecialAttack3Update() {
 			if (attack3_.transitionFactor < 1.0f) {
 				attack3_.transitionFactor += transitionSpeed * 10.0f;
 
+
 			}
 			else {
+				if (!attack3_.isBulletShot) {
+					audio_->SoundPlay(sounds_.bossGetOff.soundDataHandle, sounds_.bossGetOff.volume, 0, 0);
+				}
 				attack3_.isBulletShot = true;
 				attack3_.transitionFactor = 1.0f;
 				attack3_.clock1 *= -1;
+
 			}
 
 
@@ -1845,6 +1884,7 @@ void Enemy::SpecialAttack3Update() {
 				BulletInitialize(worldTransform_.GetWorldPosition());
 				attack3_.numShotsPerPhase++;
 				attack3_.attackCooldown = 0;
+				audio_->SoundPlay(sounds_.bossReleaseElectricity.soundDataHandle, sounds_.bossReleaseElectricity.volume, 0, 1);
 			}
 		}
 		if (attack3_.numShotsPerPhase >= attack3_.MaxNumShotsPerPhase) {
@@ -1871,6 +1911,9 @@ void Enemy::SpecialAttack4Initialize()
 	attack4_.armGrowthToSpinDelay = 0;
 	//attack4_.stoppingTime = 0;
 	attack4_.recoilTime = 0;
+
+	audio_->SoundPlay(sounds_.bossGrowArm.soundDataHandle, sounds_.bossGrowArm.volume, 0, 0);
+
 }
 
 void Enemy::SpecialAttack4Update()
@@ -1894,6 +1937,10 @@ void Enemy::SpecialAttack4Update()
 		if (++attack4_.spinTime <= attack4_.MaxSpinTime) {
 			Move(attack4_.speed, true);
 
+			//if (attack4_.rotateT == 0) {
+			audio_->SoundPlay(sounds_.bossRotate.soundDataHandle, sounds_.bossRotate.volume, 0, 0);
+			//}
+
 			attack4_.rotateT += transitionFactor;
 			if (attack4_.rotateT >= 1.0f) {
 				attack4_.rotateT = 1;
@@ -1910,7 +1957,9 @@ void Enemy::SpecialAttack4Update()
 			if (attack4_.rotateT <= 0.0f) {
 				attack4_.rotateT = 0.0f;
 			}
-
+			if (attack4_.rotateT >= 0.6f) {
+				audio_->SoundPlay(sounds_.bossStopMove.soundDataHandle, sounds_.bossStopMove.volume, 0, 0);
+			}
 			attack4_.rotateSpeed = Lerp(attack4_.MinxRotateSpeed, attack4_.MaxRotateSpeed, attack4_.rotateT);
 			if (attack4_.rotateSpeed <= 0.011f) {
 				attack4_.rotateSpeed = 0;
@@ -1962,6 +2011,8 @@ void Enemy::NormalShotAttack1Initialize()
 	normalAttackShot1_.armGrowthToSpinDelay = 0;
 	//normalAttackShot1_.stoppingTime = 0;
 	normalAttackShot1_.recoilTime = 0;
+
+	audio_->SoundPlay(sounds_.bossGrowArm.soundDataHandle, sounds_.bossGrowArm.volume, 0, 0);
 }
 
 void Enemy::NormalShotAttack1Update()
@@ -1985,9 +2036,15 @@ void Enemy::NormalShotAttack1Update()
 		if (++normalAttackShot1_.spinTime <= normalAttackShot1_.MaxSpinTime) {
 			Move(normalAttackShot1_.speed, true);
 
+			//if (normalAttackShot1_.rotateT == 0.0f) {
+			sounds_.bossRotate.voiceHandle = audio_->SoundPlay(sounds_.bossRotate.soundDataHandle, sounds_.bossRotate.volume, 0, 0);
+			//}
+
 			normalAttackShot1_.rotateT += transitionFactor;
 			if (normalAttackShot1_.rotateT >= 1.0f) {
 				normalAttackShot1_.rotateT = 1;
+
+				audio_->SoundStop(sounds_.bossRotate.voiceHandle);
 			}
 			normalAttackShot1_.rotateSpeed = Lerp(normalAttackShot1_.MinxRotateSpeed, normalAttackShot1_.MaxRotateSpeed, normalAttackShot1_.rotateT);
 
@@ -1997,6 +2054,9 @@ void Enemy::NormalShotAttack1Update()
 
 		}
 		else {
+			if (normalAttackShot1_.rotateT >= 0.6f) {
+				audio_->SoundPlay(sounds_.bossStopMove.soundDataHandle, sounds_.bossStopMove.volume, 0, 0);
+			}
 			normalAttackShot1_.rotateT -= transitionFactor;
 			if (normalAttackShot1_.rotateT <= 0.0f) {
 				normalAttackShot1_.rotateT = 0.0f;
@@ -2045,6 +2105,8 @@ void Enemy::NormalShotAttack2Initialize()
 	normalAttackShot2_.stoppingTime = 0;
 	normalAttackShot2_.recoilTime = 0;
 
+	audio_->SoundPlay(sounds_.bossGrowArm.soundDataHandle, sounds_.bossGrowArm.volume, 0, 0);
+
 	Move(normalAttackShot2_.speed, false);
 }
 
@@ -2063,6 +2125,7 @@ void Enemy::NormalShotAttack2Update()
 	if (++normalAttackShot2_.armGrowthToSpinDelay <= normalAttackShot2_.MaxArmGrowthToSpinDelay || normalAttackShot2_.transitionFactor <= 1.0f) {
 		if (normalAttackShot2_.transitionFactor >= 1.0f) {
 			normalAttackShot2_.transitionFactor = 1.0f;
+			audio_->SoundPlay(sounds_.bossMove.soundDataHandle, sounds_.bossMove.volume, 0, 0);
 		}
 		worldTransformLeft_.transform_.x = StartEnd(str, endm, normalAttackShot2_.transitionFactor);
 		worldTransformRight_.transform_.x = StartEnd(str, end, normalAttackShot2_.transitionFactor);
@@ -2169,6 +2232,7 @@ void Enemy::NormalLongAttack1Update()
 			NormalBulletInitialize(worldTransform_.GetWorldPosition());
 			normalAttackBullet_.numShotsPerPhase++;
 			normalAttackBullet_.attackCooldown = 0;
+			audio_->SoundPlay(sounds_.bossReleaseElectricity.soundDataHandle, sounds_.bossReleaseElectricity.volume, 0, 1);
 		}
 	}
 	if (normalAttackBullet_.numShotsPerPhase >= normalAttackBullet_.MaxNumShotsPerPhase) {
@@ -2241,6 +2305,7 @@ void Enemy::NormalLongAttack2Update()
 {
 	if (normal2AttackBullet_.numShotsPerPhase < normal2AttackBullet_.MaxNumShotsPerPhase) {
 		if (++normal2AttackBullet_.attackCooldown >= normal2AttackBullet_.MaxAttackCooldown) {
+			audio_->SoundPlay(sounds_.bossReleaseElectricity.soundDataHandle, sounds_.bossReleaseElectricity.volume, 0, 1);
 			Normal2BulletInitialize(worldTransform_.GetWorldPosition());
 			normal2AttackBullet_.numShotsPerPhase++;
 			normal2AttackBullet_.attackCooldown = 0;
@@ -2293,10 +2358,84 @@ void Enemy::UpdateHitColor()
 		{
 			damageCoolTimer_ = 0;
 			isHitColor_ = false;
-            isCoolTime_ = false;
+			isCoolTime_ = false;
 			color_.SetColor(defaultColor_);
 		}
 	}
+}
+
+void Enemy::InitializeSound()
+{
+	//音
+	audio_ = std::make_unique<Audio>();
+	audio_->Initialize();
+	audio2_ = std::make_unique<Audio>();
+	audio2_->Initialize();
+	audio3_ = std::make_unique<Audio>();
+	audio3_->Initialize();
+	audio4_ = std::make_unique<Audio>();
+	audio4_->Initialize();
+	audio5_ = std::make_unique<Audio>();
+	audio5_->Initialize();
+
+	// 移動音
+	sounds_.bossMove.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossMove.wav");
+	sounds_.bossMove.volume = 0.2f;
+
+	// 攻撃1予測線音
+	sounds_.bossArmPrediction.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossArmPredection.wav");
+	sounds_.bossArmPrediction.volume = 0.2f;
+
+	// 攻撃1腕はえ
+	sounds_.bossArmStickOut.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossArmStickOut.wav");
+	sounds_.bossArmStickOut.volume = 0.2f;
+
+	// ジャンプ
+	sounds_.bossJumpUp.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossJumpUp.wav");
+	sounds_.bossJumpUp.volume = 0.2f;
+
+	// 地面着地
+	sounds_.bossGetOff.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossGetOff.wav");
+	sounds_.bossGetOff.volume = 0.2f;
+
+	// 雷
+	sounds_.bossThunder.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossThunder.wav");
+	sounds_.bossThunder.volume = 0.2f;
+
+	// 発射
+	sounds_.bossReleaseElectricity.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossReleaseElectricity.wav");
+	sounds_.bossReleaseElectricity.volume = 0.2f;
+
+	// うではえ
+	sounds_.bossGrowArm.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossGrowArm.wav");
+	sounds_.bossGrowArm.volume = 0.2f;
+
+	// 回り
+	sounds_.bossRotate.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/rotate.wav");
+	sounds_.bossRotate.volume = 0.2f;
+
+	// 止まる
+	sounds_.bossStopMove.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossStopMove.wav");
+	sounds_.bossStopMove.volume = 0.2f;
+
+	// ブルブル
+	sounds_.bossDieTremble.soundDataHandle = audio4_->SoundLoadWave("resources/Sounds/bossDieTremble.wav");
+	sounds_.bossDieTremble.volume = 0.5f;
+
+	// 爆発
+	sounds_.bossDieExplotion.soundDataHandle = audio2_->SoundLoadWave("resources/Sounds/bossDieExplotion.wav");
+	sounds_.bossDieExplotion.volume = 1.2f;
+
+	// 煙
+	sounds_.smoke.soundDataHandle = audio3_->SoundLoadWave("resources/Sounds/playerDieSmoke.wav");
+	sounds_.smoke.volume = 0.3f;
+
+	// ダメージ
+	sounds_.bossDamage.soundDataHandle = audio5_->SoundLoadWave("resources/Sounds/bossDamage.wav");
+	sounds_.smoke.volume = 0.3f;
+
+
+
 }
 
 
