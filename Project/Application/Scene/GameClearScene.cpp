@@ -52,13 +52,12 @@ void GameClearScene::Update()
 
         if (select == 0)
         {
-            SceneManager::ReserveScene("game");
-            decision.voiceHandle = audio2_->SoundPlay(decision.soundDataHandle, decision.volume, 0, 0);
+
+            SceneManager::ReserveScene("title");
         }
         else if (select == 1)
         {
-            SceneManager::ReserveScene("title");
-            decision.voiceHandle = audio2_->SoundPlay(decision.soundDataHandle, decision.volume, 0, 0);
+            SceneManager::ReserveScene("game");
         }
         audio_->SoundStop(clearBgm_.voiceHandle);
     }
