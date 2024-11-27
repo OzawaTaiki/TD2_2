@@ -26,10 +26,6 @@ void Weapon::Initialize()
     slashModel_->SetParent(&worldTransform_);
     slashModel_->translate_ = { 0,0,2 };
     slashModel_->scale_= { 2,2,2 };
-
-
-
-
 }
 
 void Weapon::UpdateWorldTransform()
