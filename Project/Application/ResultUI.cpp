@@ -157,7 +157,9 @@ void ResultUI::ButtonUpdate()
         }
     }
     if (Input::GetInstance()->IsKeyTriggered(DIK_LEFTARROW) ||
-        Input::GetInstance()->IsKeyTriggered(DIK_RIGHTARROW))
+        Input::GetInstance()->IsKeyTriggered(DIK_RIGHTARROW) ||
+        Input::GetInstance()->IsKeyTriggered(DIK_A) ||
+        Input::GetInstance()->IsKeyTriggered(DIK_D))
     {
         selectButton_ = selectButton_ == 0 ? 1 : 0;
     }
