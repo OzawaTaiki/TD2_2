@@ -1,25 +1,25 @@
-#include "ResultPlayer.h"
+#include "ResultEnemy.h"
 #include "ModelManager.h"
 
 #include "ConfigManager.h"
 
-void ResultPlayer::Initialize()
+void ResultEnemy::Initialize()
 {
     model_ = std::make_unique<ObjectModel>();
 
     ConfigManager* config = ConfigManager::GetInstance();
-    config->SetVariable("Result", "pmodelPath", &modelName_);
-    config->SetVariable("Result", "pBaseScale", &baseScale_);
-    config->SetVariable("Result", "pScaleRange", &scaleRange_);
-    config->SetVariable("Result", "pScaleSpeed", &scaleSpeed_);
-    config->SetVariable("Result", "pCurrentTime", &currentTime_);
-    config->SetVariable("Result", "protate", &model_->rotate_);
+    config->SetVariable("Result", "emodelPath", &modelName_);
+    config->SetVariable("Result", "eBaseScale", &baseScale_);
+    config->SetVariable("Result", "eScaleRange", &scaleRange_);
+    config->SetVariable("Result", "eScaleSpeed", &scaleSpeed_);
+    config->SetVariable("Result", "eCurrentTime", &currentTime_);
+    config->SetVariable("Result", "erotate", &model_->rotate_);
 
     model_->Initialize(modelName_);
     model_->scale_ = baseScale_;
 }
 
-void ResultPlayer::Update()
+void ResultEnemy::Update()
 {
 #ifdef _DEBUG
     ImGui();
@@ -30,12 +30,12 @@ void ResultPlayer::Update()
     model_->Update();
 }
 
-void ResultPlayer::Draw(const Camera* _camera)
+void ResultEnemy::Draw(const Camera* _camera)
 {
     model_->Draw(_camera, { 1,1,1,1 });
 }
 
-void ResultPlayer::Scaling()
+void ResultEnemy::Scaling()
 {
     currentTime_ += 1.0f / 60.0f;
 
@@ -47,7 +47,7 @@ void ResultPlayer::Scaling()
 
 #ifdef _DEBUG
 #include <imgui.h>
-void ResultPlayer::ImGui()
+void ResultEnemy::ImGui()
 {
     ImGui::SeparatorText("Player");
     ImGui::DragFloat3("baseScale", &baseScale_.x, 0.01f);
@@ -56,7 +56,7 @@ void ResultPlayer::ImGui()
 
     char buf[255];
     strcpy_s(buf, modelName_.c_str());
-    if(ImGui::InputText("modelPath", buf,255))
+    if (ImGui::InputText("modelPath", buf, 255))
         modelName_ = buf;
     if (ImGui::Button("save"))
     {

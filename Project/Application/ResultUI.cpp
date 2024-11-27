@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "ConfigManager.h"
 #include "TextureManager.h"
+
 void ResultUI::Initialize(const std::string& _scene)
 {
     std::string label1;
@@ -106,6 +107,11 @@ void ResultUI::Update()
         retryButton_->SetTextureNameAndLoad(retryButtonTexturePath_);
         titleButton_->SetTextureNameAndLoad(titleButtonTexturePath_);
     }
+
+    if (ImGui::Button("save"))
+    {
+        ConfigManager::GetInstance()->SaveData("UI");
+    }
     ImGui::End();
 #endif // _DEBUG
 
@@ -178,7 +184,7 @@ void ResultUI::ButtonUpdate()
     float retryT = sinf(currentRetryTimer_ * resizeSpeed_);
 
     retrySize_ = baseSize_ + sizeRange_ * retryT;
-    if (retryT == 0.0f)
+    if (std::fabsf(retryT) <= 0.001f)
     {
         retrySize_ = baseSize_;
         currentRetryTimer_ = 0;
@@ -188,7 +194,7 @@ void ResultUI::ButtonUpdate()
     float titleT = sinf(currentTitleTimer_ * resizeSpeed_);
     titleSize_ = baseSize_ + sizeRange_ * titleT;
 
-    if (titleT == 0.0f)
+    if (std::fabsf(titleT) <= 0.001f)
     {
         titleSize_ = baseSize_;
         currentTitleTimer_ = 0;

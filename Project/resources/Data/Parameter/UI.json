@@ -22,13 +22,43 @@
             "cube.jpg"
         ],
         "CleartextfloatingRange": [
-            1.0
+            10.0
         ],
         "CleartextfloatingSpeed": [
-            1.0
+            2.0
         ],
         "CleartitleButtonTexturePath": [
             "cube.jpg"
+        ],
+        "GameOverbackGroundTexturePath": [
+            "white.png"
+        ],
+        "GameOverretryButtonTexturePath": [
+            "white.png"
+        ],
+        "GameOvertextBasePos": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "GameOvertextSize": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "GameOvertextTexturePath": [
+            "white.png"
+        ],
+        "GameOvertextfloatingRange": [
+            1.0
+        ],
+        "GameOvertextfloatingSpeed": [
+            1.0
+        ],
+        "GameOvertitleButtonTexturePath": [
+            "white.png"
         ],
         "Retryanchor": [
             [
@@ -37,7 +67,7 @@
             ]
         ],
         "RetryisActive": [
-            257
+            256
         ],
         "RetryisVisible": [
             738197505
@@ -53,8 +83,8 @@
         ],
         "Retrysize": [
             [
-                314.2242126464844,
-                107.11211395263672
+                300.0,
+                100.0
             ]
         ],
         "RetrytextureName": [
@@ -67,10 +97,10 @@
             ]
         ],
         "TitleisActive": [
-            256
+            257
         ],
         "TitleisVisible": [
-            1
+            486539265
         ],
         "Titlelabel": [
             "Title"
@@ -83,8 +113,8 @@
         ],
         "Titlesize": [
             [
-                300.0,
-                100.0
+                309.6637878417969,
+                104.83189392089844
             ]
         ],
         "TitletextureName": [
@@ -96,6 +126,36 @@
                 100.0
             ]
         ],
+        "continueanchor": [
+            [
+                0.5,
+                0.5
+            ]
+        ],
+        "continueisActive": [
+            256
+        ],
+        "continueisVisible": [
+            1
+        ],
+        "continuelabel": [
+            "continue"
+        ],
+        "continuepos": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "continuesize": [
+            [
+                300.0,
+                100.0
+            ]
+        ],
+        "continuetextureName": [
+            "cube.jpg"
+        ],
         "label": [
             "Title"
         ],
@@ -104,8 +164,8 @@
         ],
         "retrySize": [
             [
-                314.2242126464844,
-                107.11211395263672
+                300.0,
+                100.0
             ]
         ],
         "sizeRange": [
@@ -116,8 +176,8 @@
         ],
         "titleSize": [
             [
-                300.0,
-                100.0
+                309.6637878417969,
+                104.83189392089844
             ]
         ]
     }
