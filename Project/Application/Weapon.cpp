@@ -25,7 +25,7 @@ void Weapon::Initialize()
     slashModel_->Initialize("Slash/Slash_test.obj");
     slashModel_->SetParent(&worldTransform_);
     slashModel_->translate_ = { 0,0,2 };
-    slashModel_->scale_= { 1,1,2 };
+    slashModel_->scale_= { 2,2,2 };
 
 
 
