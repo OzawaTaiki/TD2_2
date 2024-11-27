@@ -100,6 +100,11 @@ void FollowCamera::Update()
 
 			camera_.ShakeParametaerSettingFromImGui();
 
+			if (ImGui::Button("Save"))
+			{
+                ConfigManager::GetInstance()->SaveData("followCamera");
+			}
+
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

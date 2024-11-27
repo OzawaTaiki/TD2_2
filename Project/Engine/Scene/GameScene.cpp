@@ -75,10 +75,6 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 #ifdef _DEBUG
-    if (ImGui::Button("save")) {
-        ConfigManager::GetInstance()->SaveData();
-        //JsonLoader::SaveJson()
-    }
 #endif // _DEBUG
 
     input_->Update();

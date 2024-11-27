@@ -57,7 +57,7 @@ void TitleEnemy::ImGui()
 
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("TitleEnemy");
+        ConfigManager::GetInstance()->SaveData("Title");
     }
     ImGui::PopID();
 
