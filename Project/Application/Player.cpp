@@ -134,7 +134,7 @@ void Player::Initialize()
 	sounds_.playerMove.volume = 0.2f;
 	
 	// 被弾音
-	sounds_.playerDamage.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerMove.wav");
+	sounds_.playerDamage.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerDamage.wav");
 	//sounds_.playerDamage.voiceHandle = audio_->IsPlaying(sounds_.playerDamage.soundDataHandle);
 	sounds_.playerDamage.volume = 0.2f;
 
