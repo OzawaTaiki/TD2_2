@@ -106,10 +106,10 @@ void TitleUI::TextUpdate()
     if (t < 1.0f / d1) {
         easedT= n1 * t * t;
     }
-    else if (t < 2 / d1) {
+    else if (t < 2.0f / d1) {
         easedT = n1 * (t -= 1.5f / d1) * t + 0.8f;
     }
-    else if (t < 2.5 / d1) {
+    else if (t < 2.5f / d1) {
         easedT = n1 * (t -= 2.25f / d1) * t + 0.9375f;
     }
     else {
