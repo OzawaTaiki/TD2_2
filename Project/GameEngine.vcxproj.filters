@@ -330,6 +330,8 @@
     <ClCompile Include="Application\HitEffect.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="Application\Enemy\EnemyDeathParticle.cpp">
+      <Filter>ソース ファイル</Filter>
     <ClCompile Include="Application\Scene\GameClearScene.cpp">
       <Filter>Application\Scene</Filter>
     </ClCompile>
@@ -359,6 +361,7 @@
     </ClCompile>
     <ClCompile Include="Application\TItleUI.cpp">
       <Filter>Application</Filter>
+
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -600,6 +603,8 @@
     <ClInclude Include="Application\HitEffect.h">
       <Filter>Application</Filter>
     </ClInclude>
+    <ClInclude Include="Application\Enemy\EnemyDeathParticle.h">
+      <Filter>ヘッダー ファイル</Filter>
     <ClInclude Include="Application\Scene\GameOverScene.h">
       <Filter>Application\Scene</Filter>
     </ClInclude>
