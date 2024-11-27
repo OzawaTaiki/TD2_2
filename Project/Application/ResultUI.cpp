@@ -6,10 +6,11 @@
 
 void ResultUI::Initialize(const std::string& _scene)
 {
+    scene_ = _scene;
     std::string label1;
     std::string label2;
 
-    if (_scene=="Clear")
+    if (_scene == "Clear")
     {
         label1 = "Retry";
         label2 = "Title";
@@ -32,16 +33,16 @@ void ResultUI::Initialize(const std::string& _scene)
     baseSize_ = titleButton_->GetSize();
 
     ConfigManager* configManager = ConfigManager::GetInstance();
-    configManager->SetVariable("UI", "baseSize", &baseSize_);
-    configManager->SetVariable("UI", "retrySize", &retrySize_);
-    configManager->SetVariable("UI", "titleSize", &titleSize_);
-    configManager->SetVariable("UI", "sizeRange", &sizeRange_);
-    configManager->SetVariable("UI", "resizeSpeed", &resizeSpeed_);
+    configManager->SetVariable(  _scene, "baseSize", &baseSize_);
+    configManager->SetVariable(  _scene, "retrySize", &retrySize_);
+    configManager->SetVariable(  _scene, "titleSize", &titleSize_);
+    configManager->SetVariable(  _scene, "sizeRange", &sizeRange_);
+    configManager->SetVariable(  _scene, "resizeSpeed", &resizeSpeed_);
 
-    configManager->SetVariable("UI", _scene + "backGroundTexturePath", &backGroundTexturePath_);
-    configManager->SetVariable("UI", _scene + "textTexturePath", &textTexturePath_);
-    configManager->SetVariable("UI", _scene + "retryButtonTexturePath", &retryButtonTexturePath_);
-    configManager->SetVariable("UI", _scene + "titleButtonTexturePath", &titleButtonTexturePath_);
+    configManager->SetVariable(  _scene, "backGroundTexturePath", &backGroundTexturePath_);
+    configManager->SetVariable(  _scene, "textTexturePath", &textTexturePath_);
+    configManager->SetVariable(  _scene, "retryButtonTexturePath", &retryButtonTexturePath_);
+    configManager->SetVariable(  _scene, "titleButtonTexturePath", &titleButtonTexturePath_);
 
     retryButton_->SetTextureNameAndLoad(retryButtonTexturePath_);
     titleButton_->SetTextureNameAndLoad(titleButtonTexturePath_);
@@ -53,10 +54,10 @@ void ResultUI::Initialize(const std::string& _scene)
 
     text_ = Sprite::Create(TextureManager::GetInstance()->Load(textTexturePath_));
     text_->Initialize();
-    configManager->SetVariable("UI", _scene + "textSize", &textSize_);
-    configManager->SetVariable("UI", _scene + "textBasePos", &textBasePos_);
-    configManager->SetVariable("UI", _scene + "textfloatingSpeed", &textfloatingSpeed_);
-    configManager->SetVariable("UI", _scene + "textfloatingRange", &textfloatingRange_);
+    configManager->SetVariable(  _scene, "textSize", &textSize_);
+    configManager->SetVariable(  _scene, "textBasePos", &textBasePos_);
+    configManager->SetVariable(  _scene, "textfloatingSpeed", &textfloatingSpeed_);
+    configManager->SetVariable(  _scene, "textfloatingRange", &textfloatingRange_);
 
 }
 
@@ -110,7 +111,7 @@ void ResultUI::Update()
 
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("UI");
+        ConfigManager::GetInstance()->SaveData(  scene_);
     }
     ImGui::End();
 #endif // _DEBUG

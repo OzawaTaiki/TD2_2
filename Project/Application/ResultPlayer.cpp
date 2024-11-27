@@ -8,12 +8,13 @@ void ResultPlayer::Initialize()
     model_ = std::make_unique<ObjectModel>();
 
     ConfigManager* config = ConfigManager::GetInstance();
-    config->SetVariable("Result", "pmodelPath", &modelName_);
-    config->SetVariable("Result", "pBaseScale", &baseScale_);
-    config->SetVariable("Result", "pScaleRange", &scaleRange_);
-    config->SetVariable("Result", "pScaleSpeed", &scaleSpeed_);
-    config->SetVariable("Result", "pCurrentTime", &currentTime_);
-    config->SetVariable("Result", "protate", &model_->rotate_);
+    config->SetVariable("Clear", "pmodelPath", &modelName_);
+    config->SetVariable("Clear", "pBaseScale", &baseScale_);
+    config->SetVariable("Clear", "pScaleRange", &scaleRange_);
+    config->SetVariable("Clear", "pScaleSpeed", &scaleSpeed_);
+    config->SetVariable("Clear", "pCurrentTime", &currentTime_);
+    config->SetVariable("Clear", "protate", &model_->rotate_);
+    config->SetVariable("Clear", "pPosition", &model_->translate_);
 
     model_->Initialize(modelName_);
     model_->scale_ = baseScale_;
@@ -60,7 +61,7 @@ void ResultPlayer::ImGui()
         modelName_ = buf;
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("Result");
+        ConfigManager::GetInstance()->SaveData("Clear");
         model_->SetModel(modelName_);
     }
 

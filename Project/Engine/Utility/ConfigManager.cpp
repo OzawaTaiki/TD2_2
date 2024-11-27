@@ -144,8 +144,8 @@ void ConfigManager::SaveData(const std::string& _groupName)
         else if (value.address.index() == 5)
         {
             // std::string
-            std::string* ptr = std::get<std::string*>(value.address);
-            json_->SetData(_groupName, variableName, *ptr);
+            //std::string* ptr = std::get<std::string*>(value.address);
+            //json_->SetData(_groupName, variableName, *ptr);
         }
     }
     json_->SaveJson(_groupName);

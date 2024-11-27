@@ -10,6 +10,9 @@ void TitleUI::Initialize()
     pressAnyKey_ = Sprite::Create(0);
     pressAnyKey_->Initialize();
 
+    title_ = std::make_unique<ObjectModel>();
+    title_->Initialize(titleModelpath_);
+
     ConfigManager* config = ConfigManager::GetInstance();
     config->SetVariable("Title", "UIpos", &pressAnyKey_->translate_);
     config->SetVariable("Title", "UIscale", &pressAnyKey_->scale_);
@@ -17,12 +20,19 @@ void TitleUI::Initialize()
     config->SetVariable("Title", "UIcolor", &pressTextColor_);
     config->SetVariable("Title", "UITextTexture", &textTextureParh_);
     config->SetVariable("Title", "UItitleModel", &titleModelpath_);
+    title_->translate_;
+    // title_のｔらんｓふぉーむをとうろく
+    config->SetVariable("Title", "titlePos", &title_->translate_);
+    config->SetVariable("Title", "titleScale", &title_->scale_);
+    config->SetVariable("Title", "titleRotate", &title_->rotate_);
+
+
+
 
     uint32_t handle = TextureManager::GetInstance()->Load(textTextureParh_);
     pressAnyKey_->SetTextureHandle(handle);
 
-    title_ = std::make_unique<ObjectModel>();
-    title_->Initialize(titleModelpath_);
+    title_->SetModel(titleModelpath_);
 }
 
 void TitleUI::Update()
@@ -46,9 +56,20 @@ void TitleUI::Update()
     {
         textTextureParh_ = buf1;
     }
+    ImGui::SeparatorText("Title");
+    ImGui::PushID("Title");
+    ImGui::DragFloat3("Position", &title_->translate_.x, 0.01f);
+    ImGui::DragFloat3("Scale", &title_->scale_.x, 0.01f);
+    ImGui::DragFloat3("Rotate", &title_->rotate_.x, 0.01f);
     if (ImGui::InputText("TitleModel", buf2, sizeof(buf2)))
     {
         titleModelpath_ = buf2;
+    }
+    ImGui::PopID();
+    if (ImGui::SmallButton("Set"))
+    {
+        pressAnyKey_->SetTextureHandle(TextureManager::GetInstance()->Load(textTextureParh_));
+        title_->SetModel(titleModelpath_);
     }
 
 #endif // _DEBUG

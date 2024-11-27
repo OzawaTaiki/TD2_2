@@ -114,6 +114,27 @@
         ],
         "titleModel": [
             "playerbody/playerbody.obj"
+        ],
+        "titlePos": [
+            [
+                -0.8700000047683716,
+                0.0,
+                10.59000015258789
+            ]
+        ],
+        "titleRotate": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "titleScale": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
         ]
     }
 }

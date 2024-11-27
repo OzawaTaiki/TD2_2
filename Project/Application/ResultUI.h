@@ -24,6 +24,8 @@ private:
 
     void ButtonUpdate();
 
+    std::string scene_;
+
     std::unique_ptr<UIButton> retryButton_ = nullptr;
     std::unique_ptr<UIButton> titleButton_ = nullptr;
 

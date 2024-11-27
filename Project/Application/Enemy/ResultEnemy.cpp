@@ -8,12 +8,13 @@ void ResultEnemy::Initialize()
     model_ = std::make_unique<ObjectModel>();
 
     ConfigManager* config = ConfigManager::GetInstance();
-    config->SetVariable("Result", "emodelPath", &modelName_);
-    config->SetVariable("Result", "eBaseScale", &baseScale_);
-    config->SetVariable("Result", "eScaleRange", &scaleRange_);
-    config->SetVariable("Result", "eScaleSpeed", &scaleSpeed_);
-    config->SetVariable("Result", "eCurrentTime", &currentTime_);
-    config->SetVariable("Result", "erotate", &model_->rotate_);
+    config->SetVariable("GameOver", "emodelPath", &modelName_);
+    config->SetVariable("GameOver", "eBaseScale", &baseScale_);
+    config->SetVariable("GameOver", "eScaleRange", &scaleRange_);
+    config->SetVariable("GameOver", "eScaleSpeed", &scaleSpeed_);
+    config->SetVariable("GameOver", "eCurrentTime", &currentTime_);
+    config->SetVariable("GameOver", "erotate", &model_->rotate_);
+    config->SetVariable("GameOver", "ePosition", &model_->translate_);
 
     model_->Initialize(modelName_);
     model_->scale_ = baseScale_;
@@ -60,7 +61,7 @@ void ResultEnemy::ImGui()
         modelName_ = buf;
     if (ImGui::Button("save"))
     {
-        ConfigManager::GetInstance()->SaveData("Result");
+        ConfigManager::GetInstance()->SaveData("GameOver");
         model_->SetModel(modelName_);
     }
 
