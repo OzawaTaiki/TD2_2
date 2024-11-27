@@ -70,6 +70,8 @@ void GameScene::Initialize()
     followCamera_->SetEnemy(enemy_.get());
 
     stage_->SetEnemy(enemy_.get());
+
+    player_->SetEnemy(enemy_.get());
 }
 
 void GameScene::Update()

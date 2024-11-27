@@ -95,7 +95,7 @@ void Enemy::Initialize()
 	bodyCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
 	bodyCollider_->SetShape(model_->GetMin(), model_->GetMax());
 	bodyCollider_->SetAtrribute("enemy");
-	bodyCollider_->SetMask({ "enemy","enemyBullet"});
+	bodyCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet" });
 
 	bodyCollider_->SetGetWorldMatrixFunc([this]() { return worldTransform_.matWorld_; });
 	bodyCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
@@ -104,8 +104,8 @@ void Enemy::Initialize()
     leftArmCollider_ = std::make_unique<Collider>();
     leftArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
     leftArmCollider_->SetShape(modelLeftArm_->GetMin(), modelLeftArm_->GetMax());
-    leftArmCollider_->SetAtrribute("enemy");
-    leftArmCollider_->SetMask({ "enemy","enemyBullet" });
+    leftArmCollider_->SetAtrribute("enemyLeft");
+    leftArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet"});
     leftArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformLeft_.matWorld_; });
     leftArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
@@ -113,8 +113,8 @@ void Enemy::Initialize()
     rightArmCollider_ = std::make_unique<Collider>();
     rightArmCollider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
     rightArmCollider_->SetShape(modelRightArm_->GetMin(), modelRightArm_->GetMax());
-    rightArmCollider_->SetAtrribute("enemy");
-    rightArmCollider_->SetMask({ "enemy","enemyBullet" });
+    rightArmCollider_->SetAtrribute("enemyRight");
+    rightArmCollider_->SetMask({ "enemy","enemyLeft", "enemyRight","enemyBullet" });
     rightArmCollider_->SetGetWorldMatrixFunc([this]() { return worldTransformRight_.matWorld_; });
     rightArmCollider_->SetOnCollisionFunc([this](const Collider* _other) { OnCollision(_other); });
 
@@ -191,6 +191,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("attack4", "SpinTime", &attack4_.MaxSpinTime);
 	configManager->SetVariable("attack4", "speed", &attack4_.speed);
 	configManager->SetVariable("attack4", "ArmGrowthToSpinDelay", &attack4_.MaxArmGrowthToSpinDelay);
+	configManager->SetVariable("attack4", "AttackPower", &attack4_.attackPower);
 	//configManager->SetVariable("attack4", "StoppingTime", &attack4_.MaxStoppingTime);
 	configManager->SetVariable("attack4", "cooldownTime", &attack4_.cooldownTime);
 
@@ -489,22 +490,17 @@ void Enemy::Update()
 
 		if (ImGui::BeginTabItem("attack2"))
 		{
-			//ImGui::DragFloat3("pos", &attack2_.attackPos.x, 0.01f);
 			ImGui::DragFloat("ExpandTime", &attack2_.MaxExpandTime, 0.01f);
-			//ImGui::DragFloat("thicknessStartTime", &attack2_.MaxThicknessStartTime, 0.01f);
 			ImGui::DragFloat("attackPower", &attack2_.attackPower, 0.01f);
 			ImGui::DragFloat("poreparationTime", &attack2_.MaxAttackPreparationTime, 0.01f);
-			//ImGui::DragFloat("thunderStrikeTime", &attack2_.MaxThunderStrikeTime, 0.01f);
 			ImGui::DragFloat("maxSize", &attack2_.maxSize, 0.01f);
 			ImGui::DragFloat("minSize", &attack2_.minSize, 0.01f);
-			//ImGui::DragFloat("LandingTime", &attack2_.MaxLandingTime, 0.01f);
 			ImGui::DragFloat("MaxDeathTimer_", &attack2_.MaxDeathTimer_, 0.01f);
 			ImGui::EndTabItem();
 		}
 
 		if (ImGui::BeginTabItem("attack3"))
 		{
-			//ImGui::DragFloat3("pos", &attack3_.attackPos.x, 0.01f);
 			ImGui::DragFloat("cooldown", &attack3_.MaxAttackCooldown, 0.01f);
 			ImGui::DragFloat("MinPosY", &attack3_.MinPosY, 0.01f);
 			ImGui::DragFloat("MaxPosY", &attack3_.MaxPosY, 0.01f);
@@ -529,6 +525,7 @@ void Enemy::Update()
 			ImGui::DragFloat("MinRotateSpeed", &attack4_.MinxRotateSpeed, 0.01f);
 			//ImGui::DragFloat("StoppingTime", &attack4_.MaxStoppingTime, 0.01f);
 			ImGui::DragFloat("speed", &attack4_.speed, 0.01f);
+			ImGui::DragFloat("attackPower", &attack4_.attackPower, 0.01f);
 			ImGui::EndTabItem();
 		}
 
@@ -614,8 +611,7 @@ void Enemy::Draw(const Camera& camera)
 		}
 		break;
 	case Behavior::kDie:
-		//deashParticle_->Draw();
-
+		
 		deashExplosionParticle_->Draw();
 
 		if (die_.enmey) {
@@ -686,13 +682,14 @@ void Enemy::OnCollision([[maybe_unused]] const Collider* _other)
 {
 	if (_other->GetName() == "weapon")
 	{
+		
 		if(!isCoolTime_)
 		{
 			color_.SetColor(hitColor_);
 			isHitColor_ = true;
 			isCoolTime_ = true;
 
-			hp--;
+			hp  -= player_->GetDamege();
             if (hp <= 0)
             {
                 isAlive = false;
@@ -1070,15 +1067,19 @@ void Enemy::BehaviorAttackInitialize()
 				{
 				case Enemy::NormalAttack::kAttackShort1: // 近距離1
 					NormalShotAttack1Initialize();
+					damage_ = 5;
 					break;
 				case Enemy::NormalAttack::kAttackShort2: // 近距離2
 					NormalShotAttack2Initialize();
+					damage_ = 5;
 					break;
 				case Enemy::NormalAttack::kAttackLong1:  // 遠距離1
 					NormalLongAttack1Initialize();
+					damage_ = 2;
 					break;
 				case Enemy::NormalAttack::kAttackLong2:  // 遠距離2
 					NormalLongAttack2Initialize();
+					damage_ = 2;
 					break;
 				default:
 					break;
@@ -1098,19 +1099,23 @@ void Enemy::BehaviorAttackInitialize()
 				case Enemy::SpecialAttack::kAttack:		// 攻撃1
 					SpecialAttackInitialize();
 					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack;
+					damage_ = attack1_.attackPower;
 					break;
 				case Enemy::SpecialAttack::kAttack2:	// 攻撃2
 					SpecialAttack2Initialize();
 					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack2;
 					follow_->SetT(0);
+					damage_ = attack2_.attackPower;
 					break;
 				case Enemy::SpecialAttack::kAttack3:	// 攻撃3
 					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack3;
 					SpecialAttack3Initialize();
+					damage_ = attack3_.attackPower;
 					break;
 				case Enemy::SpecialAttack::kAttack4:	// 攻撃4
 					specialAttackBehaviorOld_ = Enemy::SpecialAttack::kAttack4;
 					SpecialAttack4Initialize();
+					damage_ = attack4_.attackPower;
 					break;
 				default:
 					break;
@@ -1126,7 +1131,6 @@ void Enemy::BehaviorAttackInitialize()
 
 void Enemy::BehaviorAttackUpdate()
 {
-
 	// 攻撃遷移
 	switch (attackBehavior_) {
 	case AttackBehavior::kNormal: // 通常攻撃の場合

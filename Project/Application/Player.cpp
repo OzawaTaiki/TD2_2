@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 
 #include "../../../Application/Stage/Stage.h"
+#include "Enemy/Enemy.h"
 
 #include <algorithm>
 #include <cassert>
@@ -96,13 +97,15 @@ void Player::Initialize()
 		smokeParticle_[index]->SetPlayerMat(&worldTransformBody_);
 	}
 
-    ConfigManager* configManager = ConfigManager::GetInstance();
+	ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("Player", "speed", &speed);
 	configManager->SetVariable("Player", "transform", &worldTransform_.transform_);
 	configManager->SetVariable("Player", "tiltMotionRotate", &tiltMotionMaxRotate_);
 	configManager->SetVariable("Player", "tileMotionDuration", &tiltMotionDuration_);
 	configManager->SetVariable("Player", "AttackRecastTime", &MaxRecastTime);
+	configManager->SetVariable("Player", "Attackdamage", &damage_);
+	configManager->SetVariable("Player", "Hp", &maxHp);
 
 
 	// hitColor関連
@@ -119,6 +122,7 @@ void Player::Initialize()
 	collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
+	hp = int(maxHp);
 }
 
 void Player::Update()
@@ -144,7 +148,11 @@ void Player::Update()
 			ImGui::DragFloat("speed", &speed, 0.01f);
 			ImGui::SliderAngle("tiltMotion", &tiltMotionMaxRotate_, 0, 45.0f);
 			ImGui::DragFloat("tiltMotionDuration", &tiltMotionDuration_, 0.01f, 0.0f, 10.0f);
-			ImGui::DragInt("HP", &hp,1.0f);
+			ImGui::DragInt("HP", &hp, 1.0f);
+			int mHp = int(maxHp);
+			ImGui::DragInt("MaxHP", &mHp, 1.0f);
+			maxHp = uint32_t(mHp);
+			ImGui::DragFloat("damage_", &damage_, 1.0f);
 			if (ImGui::TreeNode("hitColor"))
 			{
 				ImGui::ColorEdit4("defaultColor", &defaultColor_.x);
@@ -212,6 +220,10 @@ void Player::Update()
 
 	// HP
 	if (hp <= 0) {
+
+		if (isAlive) {
+			behaviorRequest_ = Behavior::kDie;
+		}
 		isAlive = false;
 	}
 
@@ -221,7 +233,7 @@ void Player::Update()
 	weapon_->UpdateWorldTransform();
 	worldTransformBody_.UpdateData();
 	worldTransform_.UpdateData();
-	
+
 
 	if (isAlive)
 	{
@@ -239,11 +251,12 @@ void Player::Draw(const Camera& camera)
 	case Behavior::kRoot:
 	case Behavior::kJump:
 	default:
-
+		dustParticle_->Draw();
 		break;
 	case Behavior::kAttack:
 		weapon_->UpdateWorldTransform();
 		weapon_->Draw(camera);
+		dustParticle_->Draw();
 		break;
 	case Behavior::kDie:
 		for (uint32_t index = 0; index < smokeParticle_.size(); ++index)
@@ -253,25 +266,56 @@ void Player::Draw(const Camera& camera)
 		break;
 	}
 
-	dustParticle_->Draw();
 
+#ifdef _DEBUG
 	collider_->Draw();
+#endif // DEBUG
 }
 
 void Player::OnCollision(const Collider* _other)
 {
-	
-	if (collider_->IsCollisionEnter()) {
-		hp--;
-	}
 
+	if (_other->GetName() == ("enemy")) {
+		if (collider_->IsCollisionEnter()) {
+			if (enemy_->GetBehavior() == Enemy::Behavior::kRoot) {
+				hp--;
+			}
+		}
+	}
+	if (_other->GetName() == ("enemyBullet")) {
+		if (enemy_->GetSpecialAttack() == Enemy::SpecialAttack::kAttack3) {
+			hp -= enemy_->GetDamege();
+		}
+		else if (collider_->IsCollisionEnter()) {
+			hp -= enemy_->GetDamege();
+		}
+	}
+	if (_other->GetName() == ("enemyStageArm")) {
+		if (collider_->IsCollisionEnter()) {
+			hp -= enemy_->GetDamege();
+		}
+	}
+	if(_other->GetName() == ("enemyThunder")) {
+		if (collider_->IsCollisionEnter()) {
+			hp -= enemy_->GetDamege();
+		}
+	}
+	if(_other->GetName() == ("enemyRight")) {
+		if (collider_->IsCollisionEnter()) {
+			hp -= enemy_->GetDamege();
+		}
+	}
+	if(_other->GetName() == ("enemyLeft")) {
+		if (collider_->IsCollisionEnter()) {
+			hp -= enemy_->GetDamege();
+		}
+	}
+	
 	if (isHitColor_)
 		return;
 
 	isHitColor_ = true;
 	color_.SetColor(hitColor_);
-	
-	
 }
 
 void Player::StageMovementRestrictions()
@@ -451,13 +495,13 @@ void Player::BehaviorRootUpdate()
 
 #pragma endregion // キーボード
 
-//#ifdef _DEBUG
-//	ImGui::Begin("Play");
-//	ImGui::InputFloat3("velo", &velocity_.x);
-//	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
-//	ImGui::Checkbox("isMove", &isMove_);
-//	ImGui::End();
-//#endif // _DEBUG
+	//#ifdef _DEBUG
+	//	ImGui::Begin("Play");
+	//	ImGui::InputFloat3("velo", &velocity_.x);
+	//	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
+	//	ImGui::Checkbox("isMove", &isMove_);
+	//	ImGui::End();
+	//#endif // _DEBUG
 
 
 #pragma endregion
@@ -474,8 +518,6 @@ void Player::BehaviorRootUpdate()
 		}
 	}
 }
-
-
 
 void Player::BehaviorAttackInitialize()
 {
@@ -570,7 +612,7 @@ void Player::BehaviorDieInitialize()
 	die_.coolTime = 0;
 	die_.shakeTime = 0;
 	die_.isExplosion = false;
-	die_.shakePos = Vector3(0,0,0);
+	die_.shakePos = Vector3(0, 0, 0);
 	for (int i = 0; i < 5; i++) {
 		die_.smokeFlag[i] = false;
 	}
@@ -616,7 +658,7 @@ void Player::BehaviorDieUpdate()
 			}
 		}
 	}
-	
+
 	if (die_.isExplosion) {
 		die_.transitionFactor += die_.transitionFactorSpeed;
 		if (die_.transitionFactor >= 1.0f) {
@@ -629,7 +671,7 @@ void Player::BehaviorDieUpdate()
 		worldTransform_.rotate_.x = easeOutBounce(die_.strRotate.x, DegreesToRadians(90), die_.transitionFactor);
 	}
 
-	
+
 
 	// 爆発パーティクル
 	//deashExplosionParticle_->Update(die_.isExplosion);

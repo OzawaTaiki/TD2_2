@@ -212,7 +212,6 @@ public: //ふるまい関係
 
 #pragma endregion // 怯み関係
 
-
 #pragma region Die
 
 	struct Die {
@@ -284,6 +283,7 @@ public: //ふるまい関係
 		float recoilTime = 0;
 		float MaxRecoilTime = 10;
 
+		float attackPower = 10;
 	};
 
 	// 通常近距離攻撃
@@ -476,6 +476,8 @@ public:
 	const AttackBehavior& GetattackBehavior() const { return attackBehavior_; };
 	const SpecialAttack& GetSpecialAttack() const { return specialAttackBehavior_; };
 	const NormalAttack& GetNormalAttack() const { return normalAttackBehavior_; };
+
+	const float& GetDamege() const { return damage_; }
 private:
 	// モデル
 	Model* model_ = nullptr;
@@ -535,6 +537,8 @@ private:
     std::unique_ptr<Collider> rightArmCollider_;
 
 private:
+	float damage_ = 0;
+
 	// 速度
 	Vector3 velocity_ = {};
 	//

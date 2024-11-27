@@ -37,6 +37,8 @@ enum class LRDirection {
 	kLeftBack       // 左後ろ
 };
 
+class Enemy;
+
 /// <summary>
 /// プレイヤー
 /// </summary>
@@ -65,7 +67,7 @@ public :
 
 	// カメラのビュープロジェクション
 	void SetCamera(const Camera* camera) { camera_ = camera; };
-
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 	WorldTransform& GetWorldTransformBody() { return worldTransformBody_; };
@@ -73,7 +75,7 @@ public :
 	const float& GetRotateY() { return worldTransform_.rotate_.y; };
 
 	void SetStage(Stage* stage) { stage_ = stage; }
-
+	const float& GetDamege() const { return damage_; }
 
 	// 移動制限
 	void StageMovementRestrictions();
@@ -112,6 +114,8 @@ private:
 
 
 private:
+	Enemy* enemy_;
+
 	// モデル
 	Model* model_ = nullptr;
 
@@ -142,6 +146,7 @@ private:
     std::unique_ptr<Collider> collider_;
 
 private:
+	float damage_ = 0;
 	//左右
 	LRDirection lrDirection_ = LRDirection::kRight;
 	//旋回開始時の角度
@@ -194,7 +199,7 @@ private:
 	int recastTime = 0;
 	uint32_t MaxRecastTime = 30;
 
-
+	uint32_t maxHp = 100;
 	int hp = 100;
 	bool isAlive = true;
 
