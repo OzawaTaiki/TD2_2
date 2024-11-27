@@ -26,6 +26,7 @@ private:
 		Datum(const Vector3& _vec3) { datum = _vec3; };
 		Datum(const Vector4& _vec4) { datum = _vec4; };
         Datum(const std::string& _str) { datum = _str; };
+        Datum(const Datum& _datum) { datum = _datum.datum; };
 
 	};
 	struct Data
