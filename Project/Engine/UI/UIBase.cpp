@@ -19,9 +19,9 @@ void UIBase::Initialize(const std::string& _label)
     configManager->SetVariable("UI", label_ + "label", &label_);
 
     if (textureName_ == "")
-        textureHandle_ = 0;
-    else
-        textureHandle_ = TextureManager::GetInstance()->Load(textureName_);
+        textureName_ = "white.png";
+
+    textureHandle_ = TextureManager::GetInstance()->Load(textureName_);
     sprite_ = Sprite::Create(textureHandle_);
     sprite_->Initialize();
     sprite_->translate_ = position_;
@@ -70,6 +70,7 @@ void UIBase::SetTextureNameAndLoad(const std::string& _textureName)
 {
     textureName_ = _textureName;
     textureHandle_ = TextureManager::GetInstance()->Load(textureName_);
+    sprite_->SetTextureHandle(textureHandle_);
 }
 
 #ifdef _DEBUG
@@ -90,12 +91,13 @@ void UIBase::ImGui()
         if (ImGui::InputText("textureName", buf, 255))
         {
             textureName_ = buf;
-            textureHandle_ = TextureManager::GetInstance()->Load(textureName_);
         }
 
         if (ImGui::Button("save"))
         {
             ConfigManager::GetInstance()->SaveData("UI");
+            textureHandle_ = TextureManager::GetInstance()->Load(textureName_);
+            sprite_->SetTextureHandle(textureHandle_);
         }
         ImGui::EndTabItem();
     }

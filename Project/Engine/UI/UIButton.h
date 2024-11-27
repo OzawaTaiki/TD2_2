@@ -16,6 +16,8 @@ public:
 
     bool IsClicked() const;
 
+    Vector2 GetSize() const { return size_; }
+
 private:
 
 

@@ -44,8 +44,6 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-    Input::GetInstance()->Update();
-
     camera_.Update();
 
     player_->Update();

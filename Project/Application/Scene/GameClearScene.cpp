@@ -47,13 +47,16 @@ void GameClearScene::Update()
             SceneManager::ReserveScene("title");
         }
     }
+
+
 }
 
 void GameClearScene::Draw()
 {
+    ui_.DrawBackGround();
+
     player_->Draw(&camera_);
 
-    Sprite::PreDraw();
     ui_.Draw();
 
 }
