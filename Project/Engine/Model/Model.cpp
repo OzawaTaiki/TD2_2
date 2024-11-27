@@ -52,7 +52,16 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, uint32
         // テクスチャ
         material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(commandList, 4, _textureHandle);
         // ライトたち
-        lightGroup_->TransferData();
+        if (lightGroup_)
+        {
+            lightGroup_->TransferData();
+            lightGroup_->QueueCommand(commandList);
+        }
+        else
+        {
+            defaultLightGroup_->TransferData();
+            defaultLightGroup_->QueueCommand(commandList);
+        }
 
         commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
     }
@@ -79,8 +88,16 @@ void Model::Draw(const WorldTransform& _transform, const Camera* _camera, Object
         // テクスチャ
         material_[mesh->GetUseMaterialIndex()]->TextureQueueCommand(commandList, 4);
         // ライトたち
-        lightGroup_->TransferData();
-        lightGroup_->QueueCommand(commandList);
+        if (lightGroup_)
+        {
+            lightGroup_->TransferData();
+            lightGroup_->QueueCommand(commandList);
+        }
+        else
+        {
+            defaultLightGroup_->TransferData();
+            defaultLightGroup_->QueueCommand(commandList);
+        }
 
         commandList->DrawIndexedInstanced(mesh->GetIndexNum(), 1, 0, 0, 0);
     }
@@ -105,15 +122,15 @@ Model* Model::CreateFromObj(const std::string& _filePath)
        model-> LoadFile(_filePath);
     }
 
-    model->lightGroup_ = std::make_unique<LightGroup>();
-    model->lightGroup_->Initialize();
+    model->defaultLightGroup_ = std::make_unique<LightGroup>();
+    model->defaultLightGroup_->Initialize();
     return model;
 }
 
 void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const
 {
-    lightGroup_->TransferData();
-    lightGroup_->QueueCommand(_commandList);
+    defaultLightGroup_->TransferData();
+    defaultLightGroup_->QueueCommand(_commandList);
 
     for (auto& mesh : mesh_)
     {
@@ -132,8 +149,8 @@ void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList) const
 
 void Model::QueueCommandAndDraw(ID3D12GraphicsCommandList* _commandList, uint32_t _textureHandle) const
 {
-    lightGroup_->TransferData();
-    lightGroup_->QueueCommand(_commandList);
+    defaultLightGroup_->TransferData();
+    defaultLightGroup_->QueueCommand(_commandList);
 
     for (auto& mesh : mesh_)
     {

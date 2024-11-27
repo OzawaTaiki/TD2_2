@@ -37,6 +37,14 @@ void GameOverScene::Initialize()
     decision.volume = 0.2f;
    // choice.voiceHandle = audio2_->SoundPlay(choice.soundDataHandle, choice.volume, 0, 0);
 
+    lightGroup_ = std::make_unique<LightGroup>();
+    lightGroup_->Initialize();
+    lightGroup_->GetSpotLight()->SetIntensity(0);
+    lightGroup_->GetPointLight()->SetIntensity(0);
+    lightGroup_->GetDirectoinalLight()->SetIntensity(0.4f);
+    lightGroup_->GetDirectoinalLight()->SetColor({ 0.607f,0.611f,0.8f,1 });
+
+    enemy_->SetLight(lightGroup_.get());
 
 }
 

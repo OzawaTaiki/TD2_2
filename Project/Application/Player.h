@@ -70,6 +70,8 @@ public :
 	void SetCamera(const Camera* camera) { camera_ = camera; };
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
+	void SetLight(LightGroup* _ptr);
+
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 	WorldTransform& GetWorldTransformBody() { return worldTransformBody_; };
 
@@ -118,7 +120,6 @@ private:
     void UpdateHitColor();
 
 	void SoundInitialize();
-
 private:
 	Enemy* enemy_;
 

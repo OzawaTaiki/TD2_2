@@ -26,6 +26,7 @@ public:
 	void RegisterCollider();
 	void OnCollision(const Collider* _other);
 
+	void SetLight(LightGroup* _ptr);
 
 
 	// ゲッター、セッター
