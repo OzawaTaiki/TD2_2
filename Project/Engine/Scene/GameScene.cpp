@@ -77,7 +77,7 @@ void GameScene::Update()
 #ifdef _DEBUG
 #endif // _DEBUG
 
-    input_->Update();
+    //input_->Update();
     CollisionManager::GetInstance()->ResetColliderList();
 
     if (input_->IsKeyPressed(DIK_RSHIFT) && Input::GetInstance()->IsKeyTriggered(DIK_RETURN))
