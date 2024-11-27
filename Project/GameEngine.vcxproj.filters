@@ -363,6 +363,15 @@
       <Filter>Application</Filter>
 
     </ClCompile>
+    <ClCompile Include="Application\ResultPlayer.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ResultUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\ResultEnemy.cpp">
+      <Filter>Application\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shader\Object3d.hlsli">
@@ -634,6 +643,15 @@
     </ClInclude>
     <ClInclude Include="Application\TItleUI.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultPlayer.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\ResultEnemy.h">
+      <Filter>Application\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

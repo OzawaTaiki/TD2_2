@@ -2,6 +2,9 @@
 #include "BaseScene.h"
 #include <memory>
 
+#include "ResultPlayer.h"
+#include "ResultUI.h"
+
 class GameClearScene : public BaseScene
 {
 public:
@@ -14,7 +17,11 @@ public:
     void Update() override;
     void Draw() override;
 
+
 private:
+    Camera camera_ = {};
+    std::unique_ptr<ResultPlayer> player_ = nullptr;
+    ResultUI ui_ = {};
 
 #ifdef _DEBUG
     void ImGui();
