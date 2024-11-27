@@ -21,6 +21,7 @@ public:
 	// 描画
 	void Draw(const Camera& viewProjection);
 
+    void StartSlashEffect();
 
 	// 接触履歴を抹消
 	void ContactRecordClear();
