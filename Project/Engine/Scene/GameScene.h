@@ -14,10 +14,11 @@
 #include "DebugCamera.h"
 
 //Application
-#include "../../Application/Player.h"
-#include "../../Application/Enemy/Enemy.h"
-#include "../../Application/FollowCamera.h"
-#include "../../Application/Stage/Stage.h"
+#include "Player.h"
+#include "Enemy/Enemy.h"
+#include "FollowCamera.h"
+#include "Stage/Stage.h"
+#include "GameSceneUI.h"
 
 #include <memory>
 
@@ -55,5 +56,13 @@ private:
 
     // ステージ
     std::unique_ptr <Stage> stage_;
+
+    // UI
+    std::unique_ptr<GameSceneUI> ui_;
+
+    // 敵撃破からフェードを始めるまでの時間
+    float fadeStartDelay_ = 3.0f;
+
+    float timer_ = 0.0f;
 
 };

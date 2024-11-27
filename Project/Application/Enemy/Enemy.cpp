@@ -621,7 +621,7 @@ void Enemy::Draw(const Camera& camera)
 		}
 		break;
 	case Behavior::kDie:
-		
+
 		deashExplosionParticle_->Draw();
 
 		if (die_.enmey) {
@@ -692,7 +692,6 @@ void Enemy::OnCollision([[maybe_unused]] const Collider* _other)
 {
 	if (_other->GetName() == "weapon")
 	{
-		
 		if(!isCoolTime_)
 		{
 			color_.SetColor(hitColor_);

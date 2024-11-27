@@ -75,8 +75,12 @@ public :
 
 	const float& GetRotateY() { return worldTransform_.rotate_.y; };
 
+	float GetHPRatio()const { return (float)hp / (float)maxHp; }
+
 	void SetStage(Stage* stage) { stage_ = stage; }
 	const float& GetDamege() const { return damage_; }
+
+	bool IsPostDieEffectFinished() const { return die_.coolTime >= die_.MaxCoolTime; }
 
 	// 移動制限
 	void StageMovementRestrictions();

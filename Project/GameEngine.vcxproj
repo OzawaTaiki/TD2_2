@@ -119,6 +119,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Application\Enemy\ResultEnemy.cpp" />
     <ClCompile Include="Application\Enemy\TitleEnemy.cpp" />
     <ClCompile Include="Application\FollowCamera.cpp" />
+    <ClCompile Include="Application\GameSceneUI.cpp" />
     <ClCompile Include="Application\HitEffect.cpp" />
     <ClCompile Include="Application\Player.cpp" />
     <ClCompile Include="Application\PlayerDustParticle.cpp" />
@@ -260,6 +261,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Application\Enemy\ResultEnemy.h" />
     <ClInclude Include="Application\Enemy\TitleEnemy.h" />
     <ClInclude Include="Application\FollowCamera.h" />
+    <ClInclude Include="Application\GameSceneUI.h" />
     <ClInclude Include="Application\HitEffect.h" />
     <ClInclude Include="Application\Player.h" />
     <ClInclude Include="Application\PlayerDustParticle.h" />

@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "Sprite.h"
 
 #include <iostream>
 #include <cstdint>
@@ -37,6 +38,22 @@ public:
     // シーンの変更
     static void ChangeScene();
 
+    // シーンのフェード
+    void Fade();
+
+    // フェードの開始
+    void FadeStart();
+
+
+    // フェードの終了
+    void FadeEnd();
+
+
+    // シーンの変更中か
+    bool IsChangingScene() const { return isChangingScene_; }
+
+
+
 private:
 
     // シーンのリスト
@@ -48,6 +65,13 @@ private:
     std::string currentSceneName_ = {};
     // 次のシーン名
     std::string nextSceneName_ = {};
+
+    // シーンフェード
+    bool isChangingScene_ = false;
+    float fadeAlpha_ = 0.0f;
+    float fadeAlphaSpeed_ = 0.02f;
+
+    Sprite* fadeSprite_ = nullptr;
 
 #ifdef _DEBUG
     void ImGui();
