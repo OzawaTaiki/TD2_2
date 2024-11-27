@@ -117,6 +117,7 @@ private:
     // ヒットカラーの更新
     void UpdateHitColor();
 
+	void SoundInitialize();
 
 private:
 	Enemy* enemy_;
@@ -274,6 +275,7 @@ private:
 #pragma endregion // 死亡演出
 
 	std::unique_ptr<Audio> audio_;
+	std::unique_ptr<Audio> audio2_;
 
 	// 音
 	struct Sound {
@@ -285,6 +287,12 @@ private:
 	struct Sounds {
 		Sound playerMove;
 		Sound playerDamage;
+		Sound playerAttack;
+		Sound playerAttackLast;
+
+		Sound playerDieSmoke;
+		Sound playerDieDown;
+
 	};
 	Sounds sounds_;
 

@@ -47,7 +47,12 @@ void GameScene::Initialize()
     audio_ = std::make_unique<Audio>();
     audio_->Initialize();
 
+    // 移動音
+    gameBgm_.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/gameBgm.wav");
+    gameBgm_.volume = 0.08f;
+    gameBgm_.voiceHandle = audio_->SoundPlay(gameBgm_.soundDataHandle, gameBgm_.volume, 1, 0);
 
+    
     // フォローカメラ
     followCamera_ = std::make_unique<FollowCamera>();
     followCamera_->Initialize();
@@ -155,6 +160,10 @@ void GameScene::Update()
         {
             SceneManager::ReserveScene("gameover");
         }
+    }
+
+    if (enemy_->GetBehavior() == Enemy::Behavior::kDie) {
+        audio_->SoundStop(gameBgm_.voiceHandle);
     }
 
 }

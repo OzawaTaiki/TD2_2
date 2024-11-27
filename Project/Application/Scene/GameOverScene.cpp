@@ -22,6 +22,22 @@ void GameOverScene::Initialize()
 
     ui_.Initialize("GameOver");
 
+
+    //音
+    audio_ = std::make_unique<Audio>();
+    audio_->Initialize();
+    audio2_ = std::make_unique<Audio>();
+    audio2_->Initialize();
+    // 移動音
+    gameOverBgm_.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/gameOverBgm.wav");
+    gameOverBgm_.volume = 0.2f;
+    gameOverBgm_.voiceHandle = audio_->SoundPlay(gameOverBgm_.soundDataHandle, gameOverBgm_.volume, 1, 0);
+
+    decision.soundDataHandle = audio2_->SoundLoadWave("resources/Sounds/decision.wav");
+    decision.volume = 0.2f;
+   // choice.voiceHandle = audio2_->SoundPlay(choice.soundDataHandle, choice.volume, 0, 0);
+
+
 }
 
 void GameOverScene::Update()
@@ -41,11 +57,15 @@ void GameOverScene::Update()
         if (select == 0)
         {
             SceneManager::ReserveScene("game");
+            decision.voiceHandle = audio2_->SoundPlay(decision.soundDataHandle, decision.volume, 0, 0);
         }
         else if (select == 1)
         {
             SceneManager::ReserveScene("title");
+            decision.voiceHandle = audio2_->SoundPlay(decision.soundDataHandle, decision.volume, 0, 0);
         }
+        audio_->SoundStop(gameOverBgm_.voiceHandle);
+
     }
 
 

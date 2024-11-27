@@ -415,6 +415,8 @@ private: //状態
     // ヒットカラーの更新
     void UpdateHitColor();
 
+	void InitializeSound();
+
 public:
 	/// <summary>
 	/// 初期化
@@ -594,12 +596,33 @@ private:
     float damageCoolMaxTime_ = 2;
 
 	std::unique_ptr<Audio> audio_;
+	std::unique_ptr<Audio> audio2_;
+	std::unique_ptr<Audio> audio3_;
+	std::unique_ptr<Audio> audio4_;
+	std::unique_ptr<Audio> audio5_;
 
-	uint32_t sound = 0;
+	// 音
+	
 
 	struct Sounds {
-		uint32_t playerMove;
-	};
+		Audio::Sound bossMove;				//移動
+		Audio::Sound bossArmPrediction;		//予測線
+		Audio::Sound bossArmStickOut;		//腕はえ
+		Audio::Sound bossJumpUp;			// ジャンプ
+		Audio::Sound bossGetOff;			// 地面突き
+		Audio::Sound bossThunder;			// 雷
+		Audio::Sound bossReleaseElectricity;// 撃つ瞬間
+
+		Audio::Sound bossGrowArm;			// 腕はえ
+		Audio::Sound bossRotate;			// 回り
+		Audio::Sound bossStopMove;			// 止まる
+
+		Audio::Sound bossDieTremble;		// ブルブル震えている間
+		Audio::Sound bossDieExplotion;		// 爆発する
+		Audio::Sound smoke;					// 煙
+		Audio::Sound bossDamage;			// ダメージ
+
+	};	
 	Sounds sounds_;
 
 };

@@ -44,10 +44,17 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
     collider_->SetOnCollisionFunc([this](const Collider* collider) {OnCollision(collider); });
 
 
+	//音
+	//audio_ = std::make_unique<Audio>();
+	//audio_->Initialize();
 
+	// 攻撃1腕はえ
+	//bossArmStickOut.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/bossArmStickOut.wav");
+	//bossArmStickOut.volume = 0.2f;
+	
 }
 
-void EnemyStageArm::Update()
+void EnemyStageArm::Update(Audio* audio, Audio::Sound sound)
 {
 	// 時間経過でデス
 	// 時間経過でデス
@@ -57,6 +64,10 @@ void EnemyStageArm::Update()
 	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
 
         collider_->RegsterCollider();
+
+		if (length == 0) {
+			audio->SoundPlay(sound.soundDataHandle, sound.volume, 0, 1);
+		}
 
 		if (length <= attack_->MaxLength) {
 			worldTransform_.transform_ = worldTransform_.transform_ + velocity_;

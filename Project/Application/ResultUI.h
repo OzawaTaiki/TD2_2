@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "UIButton.h"
+#include "Audio.h"
 
 #include <memory>
 
@@ -58,6 +59,16 @@ private:
     float currentRetryTimer_ = 0.0f;
     float currentTitleTimer_ = 0.0f;
 
+
+    std::unique_ptr<Audio> audio_;
+    
+    // 音
+    struct Sound {
+        uint32_t soundDataHandle;
+        uint32_t voiceHandle;
+        float volume;
+    };
+    Sound choice;
 #ifdef _DEBUG
     void ImGui();
 #endif // _DEBUG
