@@ -31,7 +31,7 @@ private:
 
     float scaleSpeed_ = 0.1f;
 
-    std::string modelName_ = "boss/boss.obj";
+    std::string modelName_ = "bossGameOver/bossGameOver2.obj";
 
 
 
