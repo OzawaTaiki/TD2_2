@@ -123,6 +123,22 @@ void Player::Initialize()
 	collider_->SetOnCollisionFunc([this](const Collider* _other) {OnCollision(_other); });
 
 	hp = int(maxHp);
+
+	//音
+	audio_ = std::make_unique<Audio>();
+	audio_->Initialize();
+
+	// 移動音
+	sounds_.playerMove.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerMove.wav");
+	//sounds_.playerMove.voiceHandle = audio_->IsPlaying(sounds_.playerMove.soundDataHandle);
+	sounds_.playerMove.volume = 0.2f;
+	
+	// 被弾音
+	sounds_.playerDamage.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/playerMove.wav");
+	//sounds_.playerDamage.voiceHandle = audio_->IsPlaying(sounds_.playerDamage.soundDataHandle);
+	sounds_.playerDamage.volume = 0.2f;
+
+
 }
 
 void Player::Update()
@@ -316,6 +332,8 @@ void Player::OnCollision(const Collider* _other)
 	if (isHitColor_)
 		return;
 
+	audio_->SoundPlay(sounds_.playerDamage.soundDataHandle, sounds_.playerDamage.volume, 0, 1);
+
 	isHitColor_ = true;
 	color_.SetColor(hitColor_);
 }
@@ -358,6 +376,8 @@ void Player::BehaviorRootUpdate()
 #pragma region Key
 
 
+
+
 	if (Input::GetInstance()->IsControllerConnected()) {
 
 
@@ -385,6 +405,17 @@ void Player::BehaviorRootUpdate()
 
 		// 移動
 		worldTransform_.transform_ = Add(worldTransform_.transform_, velocity_);
+
+		if (isMove_) {
+			audio_->SoundPlay(sounds_.playerMove.voiceHandle, sounds_.playerMove.volume, 0, 0);
+		}
+		else {
+			if (!isMove_) {
+				if (sounds_.playerMove.voiceHandle) {
+					audio_->SoundStop(sounds_.playerMove.voiceHandle);
+				}
+			}
+		}
 	}
 	else {
 
@@ -493,18 +524,26 @@ void Player::BehaviorRootUpdate()
 			worldTransform_.rotate_.y = targetRotationY;
 		}
 
+
+		
+		
+		if (isMove_) {
+			audio_->SoundPlay(sounds_.playerMove.voiceHandle, sounds_.playerMove.volume, 0, 0);
+		}
+		else {
+			if (!isMove_) {
+				if (sounds_.playerMove.voiceHandle) {
+					audio_->SoundStop(sounds_.playerMove.voiceHandle);
+				}
+			}
+		}
 	}
 
+	
+	
 #pragma endregion // キーボード
 
-	//#ifdef _DEBUG
-	//	ImGui::Begin("Play");
-	//	ImGui::InputFloat3("velo", &velocity_.x);
-	//	ImGui::InputFloat("rotateY", &worldTransform_.rotate_.y);
-	//	ImGui::Checkbox("isMove", &isMove_);
-	//	ImGui::End();
-	//#endif // _DEBUG
-
+	
 
 #pragma endregion
 

@@ -12,6 +12,7 @@
 #include "ConfigManager.h"
 #include "MyLib.h"
 #include "../Collider/Collider.h"
+#include "Audio.h"
 
 //Application
 #include "Weapon.h"
@@ -267,4 +268,20 @@ private:
 	Die die_;
 
 #pragma endregion // 死亡演出
+
+	std::unique_ptr<Audio> audio_;
+
+	// 音
+	struct Sound {
+		uint32_t soundDataHandle;
+		uint32_t voiceHandle;
+		float volume;
+	};
+
+	struct Sounds {
+		Sound playerMove;
+		Sound playerDamage;
+	};
+	Sounds sounds_;
+
 };

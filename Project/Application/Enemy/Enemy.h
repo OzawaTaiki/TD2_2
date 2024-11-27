@@ -591,6 +591,11 @@ private:
 
 	uint32_t sound = 0;
 
+	struct Sounds {
+		uint32_t playerMove;
+	};
+	Sounds sounds_;
+
 };
 
 

@@ -138,6 +138,7 @@ void Enemy::Initialize()
 		deashSmokeParticle_[index]->SetPlayerMat(&worldTransform_);
 	}
 
+#pragma region ConfigManager
     ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
@@ -228,6 +229,7 @@ void Enemy::Initialize()
 	// クールタイム
     configManager->SetVariable("enemy", "damageCoolTimeMax", &damageCoolMaxTime_);
 
+#pragma endregion // ConfigManager
 
 	rootMove_.MaxNumMovePhase = rand() % rootMove_.MaxRandMovePhase + 1;
 	rootMove_.isBehavior_ = false;
@@ -262,10 +264,18 @@ void Enemy::Initialize()
 	worldPrediction_.rotate_.y = std::atan2(sub.x, sub.z);
 	worldPrediction_.scale_ = { 1 * 5 ,1 * 5,length / 2 };
 
+	//音
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize();
 
 	sound = audio_->SoundLoadWave("resources/Sounds/Alarm01.wav");
+
+	// 移動音
+	///sounds_.playerMove = audio_->SoundLoadWave("resources/Sounds/playerMove.wav");
+
+
+
+
 
 	hp = MaxHp;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
