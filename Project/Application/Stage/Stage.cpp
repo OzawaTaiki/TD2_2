@@ -17,7 +17,7 @@ void Stage::Initialize()
 	worldFloor_.rotate_.y = { 1.57f };
 	worldFloor_.scale_ = { 0.55f,0.55f,0.55f };
 	// 床モデル
-	modelFloor_ = Model::CreateFromObj("Tile/Tile.gltf");
+	modelFloor_ = Model::CreateFromObj("Tile/Tile.obj");
 
 	// 壁(前)
 	worldWallFlont.Initialize();
