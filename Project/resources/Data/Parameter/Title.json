@@ -4,7 +4,7 @@
             "titlePush.png"
         ],
         "UITextTexture": [
-            "cube.jpg"
+            "titlePush.png"
         ],
         "UIcolor": [
             [
@@ -30,7 +30,7 @@
             ]
         ],
         "UItitleModel": [
-            "cube/cube.obj"
+            "title/Title.obj"
         ],
         "backGroundTexturePath": [
             "white.png"
