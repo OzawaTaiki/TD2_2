@@ -77,6 +77,11 @@ void Stage::Update()
 			ImGui::DragFloat3("leftTotate", &worldWallLeft.rotate_.x, 0.1f);
 			ImGui::DragFloat3("floorTranslate", &worldFloor_.transform_.x, 0.1f);
 			ImGui::DragFloat3("floorRotate", &worldFloor_.rotate_.x, 0.1f);
+
+            if (ImGui::Button("Save"))
+            {
+                ConfigManager::GetInstance()->SaveData("stage");
+            }
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

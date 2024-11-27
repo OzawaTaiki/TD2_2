@@ -141,7 +141,7 @@ void Enemy::Initialize()
     ConfigManager* configManager = ConfigManager::GetInstance();
 
 	configManager->SetVariable("enemy", "MaxHp", &MaxHp);
-	
+
 	configManager->SetVariable("root", "MaxRandCoolTime", &rootMove_.MaxRandCoolTime);
 	configManager->SetVariable("root", "MaxRandMovePhase", &rootMove_.MaxRandMovePhase);
 	configManager->SetVariable("root", "MaxCoolTime", &rootMove_.MaxCoolTime);
@@ -202,7 +202,7 @@ void Enemy::Initialize()
 	configManager->SetVariable("normalAttackShot1_", "ArmGrowthToSpinDelay", &normalAttackShot1_.MaxArmGrowthToSpinDelay);
 	//configManager->SetVariable("normalAttackShot1_", "StoppingTime", &normalAttackShot1_.MaxStoppingTime);
 	configManager->SetVariable("normalAttackShot1_", "cooldownTime", &normalAttackShot1_.cooldownTime);
-	
+
 	// 通常近距離攻撃2
 	configManager->SetVariable("normalAttackShot2_", "MaxAssaultTime", &normalAttackShot2_.MaxAssaultTime);
 	configManager->SetVariable("normalAttackShot2_", "speed", &normalAttackShot2_.speed);
@@ -265,15 +265,15 @@ void Enemy::Initialize()
 	audio_->Initialize();
 
 	sound = audio_->SoundLoadWave("resources/Sounds/Alarm01.wav");
-   
+
 	hp = MaxHp;
 	srand(unsigned int(time(nullptr))); // シードを現在の時刻で設定
 }
 
 void Enemy::Update()
 {
-	
-	
+
+
 
 	if (behaviorRequest_) {
 		// ふるまいを変更する
@@ -411,13 +411,23 @@ void Enemy::Update()
 				ImGui::ColorEdit4("hitColor", &hitColor_.x);
 				ImGui::DragFloat("hitColorMaxTime", &damageCoolMaxTime_, 0.01f);
                 ImGui::DragFloat("damageCoolTimeMax", &damageCoolMaxTime_, 0.01f);
-				if (ImGui::Button("save other"))
-				{
-					ConfigManager::GetInstance()->SaveData("enemy");
-				}
+
 				ImGui::TreePop();
 			}
 			ImGui::EndTabItem();
+			if (ImGui::Button("save"))
+			{
+				ConfigManager* config = ConfigManager::GetInstance();
+				config->SaveData("enemy");
+                config->SaveData(" attack");
+                config->SaveData("attack1");
+                config->SaveData("attack2");
+                config->SaveData("attack3");
+                config->SaveData("attack4");
+                config->SaveData("normalAttackShot1_");
+                config->SaveData("normalAttackShot2_");
+                config->SaveData("root");
+			}
 		}
 
 		ImGui::EndTabBar();
@@ -565,14 +575,14 @@ void Enemy::Update()
 
 	worldPrediction_.UpdateData();
 
-	
+
 	if (isAlive)
 	{
 		UpdateHitColor();
         bodyCollider_->RegsterCollider();
 	}
 
-	
+
 
 }
 
@@ -605,7 +615,7 @@ void Enemy::Draw(const Camera& camera)
 		break;
 	case Behavior::kDie:
 		//deashParticle_->Draw();
-		
+
 		deashExplosionParticle_->Draw();
 
 		if (die_.enmey) {
@@ -664,7 +674,7 @@ void Enemy::Draw(const Camera& camera)
 		particleEmitter_[index].Draw();
 
 
-	
+
 #ifdef _DEBUG
 	bodyCollider_->Draw();
 #endif // _DEBUG
@@ -1241,10 +1251,10 @@ void Enemy::BehaviorDieInitialize()
 void Enemy::BehaviorDieUpdate()
 {
 
-	
+
 
 	if (die_.coolTime >= die_.MaxCoolTime) {
-		
+
 		die_.isExplosion = false;
 		die_.enmey = false;
 	}
@@ -1253,8 +1263,8 @@ void Enemy::BehaviorDieUpdate()
 	if (die_.smokeCount < 5) {
 		// 煙を続々出していく
 		if (++die_.smokeTimer >= die_.MaxSmokeTimer) {
-			
-			
+
+
 			die_.smokeFlag[die_.smokeCount] = true;
 
 			die_.smokeTimer = 0;
@@ -1267,7 +1277,7 @@ void Enemy::BehaviorDieUpdate()
 			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
 			worldTransform_.transform_ = die_.shakePos + shake;
 
-			
+
 		}
 		else {
 			Vector3 shake = Vector3(rand() % 5 - 2, rand() % 3 - 1, rand() % 3 - 1);
@@ -1278,14 +1288,14 @@ void Enemy::BehaviorDieUpdate()
 			}
 		}
 	}
-	
+
 	if (die_.isExplosion) {
 		die_.coolTime++;
-		
+
 	}
 
 
-	
+
 	// 爆発パーティクル
 	deashExplosionParticle_->Update(die_.isExplosion);
 
@@ -1298,7 +1308,7 @@ void Enemy::BehaviorDieUpdate()
 			deashSmokeParticle_[index]->Update(die_.smokeFlag[index]);
 		}
 	}
-	
+
 }
 
 #pragma endregion // 死亡
@@ -1395,7 +1405,7 @@ void Enemy::SpecialAttackUpdate()
 					StageArmInitialize(newLocation);
 				}
 				else {
-					
+
 
 					if (attack1_.rrr == 0) {
 						StageArmInitialize(Stage::StageNum::kLeft, (attack1_.armNum - 2));
@@ -1406,7 +1416,7 @@ void Enemy::SpecialAttackUpdate()
 						StageArmInitialize(Stage::StageNum::kBack, (attack1_.armNum - 2));
 					}
 
-					
+
 
 				}
 				// 状態の更新
@@ -2033,7 +2043,7 @@ void Enemy::NormalShotAttack2Initialize()
 
 void Enemy::NormalShotAttack2Update()
 {
-	
+
 	normalAttackShot2_.transitionFactor += normalAttackShot2_.transitionFactorSpeed;
 
 	float str = 0;
@@ -2054,7 +2064,7 @@ void Enemy::NormalShotAttack2Update()
 		worldTransformRight_.rotate_.y = StartEnd(rotS, rotEm, normalAttackShot2_.transitionFactor);
 
 		if (worldTransformLeft_.transform_.x <= endm) {
-			
+
 			worldTransformLeft_.rotate_.y = DegreesToRadians(90);
 			worldTransformRight_.rotate_.y = DegreesToRadians(-90);
 		}
