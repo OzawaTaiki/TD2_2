@@ -1,7 +1,7 @@
 {
     "GameOver": {
         "backGroundTexturePath": [
-            "white.png"
+            "backGround.png"
         ],
         "baseSize": [
             [

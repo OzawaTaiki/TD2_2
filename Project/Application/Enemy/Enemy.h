@@ -97,11 +97,11 @@ public: //ふるまい関係
 		uint32_t normalProbability; // 通常攻撃の確率
 
 		// 1フェーズ目の通常攻撃確率
-		uint32_t probabilityPhase1 = 75;
+		uint32_t probabilityPhase1 = 65;
 		// 2フェーズ目の通常攻撃確率
-		uint32_t probabilityPhase2 = 50;
+		uint32_t probabilityPhase2 = 30;
 		// 3フェーズ目の通常攻撃確率
-		uint32_t probabilityPhase3 = 15;
+		uint32_t probabilityPhase3 = 10;
 
 		float distanceSwich = 20;
 	};
