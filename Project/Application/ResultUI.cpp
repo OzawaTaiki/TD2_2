@@ -59,6 +59,11 @@ void ResultUI::Initialize(const std::string& _scene)
     configManager->SetVariable(  _scene, "textfloatingSpeed", &textfloatingSpeed_);
     configManager->SetVariable(  _scene, "textfloatingRange", &textfloatingRange_);
 
+    audio_ = std::make_unique<Audio>();
+    audio_->Initialize();
+
+    choice.soundDataHandle = audio_->SoundLoadWave("resources/Sounds/choice.wav");
+    choice.volume = 0.2f;
 }
 
 void ResultUI::Update()
@@ -153,6 +158,7 @@ void ResultUI::ButtonUpdate()
         if (Input::GetInstance()->IsPadPressed(PadButton::iPad_Left) ||
             Input::GetInstance()->IsPadPressed(PadButton::iPad_Right))
         {
+            choice.voiceHandle = audio_->SoundPlay(choice.soundDataHandle, choice.volume, 0, 1);
             selectButton_ = (selectButton_ + 1) % buttunNum_;
         }
     }
@@ -161,6 +167,7 @@ void ResultUI::ButtonUpdate()
         Input::GetInstance()->IsKeyTriggered(DIK_A) ||
         Input::GetInstance()->IsKeyTriggered(DIK_D))
     {
+        choice.voiceHandle = audio_->SoundPlay(choice.soundDataHandle, choice.volume, 0, 1);
         selectButton_ = selectButton_ == 0 ? 1 : 0;
     }
 

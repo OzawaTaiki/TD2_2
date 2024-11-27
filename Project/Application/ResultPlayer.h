@@ -31,7 +31,7 @@ private:
 
     float scaleSpeed_ = 0.1f;
 
-    std::string modelName_ = "playerbody/playerbody.obj";
+    std::string modelName_ = "playerClear/playerClear.obj";
 
 
 
