@@ -1,0 +1,95 @@
+{
+    "Clear": {
+        "backGroundTexturePath": [
+            "white.png"
+        ],
+        "baseSize": [
+            [
+                307.2308654785156,
+                103.61543273925781
+            ]
+        ],
+        "pBaseScale": [
+            [
+                1.0,
+                1.0,
+                1.0
+            ]
+        ],
+        "pCurrentTime": [
+            102.54075622558594
+        ],
+        "pPosition": [
+            [
+                0.0,
+                0.0,
+                0.0
+            ]
+        ],
+        "pScaleRange": [
+            [
+                0.009999999776482582,
+                0.029999999329447746,
+                0.009999999776482582
+            ]
+        ],
+        "pScaleSpeed": [
+            2.0
+        ],
+        "protate": [
+            [
+                0.0,
+                3.140000104904175,
+                0.0
+            ]
+        ],
+        "resizeSpeed": [
+            2.0
+        ],
+        "retryButtonTexturePath": [
+            "cube.jpg"
+        ],
+        "retrySize": [
+            [
+                307.2308654785156,
+                103.61543273925781
+            ]
+        ],
+        "sizeRange": [
+            [
+                20.0,
+                10.0
+            ]
+        ],
+        "textBasePos": [
+            [
+                640.0,
+                180.0
+            ]
+        ],
+        "textSize": [
+            [
+                331.0,
+                110.0
+            ]
+        ],
+        "textTexturePath": [
+            "cube.jpg"
+        ],
+        "textfloatingRange": [
+            10.0
+        ],
+        "textfloatingSpeed": [
+            1.0
+        ],
+        "titleButtonTexturePath": [
+            "cube.jpg"
+        ],
+        "titleSize": [
+            [
+                310.8798522949219,
+                105.4399185180664
+            ]
+        ]
+    }
+}

@@ -6,7 +6,7 @@
 #include "ConfigManager.h"
 #include "VectorFunction.h"
 #include "ParticleInitParam.h"
-#include <imgui.h>
+#include "ImGuiManager.h"
 
 void ParticleEmitter::Setting(const Vector3& _center,
                               const Vector3& _rotate,
@@ -113,10 +113,6 @@ void ParticleEmitter::Update()
         currentTime_ = 0;
     }
 
-    ImGui::Begin("emit");
-    static const char* shapeCombo[1024] = { "Box","Sphere","Circle","None" };
-    static const char* directionCombo[1024] = { "inward","outward","random" };
-
     if (emitTime_ <= currentTime_)
     {
         // loop しない場合 かつ emit回数が emit回数に達した場合
@@ -137,6 +133,12 @@ void ParticleEmitter::Update()
         currentTime_ = 0;
         if(!loop_)emitCount_++;
     }
+#ifdef _DEBUG
+
+    ImGui::Begin("emit");
+
+    static const char* shapeCombo[1024] = { "Box","Sphere","Circle","None" };
+    static const char* directionCombo[1024] = { "inward","outward","random" };
 
     ImGui::BeginTabBar("setting");
     if (ImGui::BeginTabItem(name_.c_str()))
@@ -204,6 +206,7 @@ void ParticleEmitter::Update()
     }
     ImGui::EndTabBar();
     ImGui::End();
+#endif // _DEBUG
 }
 
 void ParticleEmitter::Draw()

@@ -1,0 +1,13 @@
+{
+    "attack": {
+        "probabilityPhase1": [
+            80
+        ],
+        "probabilityPhase2": [
+            80
+        ],
+        "probabilityPhase3": [
+            80
+        ]
+    }
+}

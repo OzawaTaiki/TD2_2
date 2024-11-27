@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
+#include "Collider.h"
 
 
 class EnemyBullet
@@ -44,7 +45,7 @@ public:
 		// 弾のスピード
 		float speed = 0.3f;
 		// 球の個数
-		int numElectricCount = 16;
+		uint32_t numElectricCount = 16;
 		// 1フェーズでの回数
 		int numShotsPerPhase = 0;
 		int MaxNumShotsPerPhase = 3;
@@ -75,6 +76,7 @@ public:
 
 	void SetParent(const WorldTransform* parent);
 
+    void Oncollision(const Collider* _other);
 	
 private:
 	// モデル
@@ -101,6 +103,8 @@ private:
 	// デスフラグ
 	bool isDead_ = false;
 
+	// コライダー
+    std::unique_ptr<Collider> collider_ = nullptr;
 
 
 };

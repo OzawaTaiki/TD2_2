@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "ObjectColor.h"
-
+#include "Collider.h"
 
 class EnemyThunder
 {
@@ -81,6 +81,9 @@ private:
 	Model* model_ = nullptr;
 
 	Model* model2_ = nullptr;
+
+    std::unique_ptr<Collider> collider_ = nullptr;
+
 
 	// モデルカラー
 	ObjectColor color_;

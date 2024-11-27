@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "ObjectColor.h"
 
+#include "Collider.h"
 
 
 class EnemyStageArm
@@ -29,15 +30,18 @@ public:
 
 		/// アーム関係
 		// 攻撃出現場所
-		int attackSpawnLocation = 1;
+		//int attackSpawnLocation = 1;
 		// 前回腕の出た場所
-		int oldAttackSpawnLocation = attackSpawnLocation;
+		//int oldAttackSpawnLocation = attackSpawnLocation;
 		// 出る腕の本数
 		int armNum = 0;
 		// 出る腕の本数(最大値)
 		int MaxArmNum = 5;
 		// 予測が出てから攻撃するまでの時間(最大)
 		float MaxAttackPreparationTime = 120.0f;
+		// 点滅
+		float Maxblinking = 30.0f;
+
 		// 伸びる時間(最大)
 		//float MaxAttaskMoveTime = 60.0f;
 		// 伸びる長さ最大
@@ -55,6 +59,15 @@ public:
 		float weakArmSpawnProbability = 10.0f;
 		// 攻撃力
 		float attackPower = 1;
+
+		// 位置
+		std::vector<int>availableLocations;
+
+		// 攻撃方法変更
+		int randAttack;
+		// 
+		int rrr;
+
 	};
 
 
@@ -77,6 +90,8 @@ public:
 	bool IsDead() const { return isDead_; };
 
 	void SetParent(const WorldTransform* parent);
+
+    void OnCollision(const Collider* collider);
 private:
 	
 	AttackArm* attack_;
@@ -87,6 +102,8 @@ private:
 	
 	Model* model2_ = nullptr;
 
+    std::unique_ptr<Collider> collider_ ;
+	
 	// モデルカラー
 	ObjectColor color_;
 	ObjectColor color2_;

@@ -1,0 +1,25 @@
+{
+    "normalAttackShot1_": {
+        "ArmGrowthToSpinDelay": [
+            60.0
+        ],
+        "MaxRotateSpeed": [
+            2.0
+        ],
+        "MinRotateSpeed": [
+            0.009999999776482582
+        ],
+        "SpinTime": [
+            18.0
+        ],
+        "StoppingTime": [
+            20.0
+        ],
+        "cooldownTime": [
+            90.0
+        ],
+        "speed": [
+            0.30000001192092896
+        ]
+    }
+}

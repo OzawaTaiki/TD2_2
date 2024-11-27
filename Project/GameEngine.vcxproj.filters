@@ -136,6 +136,15 @@
     <Filter Include="Application\Enemy">
       <UniqueIdentifier>{8535fd9b-e391-4afa-ad31-197f169fadba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application\Scene">
+      <UniqueIdentifier>{7289b8c3-ec95-4b66-ba47-1ba3bb4da6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Player">
+      <UniqueIdentifier>{200f8e22-276d-49cb-a3d4-e94c51a751de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UI">
+      <UniqueIdentifier>{d12b12ee-24f9-408c-bf4b-d636de476e6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -300,12 +309,6 @@
     <ClCompile Include="Application\FollowCamera.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\Player.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\Weapon.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="Application\Enemy\Enemy.cpp">
       <Filter>Application\Enemy</Filter>
     </ClCompile>
@@ -327,7 +330,49 @@
     <ClCompile Include="Application\HitEffect.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="Application\ThrustEffect.cpp">
+    <ClCompile Include="Application\Enemy\EnemyDeathParticle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameClearScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Scene\GameOverScene.cpp">
+      <Filter>Application\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Player.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Weapon.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\TItlePlayer.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\TitleEnemy.cpp">
+      <Filter>Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\UI\UIBase.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\UI\UIButton.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\UI\UISprite.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\TItleUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ResultPlayer.cpp">
+      <Filter>Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\ResultUI.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\Enemy\ResultEnemy.cpp">
+      <Filter>Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Application\GameSceneUI.cpp">
       <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
@@ -546,12 +591,6 @@
     <ClInclude Include="Application\FollowCamera.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="Application\Player.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="Application\Weapon.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="Application\Enemy\Enemy.h">
       <Filter>Application\Enemy</Filter>
     </ClInclude>
@@ -576,7 +615,49 @@
     <ClInclude Include="Application\HitEffect.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="Application\ThrustEffect.h">
+    <ClInclude Include="Application\Enemy\EnemyDeathParticle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameOverScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Scene\GameClearScene.h">
+      <Filter>Application\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Player.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Weapon.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\TItlePlayer.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\TitleEnemy.h">
+      <Filter>Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UI\UIBase.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UI\UIButton.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UI\UISprite.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\TItleUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultPlayer.h">
+      <Filter>Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\ResultUI.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\Enemy\ResultEnemy.h">
+      <Filter>Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GameSceneUI.h">
       <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>

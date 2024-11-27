@@ -16,6 +16,8 @@ public:
     void Update();
     void Draw(const Camera* _camera ,const Vector4& _color);
 
+    void SetModel(const std::string& _filePath);
+
     Vector3 translate_ = { 0,0,0 };
     Vector3 scale_ = { 1,1,1 };
     Vector3 rotate_ = { 0,0,0 };

@@ -7,14 +7,14 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 {
 	worldTransform_.Initialize();
 	worldTransform_.transform_ = position;
-	worldTransform_.scale_ = { 5,5,5 };
+	worldTransform_.scale_ = { 4,4,4 };
 
 	model_ = model;
 
 	attack_ = attack;
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = { 5, 5, 5 };
+	worldTransform2_.scale_ = { 8, 8, 5 };
 
 	model2_ = Model::CreateFromObj("PredictionBox/PredictionBox.obj");
 
@@ -35,6 +35,15 @@ void EnemyStageArm::Initialize(const Vector3& position, const Vector3& Velocity,
 
 	worldTransform2_.rotate_ = worldTransform_.rotate_;
 
+    collider_ = std::make_unique<Collider>();
+    collider_->SetBoundingBox(Collider::BoundingBox::OBB_3D);
+	collider_->SetShape(model_->GetMin(), model_->GetMax());
+    collider_->SetAtrribute("enemyStageArm");
+	collider_->SetMask({ "enemy" ,"enemyBullet"});
+    collider_->SetGetWorldMatrixFunc([this]() {return worldTransform_.matWorld_; });
+    collider_->SetOnCollisionFunc([this](const Collider* collider) {OnCollision(collider); });
+
+
 
 }
 
@@ -42,11 +51,13 @@ void EnemyStageArm::Update()
 {
 	// 時間経過でデス
 	// 時間経過でデス
-	
+
 
 	attackPreparationTime++;
 	if (attackPreparationTime > attack_->MaxAttackPreparationTime) {
-		
+
+        collider_->RegsterCollider();
+
 		if (length <= attack_->MaxLength) {
 			worldTransform_.transform_ = worldTransform_.transform_ + velocity_;
 			length += std::abs(velocity_.x);
@@ -77,11 +88,23 @@ void EnemyStageArm::Update()
 void EnemyStageArm::Draw(const Camera& camera)
 {
 	if (attackPreparationTime < attack_->MaxAttackPreparationTime) {
-		model2_->Draw(worldTransform2_, &camera, &color2_);
+		if (attack_->Maxblinking + attackPreparationTime > attack_->MaxAttackPreparationTime) {
+			if (int(attackPreparationTime) % 5 == 0) {
+				model2_->Draw(worldTransform2_, &camera, &color2_);
+			}
+		}
+		else{
+			model2_->Draw(worldTransform2_, &camera, &color2_);
+		}
 	}
 	else {
 		model_->Draw(worldTransform_, &camera, &color_);
 	}
+
+#ifdef _DEBUG
+    collider_->Draw();
+#endif // _DEBUG
+
 }
 
 void EnemyStageArm::SetParent(const WorldTransform* parent)
@@ -89,4 +112,8 @@ void EnemyStageArm::SetParent(const WorldTransform* parent)
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
 	worldTransform2_.parent_ = parent;
+}
+
+void EnemyStageArm::OnCollision(const Collider* collider)
+{
 }

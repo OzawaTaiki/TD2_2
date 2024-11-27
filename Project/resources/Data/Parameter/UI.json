@@ -1,0 +1,184 @@
+{
+    "UI": {
+        "ClearbackGroundTexturePath": [
+            "white.png"
+        ],
+        "ClearretryButtonTexturePath": [
+            "circle.png"
+        ],
+        "CleartextBasePos": [
+            [
+                -1.9983971555381084e+18,
+                -1.9983971555381084e+18
+            ]
+        ],
+        "CleartextSize": [
+            [
+                -1.9983971555381084e+18,
+                -1.9983971555381084e+18
+            ]
+        ],
+        "CleartextTexturePath": [
+            "cube.jpg"
+        ],
+        "CleartextfloatingRange": [
+            -1.9983971555381084e+18
+        ],
+        "CleartextfloatingSpeed": [
+            -1.9983971555381084e+18
+        ],
+        "CleartitleButtonTexturePath": [
+            "cube.jpg"
+        ],
+        "GameOverbackGroundTexturePath": [
+            "white.png"
+        ],
+        "GameOverretryButtonTexturePath": [
+            "cube.jpg"
+        ],
+        "GameOvertextBasePos": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "GameOvertextSize": [
+            [
+                0.0,
+                0.0
+            ]
+        ],
+        "GameOvertextTexturePath": [
+            "cube.jpg"
+        ],
+        "GameOvertextfloatingRange": [
+            1.0
+        ],
+        "GameOvertextfloatingSpeed": [
+            1.0
+        ],
+        "GameOvertitleButtonTexturePath": [
+            "cube.jpg"
+        ],
+        "Retryanchor": [
+            [
+                0.5,
+                0.5
+            ]
+        ],
+        "RetryisActive": [
+            256
+        ],
+        "RetryisVisible": [
+            1
+        ],
+        "Retrylabel": [
+            "Retry"
+        ],
+        "Retrypos": [
+            [
+                333.0,
+                300.0
+            ]
+        ],
+        "Retrysize": [
+            [
+                300.0,
+                100.0
+            ]
+        ],
+        "RetrytextureName": [
+            "circle.png"
+        ],
+        "Titleanchor": [
+            [
+                0.5,
+                0.5
+            ]
+        ],
+        "TitleisActive": [
+            257
+        ],
+        "TitleisVisible": [
+            1
+        ],
+        "Titlelabel": [
+            "Title"
+        ],
+        "Titlepos": [
+            [
+                986.0,
+                300.0
+            ]
+        ],
+        "Titlesize": [
+            [
+                307.2308654785156,
+                103.61543273925781
+            ]
+        ],
+        "TitletextureName": [
+            "cube.jpg"
+        ],
+        "baseSize": [
+            [
+                300.0,
+                100.0
+            ]
+        ],
+        "continueanchor": [
+            [
+                0.5,
+                0.5
+            ]
+        ],
+        "continueisActive": [
+            257
+        ],
+        "continueisVisible": [
+            1
+        ],
+        "continuelabel": [
+            "continue"
+        ],
+        "continuepos": [
+            [
+                333.0,
+                300.0
+            ]
+        ],
+        "continuesize": [
+            [
+                295.703857421875,
+                97.8519287109375
+            ]
+        ],
+        "continuetextureName": [
+            "cube.jpg"
+        ],
+        "label": [
+            "Title"
+        ],
+        "resizeSpeed": [
+            1.0
+        ],
+        "retrySize": [
+            [
+                295.703857421875,
+                97.8519287109375
+            ]
+        ],
+        "sizeRange": [
+            [
+                20.0,
+                10.0
+            ]
+        ],
+        "titleSize": [
+            [
+                300.0,
+                100.0
+            ]
+        ]
+    }
+}

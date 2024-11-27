@@ -3,6 +3,9 @@
         "ArmGrowthToSpinDelay": [
             90.0
         ],
+        "AttackPower": [
+            10.0
+        ],
         "MaxRotateSpeed": [
             1.0
         ],

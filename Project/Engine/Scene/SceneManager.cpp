@@ -1,5 +1,6 @@
 #include "SceneManager.h"
-
+#include "Input.h"
+#include "TextureManager.h"
 #include <cassert>
 
 SceneManager* SceneManager::GetInstance()
@@ -31,6 +32,15 @@ void SceneManager::Initialize(const std::string& _name)
 
     nextSceneName_ = "empty";
     currentScene_->Initialize();
+
+    uint32_t handle = TextureManager::GetInstance()->Load("white.png");
+    fadeSprite_ = Sprite::Create(handle, { 0,0 });
+    fadeSprite_->Initialize();
+    fadeSprite_->SetSize({ 1280, 720 });
+    fadeAlphaSpeed_ = 0.02f;
+
+
+
 }
 
 void SceneManager::Update()
@@ -38,12 +48,14 @@ void SceneManager::Update()
 #ifdef _DEBUG
     ImGui();
 #endif // _DEBUG
+    Input::GetInstance()->Update();
     currentScene_->Update();
 }
 
 void SceneManager::Draw()
 {
     currentScene_->Draw();
+    Fade();
 }
 
 void SceneManager::ReserveScene(const std::string& _name)
@@ -51,12 +63,22 @@ void SceneManager::ReserveScene(const std::string& _name)
     auto instance = GetInstance();
 
     assert(instance->scenes_.find(_name) != instance->scenes_.end());
+    if (instance->currentSceneName_ == _name || instance->isChangingScene_)
+        return;
+
     instance->nextSceneName_ = _name;
+
+    instance->FadeStart();
 }
 
 void SceneManager::ChangeScene()
 {
     auto instance = GetInstance();
+
+    if (instance->isChangingScene_)
+    {
+        return;
+    }
 
     if (instance->nextSceneName_ == "empty" ||
         instance->currentSceneName_ == instance->nextSceneName_)
@@ -70,7 +92,53 @@ void SceneManager::ChangeScene()
     instance->currentScene_->Initialize();
     instance->currentSceneName_ = instance->nextSceneName_;
     instance->nextSceneName_ = "empty";
+    instance->FadeStart();
 }
+
+void SceneManager::Fade()
+{
+    if (isChangingScene_)
+    {
+        fadeAlpha_ += fadeAlphaSpeed_;
+        if (fadeAlpha_ > 1.0f)
+        {
+            fadeAlpha_ = 1.0f;
+            FadeEnd();
+        }
+        else if (fadeAlpha_ < 0.0f)
+        {
+            fadeAlpha_ = 0.0f;
+            FadeEnd();
+        }
+        Sprite::PreDraw();
+        fadeSprite_->Draw({ 0,0,0,fadeAlpha_ });
+    }
+}
+
+
+void SceneManager::FadeStart()
+{
+    if (fadeAlpha_ == 0.0f)
+        fadeAlphaSpeed_ = 0.02f;
+    else if (fadeAlpha_ == 1.0f)
+        fadeAlphaSpeed_ = -0.02f;
+    else
+        return;
+    isChangingScene_ = true;
+}
+
+
+void SceneManager::FadeEnd()
+{
+    if (fadeAlpha_ == 1.0f)
+        fadeAlphaSpeed_ = -0.02f;
+    else if (fadeAlpha_ == 0.0f)
+        fadeAlphaSpeed_ = 0.02f;
+    else
+        return;
+    isChangingScene_ = false;
+}
+
 
 #ifdef _DEBUG
 #include <imgui.h>
