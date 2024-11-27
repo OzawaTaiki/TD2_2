@@ -128,8 +128,8 @@ void ConfigManager::SaveData(const std::string& _groupName)
             json_->SetData(_groupName, variableName, *ptr);
         }
         else if (value.address.index() == 2)
-        {
             // Vector2
+        {
             Vector2* ptr = std::get<Vector2*>(value.address);
             if (!ptr)
                 continue;
