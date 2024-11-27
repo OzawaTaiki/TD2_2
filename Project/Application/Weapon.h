@@ -31,10 +31,6 @@ public:
     // 斬撃のエフェクトを開始
     void StartSlashEffect();
 
-    // 突きのエフェクトを開始
-	void StartThrustEffect();
-
-
 
 	// ゲッター、セッター
 public:
@@ -52,7 +48,7 @@ public:
 	void SetRotationZ(const float& rotation) { worldTransform_.rotate_.z = rotation; }
 
     void EndSlashEffect() { isSlashEffect_ = false; }
-	
+
 	// ワールドトランスフォーム
 	WorldTransform& GetWorldTransform() { return worldTransform_; };
 
@@ -78,8 +74,5 @@ private:
     float slashEffectTime_ = 0.0f;
     float slashEffectTimeMax_ = 0.5f;
 	bool SlashUpdate_ = false;
-
-	// 突きのエフェクト
-    std::unique_ptr<ThrustEffect> thrustEffect_;
 
 };

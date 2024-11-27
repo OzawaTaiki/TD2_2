@@ -448,13 +448,12 @@ void Player::BehaviorAttackUpdate()
 
 			worldTransform_.transform_ += move;
 		}*/
-		
+
 		weapon_->SetRotationX(DegreesToRadians(90));
 
 		if (isComboChanged_)
 		{
 			weapon_->EndSlashEffect();
-			weapon_->StartThrustEffect();
 			isComboChanged_ = false;
 		}
 		SetAttackCombo(25);

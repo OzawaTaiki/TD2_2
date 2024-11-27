@@ -25,8 +25,6 @@ void Weapon::Initialize()
     slashModel_->Initialize("Slash/Slash_test.obj");
     slashModel_->SetParent(&worldTransform_);
 
-    thrustEffect_ = std::make_unique<ThrustEffect>();
-    thrustEffect_->Initialize(&worldTransform_.matWorld_);
 
 
 }
@@ -42,7 +40,6 @@ void Weapon::UpdateWorldTransform()
         SlashUpdate_ = false;
     }
 
-    thrustEffect_->Update();
 
 }
 
@@ -54,7 +51,6 @@ void Weapon::Draw(const Camera& camera)
         slashModel_->Draw(&camera, Vector4{ 1,1,1,1 });
 
 	hitPatricles_->Draw();
-    thrustEffect_->Draw();
     collider_->Draw();
 }
 
@@ -84,7 +80,3 @@ void Weapon::StartSlashEffect()
     isSlashEffect_ = true;
 }
 
-void Weapon::StartThrustEffect()
-{
-    thrustEffect_->Start();
-}
