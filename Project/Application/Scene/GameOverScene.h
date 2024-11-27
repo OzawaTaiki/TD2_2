@@ -35,6 +35,8 @@ private:
     Sound gameOverBgm_;
     Sound decision;
 
+    std::unique_ptr <LightGroup> lightGroup_ = nullptr;
+
     
 #ifdef _DEBUG
     void ImGui();

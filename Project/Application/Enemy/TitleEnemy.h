@@ -15,6 +15,8 @@ public:
     void Update();
     void Draw(const Camera* _camera);
 
+    void SetLight(LightGroup* _ptr) { model_->SetLightGroup(_ptr); }
+
 private:
     std::unique_ptr<ObjectModel> model_ = nullptr;
 

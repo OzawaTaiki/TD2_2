@@ -58,3 +58,8 @@ void Weapon::OnCollision(const Collider* _other)
         }
     }
 }
+
+void Weapon::SetLight(LightGroup* _ptr)
+{
+    model_->SetLightGroup(_ptr);
+}

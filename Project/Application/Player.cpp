@@ -131,7 +131,6 @@ void Player::Initialize()
 
 	SoundInitialize();
 }
-
 void Player::SoundInitialize()
 {
 	//音
@@ -374,6 +373,13 @@ void Player::OnCollision(const Collider* _other)
 		isHitColor_ = true;
 		color_.SetColor(hitColor_);
 	}
+}
+
+void Player::SetLight(LightGroup* _ptr)
+{
+	model_->SetLightGroup(_ptr);
+	weapon_->SetLight(_ptr);
+
 }
 
 void Player::StageMovementRestrictions()
