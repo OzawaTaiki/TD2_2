@@ -32,9 +32,9 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 	model2_ = Model::CreateFromObj("PredictionBox/PredictionCylinder.obj");
 
 	color_.Initialize();
-	color_.SetColor(Vector4{ 1, 1, 1, 1 });
+	color_.SetColor(Vector4{ 1, 0, 0, 1 });
 	color2_.Initialize();
-	color2_.SetColor(Vector4{ 1, 0, 0, 1.0f });
+	color2_.SetColor(Vector4{ 1, 1, 1, 1.0f });
 
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = Velocity;
