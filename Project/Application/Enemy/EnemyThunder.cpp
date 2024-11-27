@@ -27,9 +27,9 @@ void EnemyThunder::Initialize(const Vector3& position, const Vector3& Velocity, 
 
 	worldTransform2_.Initialize();
 	worldTransform2_.transform_ = position;
-	worldTransform2_.scale_ = { 1, 5, 1 };
+	worldTransform2_.scale_ = { 1, 3, 1 };
 
-	model2_ = Model::CreateFromObj("PredictionBox/PredictionCylinder.obj");
+	model2_ = Model::CreateFromObj("thunder/thunder.obj");
 
 	color_.Initialize();
 	color_.SetColor(Vector4{ 1, 0, 0, 1 });
